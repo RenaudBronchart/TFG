@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "129002362912",
+    "project_id": "tfgnebrija-15a7d",
+    "storage_bucket": "tfgnebrija-15a7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129002362912:android:181a49b03f42f0b0e80445",
+        "android_client_info": {
+          "package_name": "com.example.tfg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqA0yWukz_Ri7RilU-zp5JSA1Z0ly7wlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

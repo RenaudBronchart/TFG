@@ -5,11 +5,13 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tfg.screens.Home
 import com.example.tfg.screens.Login
+import com.google.firebase.auth.FirebaseAuth
 
 // para que ponemos Composable
 @Composable
-fun AppNavigation() {
+fun AppNavigation(auth: FirebaseAuth) {
 
     val navigationController = rememberNavController()
     NavHost(
@@ -17,8 +19,8 @@ fun AppNavigation() {
         startDestination = AppScreens.Login.ruta // indicar la ruta donde empezamos la app
     ) {
 
-        composable(AppScreens.Login.ruta) { Login(navigationController) }
-
+        composable(AppScreens.Login.ruta) { Login(navigationController, auth)}
+        composable(AppScreens.Home.ruta) { Home(navigationController, auth)}
 
 
     }

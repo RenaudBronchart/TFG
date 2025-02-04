@@ -3,6 +3,7 @@
 package com.example.tfg.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,11 +49,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tfg.R
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+
 
 @Composable
-fun Login(navController: NavHostController) {
-
-    var login by remember { mutableStateOf("") }
+fun Login(navController: NavHostController,auth: FirebaseAuth) {
+    val context = LocalContext.current // val porque no va cambiar y permite acceder al contexto
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) } // Estado para mostrar/ocultar la contraseña
 
@@ -81,9 +87,9 @@ fun Login(navController: NavHostController) {
 
             // Campo de usuario
             OutlinedTextField(
-                value = login,
-                onValueChange = { login = it },
-                label = { Text("Usuario", color = Color.White) },
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email", color = Color.White) },
                 textStyle = TextStyle(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp), // Bordes redondeados
@@ -138,15 +144,40 @@ fun Login(navController: NavHostController) {
             Spacer(modifier = Modifier.height(32.dp)) // Espaciado más grande
 
             // Botón "Iniciar Sesión"
-            Button(
-                onClick = { navController.navigate("Home") },
+            Button(onClick = {
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(context,"Los campos no pueden estar vacios", Toast.LENGTH_SHORT).show()
+                } else {
+                auth.signInWithEmailAndPassword(email,password)
+                    .addOnCompleteListener { task->
+                        if(task.isSuccessful) {
+                            navController.navigate("Home")
+                            Log.i("jc","inicio de sesion correcto")
+                        } else {
+                            val exception = task.exception
+                            Log.e("jc", "Error de autenticación: ${exception?.message}")
+                            val errorMessage = when(exception) {
+                                is FirebaseAuthInvalidUserException -> "Usuario no encontrado"
+                                is FirebaseAuthInvalidCredentialsException -> {
+                                    if (exception.message?.contains("There is no user record corresponding") == true) {
+                                        "Usuario no encontrado"
+                                    } else {
+                                        "Contraseña incorrecta"
+                                    }
+                                }
+                                else -> "Error de conexión, intenta más tarde"
+                            }
+                            Toast.makeText(context,errorMessage,Toast.LENGTH_SHORT).show()
+                            Log.i("jc", "Inicio de sesión fallado")
+                        }
+                    }
+                }
+            },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White
-                ),
-                shape = RoundedCornerShape(12.dp) // Bordes redondeados
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = "Iniciar sesión",
@@ -180,9 +211,3 @@ fun Login(navController: NavHostController) {
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun PaginaBienvenidaPreview() {
-    val fakeNavController = rememberNavController()
-    Login(navController = fakeNavController)
-}
