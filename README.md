@@ -52,6 +52,6 @@ Database: Firebase
 🔧 Installation and Execution
 ------------------------------
 1. Clone the repository: 
-    git clone https://github.com/your-username/your-repository.git
+    git clone https://github.com/RenaudBronchart/TFG.git
 2. Open the project in Android Studio
 3. Run the application on an emulator or a physical device
