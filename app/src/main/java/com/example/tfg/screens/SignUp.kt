@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,7 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.Date
-import com.example.tfg.components.GenderSelection
+import com.example.tfg.components.SelectGender
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
@@ -39,7 +40,7 @@ import com.google.firebase.firestore.firestore
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUp(navController: NavHostController,auth: FirebaseAuth) {
-    var gender by remember { mutableStateOf("Hombre") }
+    var selectedGender by remember { mutableStateOf("Hombre") }
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -99,7 +100,7 @@ fun SignUp(navController: NavHostController,auth: FirebaseAuth) {
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
-            TextField(
+            OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Email") },
@@ -109,14 +110,15 @@ fun SignUp(navController: NavHostController,auth: FirebaseAuth) {
             TextField(
                 value = telefono,
                 onValueChange = { telefono = it },
-                label = { Text("telefono") },
+                label = { Text("Telefono") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
-            GenderSelection(
-                selectedGender = gender,
-                onGenderChange = { newGender -> gender = newGender }
+            SelectGender(
+                selectedGender = selectedGender,
+                onGenderChange = { selectedGender = it }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Date()

@@ -6,4 +6,5 @@ sealed class AppScreens(val ruta: String) {
     object SignUp: AppScreens("signUp")
     object Profile: AppScreens("profile")
     object Home: AppScreens("home")
+    object AddProduct: AppScreens("addProduct")
 }
