@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+foundation = "1.7.7"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,22 +11,33 @@ activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 
 # Navigation
+lifecycleRuntimeKtxVersion = "2.5.1"
+materialIconsExtendedVersion = "1.7.7"
 navigationCompose ="2.8.2"
 
 # Firebase
 firebaseBom = "33.1.1"
 
 # Google Services
+runtimeLivedata = "1.7.7"
 services = "4.4.2"
 
 #fireStore
 firebaseFirestoreKtx = "25.1.1"
 
+#liveData
+liveData = "2.3.1"
+storage = "1.5.0"
+
 
 animationCoreLint = "1.8.0-beta01"
+uiTestAndroid = "1.8.0-beta01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
+androidx-lifecycle-runtime-ktx-v251 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -54,6 +66,15 @@ firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
 
 # Firestore
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
+
+# ViewModels
+androidx-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+
+#liveData
+androidx-liveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "liveData" }
+androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
