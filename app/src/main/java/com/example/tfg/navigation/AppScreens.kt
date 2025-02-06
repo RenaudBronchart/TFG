@@ -4,5 +4,6 @@ package com.example.tfg.navigation
 sealed class AppScreens(val ruta: String) {
     object Login: AppScreens("login")
     object SignUp: AppScreens("signUp")
+    object Profile: AppScreens("profile")
     object Home: AppScreens("home")
 }

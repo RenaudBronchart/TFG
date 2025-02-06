@@ -157,14 +157,8 @@ fun Login(navController: NavHostController,auth: FirebaseAuth) {
                             val exception = task.exception
                             Log.e("jc", "Error de autenticación: ${exception?.message}")
                             val errorMessage = when(exception) {
-                                is FirebaseAuthInvalidUserException -> "Usuario no encontrado"
-                                is FirebaseAuthInvalidCredentialsException -> {
-                                    if (exception.message?.contains("There is no user record corresponding") == true) {
-                                        "Usuario no encontrado"
-                                    } else {
-                                        "Contraseña incorrecta"
-                                    }
-                                }
+                                is FirebaseAuthInvalidUserException -> "Usuario o Contraseña incorrecta"
+                                is FirebaseAuthInvalidCredentialsException -> "Usuario o Contraseña incorrecta"
                                 else -> "Error de conexión, intenta más tarde"
                             }
                             Toast.makeText(context,errorMessage,Toast.LENGTH_SHORT).show()

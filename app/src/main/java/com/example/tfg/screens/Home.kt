@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Home(navController: NavHostController, auth: FirebaseAuth) {
+fun Home(navController: NavHostController,auth: FirebaseAuth) {
 
     Text(
         text = "hello"

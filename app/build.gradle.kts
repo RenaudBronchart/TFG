@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+    implementation(libs.material.icons.extended)
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.espresso.core)
@@ -72,8 +72,30 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
 
+    // Firebase Firestore
+    implementation(libs.firebase.firestore.ktx)
+
     // Firebase Auth
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.ui.test.android)
+
+    // LiveData
+    implementation (libs.androidx.runtime.livedata)
+
+    // ViewModel
+    implementation(libs.androidx.lifecycle.runtime.ktx.v251)
+    implementation(libs.androidx.storage)
+    implementation(libs.androidx.storage)
+
+    // Material3
+    implementation(libs.androidx.material3)
+
+
+    implementation(libs.material.icons.extended)
+
+
+    // Foundation (pour fillMaxWidth, clickable, etc.)
+    implementation(libs.androidx.foundation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
