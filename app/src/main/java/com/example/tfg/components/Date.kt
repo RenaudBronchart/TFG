@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import java.util.*
 
 @Composable
-fun Date() {
-    var selectedDate by remember { mutableStateOf("") }
+fun Date(selectedDate: String, onDateChange: (String) -> Unit) {
+
     val context = LocalContext.current
 
     val openDatePicker: () -> Unit = {
@@ -43,7 +43,8 @@ fun Date() {
         val datePickerDialog = DatePickerDialog(
             context,
             { _, year, monthOfYear, dayOfMonth ->
-                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+                val formattedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+                onDateChange(formattedDate) // Update the selected date in the parent composable
             },
             year, month, dayOfMonth
         )

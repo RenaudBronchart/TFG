@@ -23,7 +23,7 @@ fun AppNavigation(auth: FirebaseAuth) {
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, auth)}
         composable(AppScreens.Home.ruta) { Home(navigationController, auth)}
-        composable(AppScreens.SignUp.ruta) { SignUp(navigationController,auth)}
+        composable(AppScreens.SignUp.ruta) { SignUp(navigationController,auth,viewModel())}
         composable(AppScreens.Profile.ruta) { Profile(navigationController, auth)}
         composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, auth,viewModel())}
     }

@@ -45,6 +45,8 @@ fun AddProduct (navController: NavHostController,auth: FirebaseAuth, viewModel: 
 
     val db = FirebaseFirestore.getInstance()
     val name_collection = "productos"
+
+    var selectedCategory by remember { mutableStateOf("Selecciona una categoría") }
     val nombre:String by viewModel.nombre.observeAsState("")
     val precio:Double by viewModel.precio.observeAsState(0.0)
     val descripcion:String by viewModel.descripcion.observeAsState("")
@@ -58,7 +60,7 @@ fun AddProduct (navController: NavHostController,auth: FirebaseAuth, viewModel: 
 
     var mensaje_confirmacion by remember { mutableStateOf("") }
 
-    var selectedCategory by remember { mutableStateOf("Selecciona una categoría") }
+
 
     Scaffold(
         topBar = {
@@ -72,7 +74,7 @@ fun AddProduct (navController: NavHostController,auth: FirebaseAuth, viewModel: 
                     IconButton(onClick = { navController.navigate("Home") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "back"
+                            contentDescription = "vovler"
                         )
                     }
                 }

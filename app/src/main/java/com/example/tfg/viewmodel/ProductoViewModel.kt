@@ -19,7 +19,7 @@ class ProductoViewModel: ViewModel() {
     private val _descripcion = MutableLiveData<String>()
     val descripcion: LiveData<String> = _descripcion
 
-    private val _categoria = MutableLiveData<String>("Selecciona una categoría")
+    private val _categoria = MutableLiveData<String>()
     val categoria: LiveData<String> = _categoria
 
     private val _imagen = MutableLiveData<String>()

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -13,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -21,37 +21,44 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
-import com.google.firebase.Firebase
+import com.example.tfg.models.Usuario
+import com.example.tfg.viewmodel.UsuarioViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
-
-//import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController,auth: FirebaseAuth) {
-    var selectedGender by remember { mutableStateOf("Hombre") }
-    var nombre by remember { mutableStateOf("") }
-    var apellido by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var dni by remember { mutableStateOf("") }
-    var fechaNacimiento by remember { mutableStateOf("") }
-    var telefono by remember { mutableStateOf("") }
-    //val db = Firebase.firestore.getInstance()
-    //var name_collection = "usuarios"
+fun SignUp(navController: NavHostController, auth: FirebaseAuth, viewModel: UsuarioViewModel) {
 
-    //var
+    val db = FirebaseFirestore.getInstance()
+    val name_collection = "usuarios"
 
+    var selectedGender by remember { mutableStateOf("Selecciona un opción") }
+    val nombre:String by viewModel.nombre.observeAsState("")
+    val apellido:String by viewModel.apellido.observeAsState("")
+    val dni:String by viewModel.dni.observeAsState("")
+    val email:String by viewModel.email.observeAsState("")
+    val telefono:String by viewModel.telefono.observeAsState("")
+    val genero:String by viewModel.genero.observeAsState("")
+    val fechaNacimiento:String by viewModel.fechaNacimiento.observeAsState("")
+    val contraseña:String by viewModel.contraseña.observeAsState("")
+
+
+
+    var mensaje_confirmacion by remember { mutableStateOf("") }
+    val isButtonEnable:Boolean by viewModel.isButtonEnable.observeAsState(initial = false)
 
     Scaffold(
         topBar = {
@@ -65,7 +72,7 @@ fun SignUp(navController: NavHostController,auth: FirebaseAuth) {
                     IconButton(onClick = { navController.navigate("Login") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "back"
+                            contentDescription = "vovler"
                         )
                     }
                 }
@@ -81,58 +88,114 @@ fun SignUp(navController: NavHostController,auth: FirebaseAuth) {
         ) {
             TextField(
                 value = nombre,
-                onValueChange = { nombre = it },
+                onValueChange = { viewModel.onCompletedFields(it, apellido, email, dni, telefono, genero, fechaNacimiento, contraseña)
+                                },
                 label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
             TextField(
                 value = apellido,
-                onValueChange = { apellido = it },
+                onValueChange = { viewModel.onCompletedFields(nombre, it, email, dni, telefono, genero, fechaNacimiento, contraseña)
+                                },
                 label = { Text("Apellido") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
             TextField(
                 value = dni,
-                onValueChange = { dni = it },
+                onValueChange = { viewModel.onCompletedFields(nombre, apellido, it, email, telefono, genero, fechaNacimiento, contraseña)
+                                },
                 label = { Text("DNI/NIE") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
-            OutlinedTextField(
+            TextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, it, telefono, genero, fechaNacimiento, contraseña)
+                                },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
             TextField(
                 value = telefono,
-                onValueChange = { telefono = it },
+                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, email, it, genero, fechaNacimiento, contraseña)
+                                },
                 label = { Text("Telefono") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
             SelectGender(
                 selectedGender = selectedGender,
-                onGenderChange = { selectedGender = it }
+                onGenderChange = { newGender ->
+                    viewModel.onCompletedFields(nombre, apellido, dni, email, telefono, newGender, fechaNacimiento, contraseña)
+                    selectedGender = newGender
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Date()
+            Date(
+                selectedDate = fechaNacimiento,
+                onDateChange = { newDate ->
+                    viewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, newDate, contraseña)
+                }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            TextField(
+                value = contraseña,
+                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, fechaNacimiento, it)
+                                },
+                label = { Text("Contraseña") },
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                visualTransformation = PasswordVisualTransformation()
+            )
+
             Button(
                 onClick = {
-                    // Logique d'inscription (par exemple, utiliser Firebase Auth pour créer un utilisateur)
+                    // registrar usuario en firebase auth
+                    auth.createUserWithEmailAndPassword(email, contraseña)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val user = auth.currentUser
+
+                                val usuario = Usuario(
+                                    nombre = nombre,
+                                    apellido = apellido,
+                                    email = email,
+                                    dni = dni,
+                                    fechaNacimiento = fechaNacimiento,
+                                    telefono = telefono,
+                                    genero = selectedGender,
+                                )
+
+                                db.collection(name_collection)
+                                    .document(user?.uid ?: "")
+                                    .set(usuario)
+                                    .addOnSuccessListener {
+                                        mensaje_confirmacion = "Datos guardados correctamente"
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        mensaje_confirmacion = "No se ha guardado correctamente: ${exception.message}"
+                                    }
+                            } else {
+                                // Prendre l'exception et l'afficher dans un message d'erreur
+                                val errorMessage = task.exception?.message ?: "Erreur inconnue"
+                                mensaje_confirmacion = "Error al crear cuenta: $errorMessage"
+                            }
+                        }
                 },
+                enabled = isButtonEnable,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Crear cuenta")
             }
+
+            Spacer(modifier = Modifier.size(5.dp))
+            Text(text = mensaje_confirmacion)
         }
     }
 }
