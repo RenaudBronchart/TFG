@@ -25,9 +25,9 @@ fun SelectGender(selectedGender: String, onGenderChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it }
+    ExposedDropdownMenuBox( // componente para crear un menú desplegable
+        expanded = expanded, // para definir si el menu esta expandido o no
+        onExpandedChange = { expanded = it } // actualiza el estado cuando el usuario interactua
     ) {
         TextField(
             value = selectedGender,

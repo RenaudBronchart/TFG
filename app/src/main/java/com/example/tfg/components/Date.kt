@@ -40,16 +40,16 @@ fun Date(selectedDate: String, onDateChange: (String) -> Unit) {
         val month = calendar.get(Calendar.MONTH)
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(
-            context,
-            { _, year, monthOfYear, dayOfMonth ->
+        val datePickerDialog = DatePickerDialog( // DaTePickerDialog es un cuadro de diálogo que permite al usuario seleccionar una fecha
+            context, // context representa el contexto actual de la aplicación
+            { _, year, monthOfYear, dayOfMonth -> // _ para ignorar el primer parámetro
                 val formattedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
                 onDateChange(formattedDate) // Update the selected date in the parent composable
             },
             year, month, dayOfMonth
         )
 
-        datePickerDialog.show()
+        datePickerDialog.show() // muestra la ventana emergente del calendario
     }
 
         TextField(
