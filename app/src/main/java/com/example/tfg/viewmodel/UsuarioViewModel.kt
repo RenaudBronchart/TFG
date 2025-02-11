@@ -60,5 +60,14 @@ class UsuarioViewModel: ViewModel() {
     fun enableButton(nombre: String, apellido: String, dni: String, email: String, telefono: String, genero: String, fechaNacimiento: String, contraseña: String) =
          nombre.isNotEmpty() && apellido.isNotEmpty() && dni.isNotEmpty() && email.isNotEmpty() && telefono.isNotEmpty() && genero.isNotEmpty() && fechaNacimiento.isNotEmpty() && contraseña.isNotEmpty()
 
-
+    fun resetFields() {
+        _nombre.value = ""
+        _apellido.value = ""
+        _dni.value = ""
+        _email.value = ""
+        _telefono.value = ""
+        _genero.value = ""
+        _fechaNacimiento.value = ""
+        _contraseña.value = ""
+    }
 }

@@ -147,7 +147,7 @@ fun Login(navController: NavHostController,auth: FirebaseAuth) {
                 auth.signInWithEmailAndPassword(email,password)
                     .addOnCompleteListener { task->
                         if(task.isSuccessful) {
-                            navController.navigate("Home")
+                            navController.navigate("Profile")
                             Log.i("jc","inicio de sesion correcto")
                         } else {
                             val exception = task.exception
@@ -157,7 +157,7 @@ fun Login(navController: NavHostController,auth: FirebaseAuth) {
                                 is FirebaseAuthInvalidCredentialsException -> "Usuario o Contraseña incorrecta"
                                 else -> "Error de conexión, intenta más tarde"
                             }
-                            Toast.makeText(context,errorMessage,Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                             Log.i("jc", "Inicio de sesión fallado")
                         }
                     }

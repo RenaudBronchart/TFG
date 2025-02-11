@@ -10,13 +10,15 @@ import com.example.tfg.screens.Home
 import com.example.tfg.screens.Login
 import com.example.tfg.screens.SignUp
 import com.example.tfg.screens.Profile
+import com.example.tfg.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-// para que ponemos Composable
 @Composable
 fun AppNavigation(auth: FirebaseAuth) {
 
     val navigationController = rememberNavController()
+    val authViewModel: AuthViewModel = viewModel()
+
     NavHost(
         navController =  navigationController, // recordar la navigation
         startDestination = AppScreens.Login.ruta // indicar la ruta donde empezamos la app
@@ -24,7 +26,7 @@ fun AppNavigation(auth: FirebaseAuth) {
         composable(AppScreens.Login.ruta) { Login(navigationController, auth)}
         composable(AppScreens.Home.ruta) { Home(navigationController, auth)}
         composable(AppScreens.SignUp.ruta) { SignUp(navigationController,auth,viewModel())}
-        composable(AppScreens.Profile.ruta) { Profile(navigationController, auth)}
+        composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel) }
         composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, auth,viewModel())}
     }
 }

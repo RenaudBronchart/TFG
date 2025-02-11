@@ -177,6 +177,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth, viewModel: Usua
                                     .set(usuario)
                                     .addOnSuccessListener {
                                         mensaje_confirmacion = "Datos guardados correctamente"
+                                        viewModel.resetFields()
                                     }
                                     .addOnFailureListener { exception ->
                                         mensaje_confirmacion = "No se ha guardado correctamente: ${exception.message}"

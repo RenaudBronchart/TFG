@@ -47,6 +47,22 @@ fun Home(navController: NavHostController,auth: FirebaseAuth) {
             fontSize = 16.sp
         )
     }
+    Button(
+        onClick = { navController.navigate("Profile") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(12.dp) // Bordes redondeados
+    ) {
+        Text(
+            text = "Profile",
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 16.sp
+        )
+    }
 }
 
 
