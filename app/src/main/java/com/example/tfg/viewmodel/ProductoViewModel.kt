@@ -4,9 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Producto
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class ProductoViewModel: ViewModel() {
 
@@ -37,6 +41,30 @@ class ProductoViewModel: ViewModel() {
 
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
     val productos: StateFlow<List<Producto>> = _productos
+
+    init {
+        getProductosFromFirestore()
+    }
+
+    fun getProductosFromFirestore() {
+        viewModelScope.launch {
+            // instancia de la base de datos FB
+            val db = FirebaseFirestore.getInstance()
+            // almacenar el nombre de la colección
+            val name_collection = "productos"
+            val query = db.collection(name_collection).get().await()
+
+            val productos = mutableListOf<Producto>()
+
+            for (document in query.documents) {
+                val producto = document.toObject(Producto::class.java)
+                if (producto != null) {
+                    productos.add(producto)
+                }
+            }
+            _productos.value = productos
+        }
+}
 
     private val _isButtonEnable = MutableLiveData<Boolean>()
     val isButtonEnable: LiveData<Boolean> = _isButtonEnable
