@@ -74,7 +74,8 @@ fun AddProduct (navController: NavHostController,auth: FirebaseAuth, viewModel: 
                     IconButton(onClick = { navController.navigate("Home") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "vovler"
+                            contentDescription = "volver",
+                            tint = Color.White
                         )
                     }
                 }
@@ -187,18 +188,18 @@ fun AddProduct (navController: NavHostController,auth: FirebaseAuth, viewModel: 
                         .document(producto.id)
                         .set(producto)
                        .addOnSuccessListener {
-                           mensaje_confirmacion = "Datos guardados correctamente"
+                           mensaje_confirmacion = "Producto añadido correctamente"
                            viewModel.resetFields()
                         }
                         .addOnFailureListener {
-                            mensaje_confirmacion = "No se ha guardado correctamente"
+                            mensaje_confirmacion = "No se ha podido añadir un producto"
                         }
 
                 },
                 enabled = isButtonEnable,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Agregar producto")
+                Text("Añadir producto")
             }
             Spacer(modifier = Modifier.size(5.dp))
             Text(text = mensaje_confirmacion)

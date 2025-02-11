@@ -72,7 +72,8 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth, viewModel: Usua
                     IconButton(onClick = { navController.navigate("Login") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "vovler"
+                            contentDescription = "vovler",
+                            tint = Color.White
                         )
                     }
                 }
