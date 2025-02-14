@@ -21,10 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.tfg.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Home(navController: NavHostController, auth: FirebaseAuth) {
+fun Home(navController: NavHostController, authViewModel : AuthViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center, // Centrer verticalement
@@ -80,6 +81,22 @@ fun Home(navController: NavHostController, auth: FirebaseAuth) {
         ) {
             Text(
                 text = "Profile",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 16.sp
+            )
+
+        }
+
+        Button(
+            onClick = { navController.navigate("ListUsers") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "ListUsers",
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 16.sp
             )

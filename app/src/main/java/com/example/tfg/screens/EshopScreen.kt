@@ -39,11 +39,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import com.example.tfg.models.Producto
+import com.example.tfg.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EshopScreen(navController: NavHostController, auth: FirebaseAuth,viewModel: ProductoViewModel) {
+fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel, viewModel: ProductoViewModel) {
     var selectedCategory by remember { mutableStateOf("All") }
     val productos by viewModel.productos.collectAsState()
 

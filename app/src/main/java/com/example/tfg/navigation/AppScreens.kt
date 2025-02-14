@@ -8,4 +8,6 @@ sealed class AppScreens(val ruta: String) {
     object Home: AppScreens("home")
     object AddProduct: AppScreens("addProduct")
     object EshopScreen: AppScreens("eshopScreen")
+    object ListUsers: AppScreens("listUsers")
+    object MyData: AppScreens("myData")
 }

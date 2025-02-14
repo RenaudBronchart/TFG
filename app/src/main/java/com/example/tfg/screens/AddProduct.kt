@@ -34,14 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.SelectProductCategory
 import com.example.tfg.models.Producto
+import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.ProductoViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct (navController: NavHostController,auth: FirebaseAuth, viewModel: ProductoViewModel)    {
+fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel , viewModel: ProductoViewModel)    {
 
     val db = FirebaseFirestore.getInstance()
     val name_collection = "productos"

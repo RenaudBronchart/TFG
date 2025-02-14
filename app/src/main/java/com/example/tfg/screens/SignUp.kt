@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,13 +35,15 @@ import androidx.navigation.NavHostController
 import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
 import com.example.tfg.models.Usuario
+import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.UsuarioViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController, auth: FirebaseAuth, viewModel: UsuarioViewModel) {
+fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, viewModel: UsuarioViewModel) {
 
     val db = FirebaseFirestore.getInstance()
     val name_collection = "usuarios"
@@ -55,7 +58,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth, viewModel: Usua
     val fechaNacimiento:String by viewModel.fechaNacimiento.observeAsState("")
     val contraseña:String by viewModel.contraseña.observeAsState("")
 
-
+    val coroutineScope = rememberCoroutineScope()
 
     var mensaje_confirmacion by remember { mutableStateOf("") }
     val isButtonEnable:Boolean by viewModel.isButtonEnable.observeAsState(initial = false)
@@ -157,43 +160,40 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth, viewModel: Usua
 
             Button(
                 onClick = {
-                    // registrar usuario en firebase auth
-                    auth.createUserWithEmailAndPassword(email, contraseña)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val user = auth.currentUser
+                    coroutineScope.launch {
+                        val result = authViewModel.createUserWithEmailAndPassword(email, contraseña)
+                        val user = result?.user
 
-                                val usuario = Usuario(
-                                    nombre = nombre,
-                                    apellido = apellido,
-                                    email = email,
-                                    dni = dni,
-                                    fechaNacimiento = fechaNacimiento,
-                                    telefono = telefono,
-                                    genero = selectedGender,
-                                )
+                        if (user != null) {
+                            val usuario = Usuario(
+                                nombre = nombre,
+                                apellido = apellido,
+                                email = email,
+                                dni = dni,
+                                fechaNacimiento = fechaNacimiento,
+                                telefono = telefono,
+                                genero = selectedGender
+                            )
 
-                                db.collection(name_collection)
-                                    .document(user?.uid ?: "")
-                                    .set(usuario)
-                                    .addOnSuccessListener {
-                                        mensaje_confirmacion = "Datos guardados correctamente"
-                                        viewModel.resetFields()
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        mensaje_confirmacion = "No se ha guardado correctamente: ${exception.message}"
-                                    }
-                            } else {
-                                // Prendre l'exception et l'afficher dans un message d'erreur
-                                val errorMessage = task.exception?.message ?: "Erreur inconnue"
-                                mensaje_confirmacion = "Error al crear cuenta: $errorMessage"
-                            }
+                            db.collection(name_collection)
+                                .document(user.uid)
+                                .set(usuario)
+                                .addOnSuccessListener {
+                                    mensaje_confirmacion = "Datos guardados correctamente"
+                                    viewModel.resetFields()
+                                }
+                                .addOnFailureListener { exception ->
+                                    mensaje_confirmacion = "No se ha guardado correctamente: ${exception.message}"
+                                }
+                        } else {
+                            mensaje_confirmacion = "Error al crear cuenta"
                         }
+                    }
                 },
                 enabled = isButtonEnable,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Crear cuenta")
+                Text("Registrarse")
             }
 
             Spacer(modifier = Modifier.size(5.dp))

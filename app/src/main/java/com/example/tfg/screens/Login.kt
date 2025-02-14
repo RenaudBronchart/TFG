@@ -46,13 +46,14 @@ import com.example.tfg.R
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.platform.LocalContext
+import com.example.tfg.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 
 @Composable
-fun Login(navController: NavHostController,auth: FirebaseAuth) {
+fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
     val context = LocalContext.current // val porque no va cambiar y permite acceder al contexto
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -144,14 +145,12 @@ fun Login(navController: NavHostController,auth: FirebaseAuth) {
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(context,"Los campos no pueden estar vacios", Toast.LENGTH_SHORT).show()
                 } else {
-                auth.signInWithEmailAndPassword(email,password)
-                    .addOnCompleteListener { task->
+                    authViewModel.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                         if(task.isSuccessful) {
                             navController.navigate("Profile")
                             Log.i("jc","inicio de sesion correcto")
                         } else {
                             val exception = task.exception
-                            Log.e("jc", "Error de autenticación: ${exception?.message}")
                             val errorMessage = when(exception) {
                                 is FirebaseAuthInvalidUserException -> "Usuario o Contraseña incorrecta"
                                 is FirebaseAuthInvalidCredentialsException -> "Usuario o Contraseña incorrecta"
