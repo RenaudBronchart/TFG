@@ -34,7 +34,7 @@ class EditUserViewModel : ViewModel() {
     private val _fechaNacimiento = mutableStateOf("")
     val fechaNacimiento: State<String> get() = _fechaNacimiento
 
-    // 🛠️ Fonctions pour mettre à jour les champs (au lieu d'accéder aux variables privées)
+    // 🛠 Fonctions pour mettre à jour les champs (au lieu d'accéder aux variables privées)
     fun setNombre(value: String) { _nombre.value = value }
     fun setApellido(value: String) { _apellido.value = value }
     fun setEmail(value: String) { _email.value = value }
@@ -56,7 +56,7 @@ class EditUserViewModel : ViewModel() {
         }
     }
 
-    // Fonction pour mettre à jour Firestore
+
     private val _mensajeConfirmacion = MutableStateFlow("")
     val mensajeConfirmacion: StateFlow<String> get() = _mensajeConfirmacion
 

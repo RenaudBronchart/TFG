@@ -39,34 +39,14 @@ import com.example.tfg.viewmodel.UsuarioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyData(
-    navController: NavHostController,
-    authViewModel: AuthViewModel,
-    viewModel: UsuarioViewModel,
-    editUserViewModel: EditUserViewModel
-) {
+fun MyData(navController: NavHostController, authViewModel: AuthViewModel, viewModel: UsuarioViewModel,
+    editUserViewModel: EditUserViewModel) {
+
     val currentUser by authViewModel.user.collectAsState()
     val usuarioData by viewModel.usuario.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(Unit) {
-
-        editUserViewModel.setMensajeConfirmacion("")
-    }
-
-    // Charger les données de l'utilisateur
-    LaunchedEffect(currentUser?.uid) {
-        currentUser?.uid?.let { uid ->
-            viewModel.loadUsuario(uid)  // Charger l'utilisateur depuis Firestore
-        }
-    }
-
-    // Charger les données dans editUserViewModel
-    LaunchedEffect(usuarioData) {
-        usuarioData?.let {
-            editUserViewModel.cargarDatosUsuario(it)
-        }
-    }
+    // Observer des changements de message pour afficher un Snackbar
+    val mensaje by editUserViewModel.mensajeConfirmacion.collectAsState()
 
     // Observer les valeurs mises à jour dans EditUserViewModel
     val nombre by editUserViewModel.nombre
@@ -86,8 +66,23 @@ fun MyData(
         Field("Teléfono", telefono, editUserViewModel::setTelefono),
     )
 
-    // Observer des changements de message pour afficher un Snackbar
-    val mensaje by editUserViewModel.mensajeConfirmacion.collectAsState()
+    LaunchedEffect(Unit) {
+        editUserViewModel.setMensajeConfirmacion("")
+    }
+
+    // Charger les données de l'utilisateur
+    LaunchedEffect(currentUser?.uid) {
+        currentUser?.uid?.let { uid ->
+            viewModel.loadUsuario(uid)  // Charger l'utilisateur depuis Firestore
+        }
+    }
+
+    // Charger les données dans editUserViewModel
+    LaunchedEffect(usuarioData) {
+        usuarioData?.let {
+            editUserViewModel.cargarDatosUsuario(it)
+        }
+    }
 
     // Afficher un Snackbar quand le message change
     LaunchedEffect(mensaje) {
