@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.Date
@@ -43,25 +45,26 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, viewModel: UsuarioViewModel) {
+fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewModel: UsuarioViewModel) {
 
     val db = FirebaseFirestore.getInstance()
-    val name_collection = "usuarios"
+    val nameCollection = "usuarios"
 
-    var selectedGender by remember { mutableStateOf("Selecciona un opción") }
-    val nombre:String by viewModel.nombre.observeAsState("")
-    val apellido:String by viewModel.apellido.observeAsState("")
-    val dni:String by viewModel.dni.observeAsState("")
-    val email:String by viewModel.email.observeAsState("")
-    val telefono:String by viewModel.telefono.observeAsState("")
-    val genero:String by viewModel.genero.observeAsState("")
-    val fechaNacimiento:String by viewModel.fechaNacimiento.observeAsState("")
-    val contraseña:String by viewModel.contraseña.observeAsState("")
+    var selectedGender by remember { mutableStateOf("Selecciona una opción") }
+
+    // Observer les valeurs depuis le ViewModel
+    val nombre by viewModel.nombre.observeAsState("")
+    val apellido by viewModel.apellido.observeAsState("")
+    val dni by viewModel.dni.observeAsState("")
+    val email by viewModel.email.observeAsState("")
+    val telefono by viewModel.telefono.observeAsState("")
+    val genero by viewModel.genero.observeAsState("")
+    val fechaNacimiento by viewModel.fechaNacimiento.observeAsState("")
+    val contraseña by viewModel.contraseña.observeAsState("")
+    val isButtonEnabled by viewModel.isButtonEnable.observeAsState(false)
 
     val coroutineScope = rememberCoroutineScope()
-
-    var mensaje_confirmacion by remember { mutableStateOf("") }
-    val isButtonEnable:Boolean by viewModel.isButtonEnable.observeAsState(initial = false)
+    var mensajeConfirmacion by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -75,7 +78,7 @@ fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, view
                     IconButton(onClick = { navController.navigate("Login") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "vovler",
+                            contentDescription = "Volver",
                             tint = Color.White
                         )
                     }
@@ -88,48 +91,16 @@ fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, view
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
-            TextField(
-                value = nombre,
-                onValueChange = { viewModel.onCompletedFields(it, apellido, email, dni, telefono, genero, fechaNacimiento, contraseña)
-                                },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
+            // Champs de texte avec DataField
+            DataField("Nombre", nombre) { viewModel.onCompletedFields(it, apellido, dni, email, telefono, genero, fechaNacimiento, contraseña) }
+            DataField("Apellido", apellido) { viewModel.onCompletedFields(nombre, it, dni, email, telefono, genero, fechaNacimiento, contraseña) }
+            DataField("DNI", dni) { viewModel.onCompletedFields(nombre, apellido, it, email, telefono, genero, fechaNacimiento, contraseña) }
+            DataField("Email", email) { viewModel.onCompletedFields(nombre, apellido, dni, it, telefono, genero, fechaNacimiento, contraseña) }
+            DataField("Teléfono", telefono) { viewModel.onCompletedFields(nombre, apellido, dni, email, it, genero, fechaNacimiento, contraseña) }
 
-            TextField(
-                value = apellido,
-                onValueChange = { viewModel.onCompletedFields(nombre, it, email, dni, telefono, genero, fechaNacimiento, contraseña)
-                                },
-                label = { Text("Apellido") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = dni,
-                onValueChange = { viewModel.onCompletedFields(nombre, apellido, it, email, telefono, genero, fechaNacimiento, contraseña)
-                                },
-                label = { Text("DNI/NIE") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = email,
-                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, it, telefono, genero, fechaNacimiento, contraseña)
-                                },
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = telefono,
-                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, email, it, genero, fechaNacimiento, contraseña)
-                                },
-                label = { Text("Telefono") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
+            // Sélection du genre
             SelectGender(
                 selectedGender = selectedGender,
                 onGenderChange = { newGender ->
@@ -138,8 +109,7 @@ fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, view
                 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            // Sélection de la date de naissance
             Date(
                 selectedDate = fechaNacimiento,
                 onDateChange = { newDate ->
@@ -147,17 +117,15 @@ fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, view
                 }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            TextField(
+            // Champ du mot de passe
+            DataField(
+                label = "Contraseña",
                 value = contraseña,
-                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, fechaNacimiento, it)
-                                },
-                label = { Text("Contraseña") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                visualTransformation = PasswordVisualTransformation()
+                onValueChange = { viewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, fechaNacimiento, it) },
+                isPassword = true
             )
 
+            // Bouton d'inscription
             Button(
                 onClick = {
                     coroutineScope.launch {
@@ -175,31 +143,56 @@ fun SignUp(navController: NavHostController, authViewModel : AuthViewModel, view
                                 genero = selectedGender
                             )
 
-                            db.collection(name_collection)
+                            db.collection(nameCollection)
                                 .document(user.uid)
                                 .set(usuario)
                                 .addOnSuccessListener {
-                                    mensaje_confirmacion = "Datos guardados correctamente"
+                                    mensajeConfirmacion = "Datos guardados correctamente"
                                     viewModel.resetFields()
+                                    navController.navigate("Home") {
+                                        popUpTo("SignUp") { inclusive = true }
+                                    }
                                 }
                                 .addOnFailureListener { exception ->
-                                    mensaje_confirmacion = "No se ha guardado correctamente: ${exception.message}"
+                                    mensajeConfirmacion = "No se ha guardado correctamente: ${exception.message}"
                                 }
                         } else {
-                            mensaje_confirmacion = "Error al crear cuenta"
+                            mensajeConfirmacion = "Error al crear cuenta"
                         }
                     }
                 },
-                enabled = isButtonEnable,
+                enabled = isButtonEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Registrarse")
             }
 
             Spacer(modifier = Modifier.size(5.dp))
-            Text(text = mensaje_confirmacion)
+            Text(text = mensajeConfirmacion)
         }
     }
+}
+
+// ✅ Composant DataField (Réutilisable)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DataField(label: String, value: String, onValueChange: (String) -> Unit, isPassword: Boolean = false) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        enabled = true,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledTextColor = MaterialTheme.colorScheme.onSurface
+        )
+    )
 }
 
 

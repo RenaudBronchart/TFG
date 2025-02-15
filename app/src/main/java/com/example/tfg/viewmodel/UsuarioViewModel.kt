@@ -75,12 +75,28 @@ class UsuarioViewModel: ViewModel() {
 
 
     fun loadUsuario(uid: String) {
+        Log.d("UsuarioViewModel", "Appel de loadUsuario avec uid: $uid")
+
         viewModelScope.launch {
             val db = FirebaseFirestore.getInstance()
-            val document = db.collection("usuarios").document(uid).get().await()
-            _usuario.value = document.toObject(Usuario::class.java)
+            try {
+                val document = db.collection("usuarios").document(uid).get().await()
+                val usuario = document.toObject(Usuario::class.java)
+
+                if (usuario != null) {
+                    _usuario.value = usuario
+                    Log.d("UsuarioViewModel", "Données récupérées : ${usuario.nombre}")
+                } else {
+                    Log.e("UsuarioViewModel", "Aucune donnée trouvée pour cet UID")
+                }
+            } catch (e: Exception) {
+                Log.e("UsuarioViewModel", "Erreur lors du chargement des données : ${e.message}")
+            }
         }
     }
+
+
+
 
     fun onCompletedFields(
         nombre: String,

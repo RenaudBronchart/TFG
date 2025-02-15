@@ -1,8 +1,10 @@
 package com.example.tfg.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.tfg.components.Date
+import com.example.tfg.components.SelectGender
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
 import com.example.tfg.viewmodel.UsuarioViewModel
@@ -80,8 +84,6 @@ fun MyData(
         Field("Email", email, editUserViewModel::setEmail),
         Field("DNI", dni, editUserViewModel::setDni),
         Field("Teléfono", telefono, editUserViewModel::setTelefono),
-        Field("Género", genero, editUserViewModel::setGenero),
-        Field("Fecha de nacimiento", fechaNacimiento, editUserViewModel::setFechaNacimiento)
     )
 
     // Observer des changements de message pour afficher un Snackbar
@@ -129,6 +131,23 @@ fun MyData(
                         onValueChange = field.onValueChange
                     )
                 }
+                // selecionar el genero
+
+                SelectGender(
+                    selectedGender = genero,
+                    onGenderChange = {
+                        newGender -> editUserViewModel.setGenero(newGender)
+                    }
+                )
+
+
+                Date(
+                    selectedDate = fechaNacimiento,
+                    onDateChange = { newDate ->
+                        editUserViewModel.setFechaNacimiento(newDate)
+                    }
+                )
+
                 Button(
                     onClick = {
                         currentUser?.uid?.let { uid ->
