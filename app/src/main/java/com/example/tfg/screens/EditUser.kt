@@ -1,10 +1,8 @@
 package com.example.tfg.screens
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,18 +32,18 @@ import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
-import com.example.tfg.viewmodel.UsuarioViewModel
+import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyData(navController: NavHostController, authViewModel: AuthViewModel, viewModel: UsuarioViewModel,
-    editUserViewModel: EditUserViewModel) {
+fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, UserViewModel: UserViewModel,
+             editUserViewModel: EditUserViewModel) {
 
     val currentUser by authViewModel.user.collectAsState()
-    val usuarioData by viewModel.usuario.collectAsState()
+    val userData by UserViewModel.usuario.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     // Observer des changements de message pour afficher un Snackbar
-    val mensaje by editUserViewModel.mensajeConfirmacion.collectAsState()
+    val message by editUserViewModel.mensajeConfirmacion.collectAsState()
 
     // Observer les valeurs mises à jour dans EditUserViewModel
     val nombre by editUserViewModel.nombre
@@ -73,21 +70,21 @@ fun MyData(navController: NavHostController, authViewModel: AuthViewModel, viewM
     // Charger les données de l'utilisateur
     LaunchedEffect(currentUser?.uid) {
         currentUser?.uid?.let { uid ->
-            viewModel.loadUsuario(uid)  // Charger l'utilisateur depuis Firestore
+            UserViewModel.loadUser(uid)  // Charger l'utilisateur depuis Firestore
         }
     }
 
     // Charger les données dans editUserViewModel
-    LaunchedEffect(usuarioData) {
-        usuarioData?.let {
-            editUserViewModel.cargarDatosUsuario(it)
+    LaunchedEffect(userData) {
+        userData?.let {
+            editUserViewModel.loadDataUser(it)
         }
     }
 
     // Afficher un Snackbar quand le message change
-    LaunchedEffect(mensaje) {
-        if (mensaje.isNotEmpty()) {
-            snackbarHostState.showSnackbar(mensaje)  // Afficher le Snackbar
+    LaunchedEffect(message) {
+        if (message.isNotEmpty()) {
+            snackbarHostState.showSnackbar(message)  // Afficher le Snackbar
         }
     }
 
@@ -112,7 +109,7 @@ fun MyData(navController: NavHostController, authViewModel: AuthViewModel, viewM
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        if (usuarioData != null) {
+        if (userData != null) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

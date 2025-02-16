@@ -22,25 +22,18 @@ class AuthViewModel: ViewModel() {
             _user.value = firebaseAuth.currentUser
         }
     }
-
     fun refreshCurrentUser() {
         auth.currentUser?.reload()?.addOnCompleteListener {
             _user.value = auth.currentUser
         }
     }
-
-
-
     fun signOut() {
         auth.signOut()
         _user.value = null
     }
-
     fun signInWithEmailAndPassword(email: String, password: String): Task<AuthResult> {
         return auth.signInWithEmailAndPassword(email, password)
     }
-
-
 
     // llama al metodo de FireBase Authentication auth.createUserWithEmailAndPassword(email, password)
     // y devuelve el resultado // devuelve un objeto tipo Task<AuthResult>

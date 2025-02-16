@@ -12,7 +12,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class UsuarioViewModel: ViewModel() {
+class UserViewModel: ViewModel() {
+    // instancia de la base de datos FB
+    // almacenar el nombre de la colección
+    private  val db = FirebaseFirestore.getInstance()
+    private val  name_collection = "usuarios"
 
     private val _nombre = MutableLiveData<String>()
     val nombre: LiveData<String> = _nombre
@@ -51,15 +55,13 @@ class UsuarioViewModel: ViewModel() {
     val isButtonEnable: LiveData<Boolean> = _isButtonEnable
 
     init {
-        getUsuariosFromFirestore()
+        getUsersFromFirestore()
     }
 
-    fun getUsuariosFromFirestore() {
+    fun getUsersFromFirestore() {
         viewModelScope.launch {
-            // instancia de la base de datos FB
-            val db = FirebaseFirestore.getInstance()
-            // almacenar el nombre de la colección
-            val name_collection = "usuarios"
+
+
             val query = db.collection(name_collection).get().await()
 
             val usuarios = mutableListOf<Usuario>()
@@ -74,11 +76,9 @@ class UsuarioViewModel: ViewModel() {
     }
 
 
-    fun loadUsuario(uid: String) {
-        Log.d("UsuarioViewModel", "Appel de loadUsuario avec uid: $uid")
-
+    fun loadUser(uid: String) {
         viewModelScope.launch {
-            val db = FirebaseFirestore.getInstance()
+
             try {
                 val document = db.collection("usuarios").document(uid).get().await()
                 val usuario = document.toObject(Usuario::class.java)
@@ -123,15 +123,7 @@ class UsuarioViewModel: ViewModel() {
         Log.d("ButtonEnabled", "isButtonEnable: ${_isButtonEnable.value}")
     }
 
-    fun enableButton(
-        nombre: String,
-        apellido: String,
-        dni: String,
-        email: String,
-        telefono: String,
-        genero: String,
-        fechaNacimiento: String,
-        contraseña: String
+    fun enableButton(nombre: String, apellido: String, dni: String, email: String, telefono: String, genero: String, fechaNacimiento: String, contraseña: String
     ) =
         nombre.isNotEmpty() && apellido.isNotEmpty() && dni.isNotEmpty() && email.isNotEmpty() && telefono.isNotEmpty() && genero.isNotEmpty() && fechaNacimiento.isNotEmpty() && contraseña.isNotEmpty()
 
@@ -145,10 +137,6 @@ class UsuarioViewModel: ViewModel() {
         _fechaNacimiento.value = ""
         _contraseña.value = ""
     }
-
-
-
-
 
 
 }

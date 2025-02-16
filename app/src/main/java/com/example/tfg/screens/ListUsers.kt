@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.UsuarioViewModel
+import com.example.tfg.viewmodel.UserViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.example.tfg.models.Usuario
@@ -34,9 +34,9 @@ import com.example.tfg.models.Usuario
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListUsers(navController: NavHostController, authViewModel: AuthViewModel, viewModel: UsuarioViewModel) {
+fun ListUsers(navController: NavHostController, authViewModel: AuthViewModel, UserViewModel: UserViewModel) {
 
-val usuarioData by viewModel.usuarios.collectAsState()
+val userData by UserViewModel.usuarios.collectAsState()
 
     Scaffold(
         topBar = {
@@ -73,7 +73,7 @@ val usuarioData by viewModel.usuarios.collectAsState()
 
             // Affichage des utilisateurs dans une liste
             LazyColumn {
-                items(usuarioData) { usuario ->
+                items(userData) { usuario ->
                     UserCard(usuario = usuario)
                 }
             }

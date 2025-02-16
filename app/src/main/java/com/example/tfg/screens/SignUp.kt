@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -38,14 +37,13 @@ import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
 import com.example.tfg.models.Usuario
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.UsuarioViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.example.tfg.viewmodel.UserViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewModel: UsuarioViewModel) {
+fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewModel: UserViewModel) {
 
     val db = FirebaseFirestore.getInstance()
     val nameCollection = "usuarios"
@@ -64,7 +62,7 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewM
     val isButtonEnabled by viewModel.isButtonEnable.observeAsState(false)
 
     val coroutineScope = rememberCoroutineScope()
-    var mensajeConfirmacion by remember { mutableStateOf("") }
+    var messageConfirmacion by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -147,17 +145,17 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewM
                                 .document(user.uid)
                                 .set(usuario)
                                 .addOnSuccessListener {
-                                    mensajeConfirmacion = "Datos guardados correctamente"
+                                    messageConfirmacion = "Datos guardados correctamente"
                                     viewModel.resetFields()
                                     navController.navigate("Home") {
                                         popUpTo("SignUp") { inclusive = true }
                                     }
                                 }
                                 .addOnFailureListener { exception ->
-                                    mensajeConfirmacion = "No se ha guardado correctamente: ${exception.message}"
+                                    messageConfirmacion = "No se ha guardado correctamente: ${exception.message}"
                                 }
                         } else {
-                            mensajeConfirmacion = "Error al crear cuenta"
+                            messageConfirmacion = "Error al crear cuenta"
                         }
                     }
                 },
@@ -168,7 +166,7 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewM
             }
 
             Spacer(modifier = Modifier.size(5.dp))
-            Text(text = mensajeConfirmacion)
+            Text(text = messageConfirmacion)
         }
     }
 }

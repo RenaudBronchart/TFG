@@ -12,7 +12,7 @@ import androidx.compose.runtime.*
 
 class EditUserViewModel : ViewModel() {
 
-    // États individuels pour chaque champ
+
     private val _nombre = mutableStateOf("")
     val nombre: State<String> get() = _nombre
 
@@ -34,6 +34,9 @@ class EditUserViewModel : ViewModel() {
     private val _fechaNacimiento = mutableStateOf("")
     val fechaNacimiento: State<String> get() = _fechaNacimiento
 
+    private val _messageConfirmation = MutableStateFlow("")
+    val mensajeConfirmacion: StateFlow<String> get() = _messageConfirmation
+
     // 🛠 Fonctions pour mettre à jour les champs (au lieu d'accéder aux variables privées)
     fun setNombre(value: String) { _nombre.value = value }
     fun setApellido(value: String) { _apellido.value = value }
@@ -44,7 +47,7 @@ class EditUserViewModel : ViewModel() {
     fun setFechaNacimiento(value: String) { _fechaNacimiento.value = value }
 
     // Permet de charger les données utilisateur depuis Usuario
-    fun cargarDatosUsuario(usuario: Usuario?) {
+    fun loadDataUser(usuario: Usuario?) {
         usuario?.let {
             setNombre(it.nombre ?: "")
             setApellido(it.apellido ?: "")
@@ -54,15 +57,6 @@ class EditUserViewModel : ViewModel() {
             setGenero(it.genero ?: "")
             setFechaNacimiento(it.fechaNacimiento ?: "")
         }
-    }
-
-
-    private val _mensajeConfirmacion = MutableStateFlow("")
-    val mensajeConfirmacion: StateFlow<String> get() = _mensajeConfirmacion
-
-    // Fonction pour mettre à jour les données de l'utilisateur
-    fun setMensajeConfirmacion(mensaje: String) {
-        _mensajeConfirmacion.value = mensaje
     }
 
     fun saveUsuario(uid: String, onSuccess: (String) -> Unit) {
@@ -82,14 +76,18 @@ class EditUserViewModel : ViewModel() {
             .set(usuario)
             .addOnSuccessListener {
                 // On envoie un message de succès lorsque la sauvegarde réussit
-                _mensajeConfirmacion.value = "Usuario actualizado correctamente"
-                onSuccess(_mensajeConfirmacion.value) // Appeler la fonction `onSuccess` et passer le message
+                _messageConfirmation.value = "Usuario actualizado correctamente"
+                onSuccess(_messageConfirmation.value) // Appeler la fonction `onSuccess` et passer le message
             }
             .addOnFailureListener { exception ->
                 // En cas d'erreur, on envoie un message d'échec
-                _mensajeConfirmacion.value = "Error al actualizar el usuario: ${exception.message}"
-                onSuccess(_mensajeConfirmacion.value) // Appeler `onSuccess` avec le message d'erreur
+                _messageConfirmation.value = "Error al actualizar el usuario: ${exception.message}"
+                onSuccess(_messageConfirmation.value) // Appeler `onSuccess` avec le message d'erreur
             }
+    }    // Fonction pour mettre à jour les données de l'utilisateur
+
+    fun setMensajeConfirmacion(mensaje: String) {
+        _messageConfirmation.value = mensaje
     }
 }
 
