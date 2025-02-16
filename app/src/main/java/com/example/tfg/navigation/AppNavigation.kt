@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tfg.screens.AddProduct
+import com.example.tfg.screens.EditProduct
 import com.example.tfg.screens.EshopScreen
 import com.example.tfg.screens.Home
 import com.example.tfg.screens.Login
@@ -15,6 +16,7 @@ import com.example.tfg.screens.ListUsers
 import com.example.tfg.screens.MyData
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
+import com.example.tfg.viewmodel.ProductoViewModel
 import com.example.tfg.viewmodel.UsuarioViewModel
 
 @Composable
@@ -23,6 +25,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
     val navigationController = rememberNavController()
     val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
     val usuarioViewModel: UsuarioViewModel = viewModel() // De nuevo, obtener usuarioViewModel si es necesario
+    val productViewModel : ProductoViewModel = viewModel()
 
     NavHost(
         navController =  navigationController, // recordar la navigation
@@ -35,10 +38,17 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel,viewModel())}
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,viewModel())}
         composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, viewModel())}
-        composable(AppScreens.MyData.ruta) {
-
-            MyData(navigationController, authViewModel, usuarioViewModel, editUserViewModel)
+        composable(AppScreens.MyData.ruta) { MyData(navigationController, authViewModel, usuarioViewModel, editUserViewModel) }
+        composable(AppScreens.EditProduct.ruta + "/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            EditProduct(
+                navController = navigationController,
+                authViewModel = authViewModel,
+                productViewModel = productViewModel,
+                productId = productId
+            )
         }
+
 
         }
 

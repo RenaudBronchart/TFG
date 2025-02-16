@@ -14,6 +14,9 @@ import kotlinx.coroutines.tasks.await
 
 class ProductoViewModel: ViewModel() {
 
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val name_collection = "productos"
+
     private val _nombre = MutableLiveData<String>()
     val nombre: LiveData<String> = _nombre // Live data en vez de MutableLiveData para que no se pueda modificar
 
@@ -38,9 +41,19 @@ class ProductoViewModel: ViewModel() {
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
-
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
     val productos: StateFlow<List<Producto>> = _productos
+
+    private val _producto = MutableStateFlow<Producto?>(null)
+    val producto: StateFlow<Producto?> = _producto
+
+    private val _isButtonEnable = MutableLiveData<Boolean>()
+    val isButtonEnable: LiveData<Boolean> = _isButtonEnable
+
+    private val _messageConfirmation = MutableStateFlow("")
+    val messageConfirmation: StateFlow<String> get() = _messageConfirmation
+
+
 
     init {
         getProductosFromFirestore()
@@ -48,10 +61,8 @@ class ProductoViewModel: ViewModel() {
 
     fun getProductosFromFirestore() {
         viewModelScope.launch {
-            // instancia de la base de datos FB
-            val db = FirebaseFirestore.getInstance()
             // almacenar el nombre de la colección
-            val name_collection = "productos"
+
             val query = db.collection(name_collection).get().await()
 
             val productos = mutableListOf<Producto>()
@@ -64,10 +75,104 @@ class ProductoViewModel: ViewModel() {
             }
             _productos.value = productos
         }
-}
+    }
 
-    private val _isButtonEnable = MutableLiveData<Boolean>()
-    val isButtonEnable: LiveData<Boolean> = _isButtonEnable
+    fun getProductById(productId: String) {
+        viewModelScope.launch {
+            try {
+                val document = db.collection(name_collection)
+                    .document(productId)
+                    .get()
+                    .await()
+
+                document.toObject(Producto::class.java)?.let {
+
+                    _productos.value = listOf(it)
+                }
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
+
+    fun addProduct(
+        nombre: String, precio: Double, descripcion: String,
+        categoria: String, imagen: String, stock: Int, marca: String,
+        onSuccess: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            val producto = Producto(
+                nombre = nombre,
+                precio = precio,
+                descripcion = descripcion,
+                categoria = categoria,
+                imagen = imagen,
+                stock = stock,
+                marca = marca
+            )
+                    db.collection(name_collection)
+                        .document(producto.id)
+                        .set(producto)
+                        .addOnSuccessListener {
+                            _messageConfirmation.value = "Producto añadido correctamente"
+                            onSuccess(_messageConfirmation.value)
+                        }
+                        .addOnFailureListener { exception ->
+                            _messageConfirmation.value = "No se ha podido añadir un producto: ${exception.message}"
+                            onSuccess(_messageConfirmation.value)
+                        }
+        }
+    }
+
+    fun deleteProduct(productId: String,onSuccess: (String) -> Unit) {
+
+        db.collection(name_collection)
+            .document(productId)
+            .delete()
+            .addOnSuccessListener {
+                _messageConfirmation.value = "Producto añadido correctamente"
+                onSuccess(_messageConfirmation.value)
+
+            }
+            .addOnFailureListener { exception ->
+                _messageConfirmation.value = "No se ha podido añadir un producto: ${exception.message}"
+                onSuccess(_messageConfirmation.value)
+            }
+
+    }
+
+    fun updateProduct(
+        productId: String,
+        nombre: String, precio: Double, descripcion: String,
+        categoria: String, imagen: String, stock: Int, marca: String,
+        onComplete: () -> Unit
+    ) {
+        val productUpdates = mapOf(
+            "nombre" to nombre,
+            "precio" to precio,
+            "descripcion" to descripcion,
+            "categoria" to categoria,
+            "imagen" to imagen,
+            "stock" to stock,
+            "marca" to marca
+        )
+
+        viewModelScope.launch {
+            try {
+                db.collection(name_collection)
+                    .document(productId)
+                    .update(productUpdates)
+                    .await()
+
+                _messageConfirmation.value = "Producto actualizado correctamente"
+                onComplete()
+            } catch (exception: Exception) {
+                _messageConfirmation.value = "Error al actualizar el producto"
+            }
+        }
+    }
+
 
     fun onCompletedFields(nombre: String, precio: Double, descripcion: String, categoria: String, imagen: String, stock: Int, marca: String) {
         _nombre.value = nombre
@@ -83,16 +188,22 @@ class ProductoViewModel: ViewModel() {
     }
 
     fun enableButton(nombre: String, precio: Double, descripcion: String, categoria: String, imagen: String, stock: Int, marca: String) =
-         nombre.isNotEmpty() && precio > 0 && descripcion.isNotEmpty() && categoria.isNotEmpty() && imagen.isNotEmpty() && stock > 0 && marca.isNotEmpty()
+        nombre.isNotEmpty() && precio > 0 && descripcion.isNotEmpty() && categoria.isNotEmpty() && imagen.isNotEmpty() && stock > 0 && marca.isNotEmpty()
 
     fun resetFields() {
         _nombre.value = ""
         _precio.value = 0.0
         _descripcion.value = ""
-        _categoria.value = ""
+        _categoria.value = "Selecciona una categoría"
         _imagen.value = ""
         _stock.value = 0
         _marca.value = ""
         _isButtonEnable.value = false // Pour désactiver le bouton après la soumission
     }
+
+    fun setMessageConfirmation(message: String) {
+        _messageConfirmation.value = message
+    }
+
+
 }

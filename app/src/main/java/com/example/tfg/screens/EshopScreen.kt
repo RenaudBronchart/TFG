@@ -21,8 +21,13 @@ import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.ProductoViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.SportsBaseball
 import androidx.compose.material.icons.filled.SportsTennis
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,9 +49,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel, viewModel: ProductoViewModel) {
+fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel, productoViewModel: ProductoViewModel) {
     var selectedCategory by remember { mutableStateOf("All") }
-    val productos by viewModel.productos.collectAsState()
+    val productos by productoViewModel.productos.collectAsState()
 
     Scaffold(
         topBar = {
@@ -95,7 +100,8 @@ fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel,
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(productos) { producto ->
-                    ProductCard(producto)
+                    ProductCard(producto,navController,productoViewModel)
+
                 }
             }
         }
@@ -128,7 +134,7 @@ fun CategoryIcon(name: String, icon: ImageVector, selectedCategory: String, onCl
 }
 
 @Composable
-fun ProductCard(producto:Producto) {
+fun ProductCard(producto:Producto, /*isAdmin:Boolean,*/ navController : NavHostController, productoViewModel: ProductoViewModel ) {
 
     Card(
         modifier = Modifier
@@ -155,6 +161,36 @@ fun ProductCard(producto:Producto) {
           Spacer(modifier = Modifier.height(8.dp))
           Text(text = producto.nombre, fontWeight = FontWeight.Bold)
           Text(text = "${producto.precio} €", color = Color.Black)
+
+          /*if (isAdmin) {*/
+            Spacer(modifier = Modifier.height(8.dp))
+              Row(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceEvenly
+              ) {
+                  Button(
+                      onClick = {
+                          navController.navigate("EditProduct/${producto.id}") // Redirige vers l'édition
+                      },
+                      colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                  ) {
+                      Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)
+                      Text("Editar", color = Color.White)
+                  }
+
+                  Button(
+                      onClick = {
+                          productoViewModel.deleteProduct(producto.id) { message ->
+                              productoViewModel.setMessageConfirmation(message)
+                          }
+                      },
+                      colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                  ) {
+                      Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.White)
+                      Text("Eliminar", color = Color.White)
+                  }
+              }
+          /*}*/
       }
     }
 }
