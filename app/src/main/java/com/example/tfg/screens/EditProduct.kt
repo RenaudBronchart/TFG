@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,14 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.ProductoViewModel
+import com.example.tfg.viewmodel.ProductViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.tfg.components.SelectProductCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, productViewModel: ProductoViewModel, productId: String) {
+fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, productViewModel: ProductViewModel, productId: String) {
     val producto by productViewModel.producto.collectAsState()
 
     var nombre by remember { mutableStateOf("") }
@@ -50,6 +50,8 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
     var imagen by remember { mutableStateOf("") }
     var stock by remember { mutableStateOf(0) }
     var marca by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val message by productViewModel.messageConfirmation.collectAsState()
 
     // Charger les données existantes
     LaunchedEffect(producto) {
@@ -64,8 +66,9 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
         }
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val message by productViewModel.messageConfirmation.collectAsState()
+    LaunchedEffect(productId) {
+        productViewModel.getProductById(productId)
+    }
 
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
@@ -101,12 +104,23 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            SelectProductCategory(
+                selectedCategory = categoria,
+                onCategorySelected = { newCategory ->
+                    categoria = newCategory
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = nombre,
                 onValueChange = { nombre = it },
                 label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             TextField(
                 value = if (precio == 0.0) "" else precio.toString(),
@@ -116,6 +130,8 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = descripcion,
                 onValueChange = { descripcion = it },
@@ -123,12 +139,7 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
                 modifier = Modifier.fillMaxWidth()
             )
 
-            TextField(
-                value = categoria,
-                onValueChange = { categoria = it },
-                label = { Text("Categoría") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            Spacer(modifier = Modifier.height(16.dp))
 
             TextField(
                 value = imagen,
@@ -137,6 +148,8 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
                 modifier = Modifier.fillMaxWidth()
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = if (stock == 0) "" else stock.toString(),
                 onValueChange = { stock = it.toIntOrNull() ?: 0 },
@@ -144,6 +157,8 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             TextField(
                 value = marca,
@@ -157,7 +172,8 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
             Button(
                 onClick = {
                     productViewModel.updateProduct(productId, nombre, precio, descripcion, categoria, imagen, stock, marca) {
-                        navController.popBackStack() //
+                    productViewModel.getProductosFromFirestore()
+
                     }
                 },
                 modifier = Modifier.fillMaxWidth()

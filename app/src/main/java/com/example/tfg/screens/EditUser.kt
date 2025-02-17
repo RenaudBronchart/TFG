@@ -36,16 +36,13 @@ import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, UserViewModel: UserViewModel,
+fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel,
              editUserViewModel: EditUserViewModel) {
 
     val currentUser by authViewModel.user.collectAsState()
-    val userData by UserViewModel.usuario.collectAsState()
+    val userData by userViewModel.usuario.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    // Observer des changements de message pour afficher un Snackbar
     val message by editUserViewModel.mensajeConfirmacion.collectAsState()
-
-    // Observer les valeurs mises à jour dans EditUserViewModel
     val nombre by editUserViewModel.nombre
     val apellido by editUserViewModel.apellido
     val email by editUserViewModel.email
@@ -70,7 +67,7 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, Use
     // Charger les données de l'utilisateur
     LaunchedEffect(currentUser?.uid) {
         currentUser?.uid?.let { uid ->
-            UserViewModel.loadUser(uid)  // Charger l'utilisateur depuis Firestore
+            userViewModel.loadUser(uid)  // Charger l'utilisateur depuis Firestore
         }
     }
 
@@ -170,10 +167,11 @@ fun DataField(label: String, value: String, onValueChange: (String) -> Unit) {
             .padding(bottom = 16.dp),
         enabled = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            disabledTextColor = MaterialTheme.colorScheme.onSurface
+        colors = TextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
         )
     )
 }

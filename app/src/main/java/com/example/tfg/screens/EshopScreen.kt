@@ -1,5 +1,6 @@
 package com.example.tfg.screens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -18,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.tfg.viewmodel.ProductoViewModel
+import com.example.tfg.viewmodel.ProductViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -26,7 +27,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.SportsBaseball
 import androidx.compose.material.icons.filled.SportsTennis
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
@@ -45,14 +46,27 @@ import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import com.example.tfg.models.Producto
 import com.example.tfg.viewmodel.AuthViewModel
-import com.google.firebase.auth.FirebaseAuth
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel, productoViewModel: ProductoViewModel) {
+fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel, productViewModel: ProductViewModel) {
     var selectedCategory by remember { mutableStateOf("All") }
-    val productos by productoViewModel.productos.collectAsState()
+    val productos by productViewModel.productos.collectAsState()
+    val isAdmin by authViewModel.isAdmin.collectAsState()
 
+
+    authViewModel.fetchCurrentUser()
+
+
+    LaunchedEffect(isAdmin) {
+        Log.d("EshopScreen", "isAdmin: $isAdmin")
+    }
+
+    LaunchedEffect(productos) {
+        // Cette effect sera déclenchée dès que 'productos' est mis à jour
+        Log.d("EshopScreen", "Productos mis à jour!")
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,11 +110,12 @@ fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel,
 
             // Affichage des produits
             LazyVerticalGrid(
+
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(productos) { producto ->
-                    ProductCard(producto,navController,productoViewModel)
+                items(productos, key = { it.id }) { producto ->
+                    ProductCard(producto, isAdmin, navController, productViewModel)
 
                 }
             }
@@ -134,65 +149,84 @@ fun CategoryIcon(name: String, icon: ImageVector, selectedCategory: String, onCl
 }
 
 @Composable
-fun ProductCard(producto:Producto, /*isAdmin:Boolean,*/ navController : NavHostController, productoViewModel: ProductoViewModel ) {
+fun ProductCard(producto:Producto, isAdmin:Boolean, navController : NavHostController, productViewModel: ProductViewModel ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .height(270.dp),
+            .height(290.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ){
-      Column(
-          modifier = Modifier
-              .fillMaxSize()
-              .padding(16.dp),
-          horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-          AsyncImage(
-              model = producto.imagen, //
-              contentDescription = producto.nombre,
-              modifier = Modifier
-                  .size(160.dp)
-                  .clip(RoundedCornerShape(8.dp)),
-              contentScale = ContentScale.Crop
-          )
-          Spacer(modifier = Modifier.height(8.dp))
-          Text(text = producto.nombre, fontWeight = FontWeight.Bold)
-          Text(text = "${producto.precio} €", color = Color.Black)
-
-          /*if (isAdmin) {*/
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = producto.imagen, //
+                contentDescription = producto.nombre,
+                modifier = Modifier
+                    .size(140.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
             Spacer(modifier = Modifier.height(8.dp))
-              Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.SpaceEvenly
-              ) {
-                  Button(
-                      onClick = {
-                          navController.navigate("EditProduct/${producto.id}") // Redirige vers l'édition
-                      },
-                      colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
-                  ) {
-                      Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color.White)
-                      Text("Editar", color = Color.White)
-                  }
+            Text(text = producto.nombre, fontWeight = FontWeight.Bold)
+            Text(text = "${producto.precio} €", color = Color.Black)
 
-                  Button(
-                      onClick = {
-                          productoViewModel.deleteProduct(producto.id) { message ->
-                              productoViewModel.setMessageConfirmation(message)
-                          }
-                      },
-                      colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                  ) {
-                      Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.White)
-                      Text("Eliminar", color = Color.White)
-                  }
-              }
-          /*}*/
-      }
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (isAdmin) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
+                        onClick = {
+                            navController.navigate("EditProduct/${producto.id}") // Redirige vers l'édition
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp) // Taille plus grande
+                        )
+                        Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
+                       /* Text("Editar", color = Color.White, fontSize = 11.sp)*/
+                    }
+
+                    Button(
+                        modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
+                        onClick = {
+                            productViewModel.deleteProduct(producto.id) { message ->
+                                productViewModel.setMessageConfirmation(message)
+
+                            }
+                        },
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Eliminar",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
+                       /*Text("Eliminar", color = Color.White, fontSize = 11.sp)*/
+                    }
+                }
+            }
+        }
+
     }
+
 }
 
 

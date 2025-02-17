@@ -35,13 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.SelectProductCategory
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.ProductoViewModel
+import com.example.tfg.viewmodel.ProductViewModel
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel , productoviewModel: ProductoViewModel)    {
+fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel , productoviewModel: ProductViewModel)    {
 
 
     val selectedCategory: String by productoviewModel.categoria.observeAsState("Selecciona una categoría")
@@ -176,7 +176,5 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
     }
 }
 
-fun updateField(update: (String) -> Unit, value: String) {
-    update(value)
-}
+
 

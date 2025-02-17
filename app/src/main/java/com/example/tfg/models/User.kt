@@ -2,7 +2,7 @@ package com.example.tfg.models
 
 import java.util.UUID
 
-data class Usuario(
+data class User(
     val id: String = UUID.randomUUID().toString(), // para generar un id unico
     val nombre: String = "",
     val apellido: String ="",
@@ -11,4 +11,5 @@ data class Usuario(
     val telefono: String = "",
     val genero:String ="",
     val fechaNacimiento: String = "",
+    val role: String = "",
     )

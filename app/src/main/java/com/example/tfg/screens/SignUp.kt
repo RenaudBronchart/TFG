@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
-import com.example.tfg.models.Usuario
+import com.example.tfg.models.User
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.UserViewModel
 import com.google.firebase.firestore.FirebaseFirestore
@@ -58,6 +58,7 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewM
     val telefono by viewModel.telefono.observeAsState("")
     val genero by viewModel.genero.observeAsState("")
     val fechaNacimiento by viewModel.fechaNacimiento.observeAsState("")
+    val role by viewModel.role.observeAsState("user")
     val contraseña by viewModel.contraseña.observeAsState("")
     val isButtonEnabled by viewModel.isButtonEnable.observeAsState(false)
 
@@ -131,14 +132,15 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, viewM
                         val user = result?.user
 
                         if (user != null) {
-                            val usuario = Usuario(
+                            val usuario = User(
                                 nombre = nombre,
                                 apellido = apellido,
                                 email = email,
                                 dni = dni,
                                 fechaNacimiento = fechaNacimiento,
                                 telefono = telefono,
-                                genero = selectedGender
+                                genero = selectedGender,
+                                role = "user"
                             )
 
                             db.collection(nameCollection)

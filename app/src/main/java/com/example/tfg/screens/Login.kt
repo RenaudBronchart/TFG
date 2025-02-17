@@ -147,7 +147,7 @@ fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
                 } else {
                     authViewModel.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                         if(task.isSuccessful) {
-                            navController.navigate("Profile")
+                            navController.navigate("Home")
                             Log.i("jc","inicio de sesion correcto")
                         } else {
                             val exception = task.exception

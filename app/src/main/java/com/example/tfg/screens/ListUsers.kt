@@ -29,7 +29,7 @@ import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.UserViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import com.example.tfg.models.Usuario
+import com.example.tfg.models.User
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,7 +82,7 @@ val userData by UserViewModel.usuarios.collectAsState()
     }
 
 @Composable
-fun UserCard(usuario: Usuario) {
+fun UserCard(usuario: User) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

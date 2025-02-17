@@ -3,7 +3,7 @@ package com.example.tfg.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.tfg.models.Usuario
+import com.example.tfg.models.User
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +47,7 @@ class EditUserViewModel : ViewModel() {
     fun setFechaNacimiento(value: String) { _fechaNacimiento.value = value }
 
     // Permet de charger les données utilisateur depuis Usuario
-    fun loadDataUser(usuario: Usuario?) {
+    fun loadDataUser(usuario: User?) {
         usuario?.let {
             setNombre(it.nombre ?: "")
             setApellido(it.apellido ?: "")
@@ -60,7 +60,7 @@ class EditUserViewModel : ViewModel() {
     }
 
     fun saveUsuario(uid: String, onSuccess: (String) -> Unit) {
-        val usuario = Usuario(
+        val usuario = User(
             nombre = _nombre.value,
             apellido = _apellido.value,
             email = _email.value,

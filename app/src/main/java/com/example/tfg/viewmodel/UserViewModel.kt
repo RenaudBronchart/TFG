@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tfg.models.Usuario
+import com.example.tfg.models.User
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,17 +39,20 @@ class UserViewModel: ViewModel() {
     private val _fechaNacimiento = MutableLiveData<String>()
     val fechaNacimiento: LiveData<String> = _fechaNacimiento
 
+    private val _role = MutableLiveData<String>("user")
+    val role: LiveData<String> get() = _role
+
     private val _contraseña = MutableLiveData<String>()
     val contraseña: LiveData<String> = _contraseña
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
-    private val _usuarios = MutableStateFlow<List<Usuario>>(emptyList())
+    private val _usuarios = MutableStateFlow<List<User>>(emptyList())
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
-    val usuarios: StateFlow<List<Usuario>> = _usuarios
+    val usuarios: StateFlow<List<User>> = _usuarios
 
-    private val _usuario = MutableStateFlow<Usuario?>(null)
-    val usuario: StateFlow<Usuario?> = _usuario
+    private val _usuario = MutableStateFlow<User?>(null)
+    val usuario: StateFlow<User?> = _usuario
 
     private val _isButtonEnable = MutableLiveData<Boolean>()
     val isButtonEnable: LiveData<Boolean> = _isButtonEnable
@@ -64,9 +67,9 @@ class UserViewModel: ViewModel() {
 
             val query = db.collection(name_collection).get().await()
 
-            val usuarios = mutableListOf<Usuario>()
+            val usuarios = mutableListOf<User>()
             for (document in query.documents) {
-                val usuario = document.toObject(Usuario::class.java)
+                val usuario = document.toObject(User::class.java)
                 if (usuario != null) {
                     usuarios.add(usuario)
                 }
@@ -81,7 +84,7 @@ class UserViewModel: ViewModel() {
 
             try {
                 val document = db.collection("usuarios").document(uid).get().await()
-                val usuario = document.toObject(Usuario::class.java)
+                val usuario = document.toObject(User::class.java)
 
                 if (usuario != null) {
                     _usuario.value = usuario

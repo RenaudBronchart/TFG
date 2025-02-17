@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ProductoViewModel: ViewModel() {
+class ProductViewModel: ViewModel() {
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val name_collection = "productos"
@@ -74,6 +74,7 @@ class ProductoViewModel: ViewModel() {
                 }
             }
             _productos.value = productos
+            Log.d("ProductosUpdated", "Productos updated: ${productos.size}")
         }
     }
 
@@ -86,8 +87,7 @@ class ProductoViewModel: ViewModel() {
                     .await()
 
                 document.toObject(Producto::class.java)?.let {
-
-                    _productos.value = listOf(it)
+                    _producto.value = it //
                 }
             } catch (e: Exception) {
 
@@ -132,6 +132,7 @@ class ProductoViewModel: ViewModel() {
             .delete()
             .addOnSuccessListener {
                 _messageConfirmation.value = "Producto añadido correctamente"
+                getProductosFromFirestore()
                 onSuccess(_messageConfirmation.value)
 
             }
@@ -164,14 +165,18 @@ class ProductoViewModel: ViewModel() {
                     .document(productId)
                     .update(productUpdates)
                     .await()
+                Log.d("UpdateProduct", "Product updated successfully")
 
                 _messageConfirmation.value = "Producto actualizado correctamente"
+                getProductosFromFirestore()
                 onComplete()
             } catch (exception: Exception) {
                 _messageConfirmation.value = "Error al actualizar el producto"
             }
         }
     }
+
+
 
 
     fun onCompletedFields(nombre: String, precio: Double, descripcion: String, categoria: String, imagen: String, stock: Int, marca: String) {
@@ -204,6 +209,7 @@ class ProductoViewModel: ViewModel() {
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }
+
 
 
 }
