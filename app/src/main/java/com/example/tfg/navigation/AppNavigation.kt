@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tfg.screens.AddProduct
+import com.example.tfg.screens.AdminPage
 import com.example.tfg.screens.EditProduct
 import com.example.tfg.screens.EshopScreen
 import com.example.tfg.screens.Home
@@ -32,13 +33,15 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         startDestination = AppScreens.Home.ruta // indicar la ruta donde empezamos la app
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
-        composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel)}
+        composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel,userViewModel)}
         composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,viewModel())}
         composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, viewModel()) }
-        composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel,viewModel())}
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,viewModel())}
+        composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,viewModel())}
+        composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel,viewModel())}
+
         composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, viewModel())}
-        composable(AppScreens.MyData.ruta) { EditUser(navigationController, authViewModel, userViewModel, editUserViewModel) }
+        composable(AppScreens.EditUser.ruta) { EditUser(navigationController, authViewModel, userViewModel, editUserViewModel) }
         composable(AppScreens.EditProduct.ruta + "/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
             EditProduct(

@@ -121,27 +121,22 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, use
                     )
                 }
                 // selecionar el genero
-
                 SelectGender(
                     selectedGender = genero,
                     onGenderChange = {
                         newGender -> editUserViewModel.setGenero(newGender)
                     }
                 )
-
-
                 Date(
                     selectedDate = fechaNacimiento,
                     onDateChange = { newDate ->
                         editUserViewModel.setFechaNacimiento(newDate)
                     }
                 )
-
                 Button(
                     onClick = {
                         currentUser?.uid?.let { uid ->
                             editUserViewModel.saveUsuario(uid) { mensaje ->
-                                // Enregistrer le message de confirmation dans le ViewModel
                                 editUserViewModel.setMensajeConfirmacion(mensaje)
                             }
                         }

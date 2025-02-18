@@ -20,7 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -32,20 +35,10 @@ import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
-
+fun AdminPage(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
     val usuarioData by userViewModel.usuario.collectAsState()
-    val currentUser by authViewModel.user.collectAsState()
     val nombre = usuarioData?.nombre ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
-
-    authViewModel.fetchCurrentUser()
-
-    LaunchedEffect(currentUser?.uid) {
-        currentUser?.uid?.let { uid ->
-            userViewModel.loadUser(uid)  // Charger l'utilisateur depuis Firestore
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -54,7 +47,16 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White
                 ),
-                title = { Text("¡Hola, $nombre! 👋") },
+                title = { Text("Admin page") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigate("Home") }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "back",
+                            tint = Color.White
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -71,7 +73,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                items(menuItems.filter { it.category == MenuCategory.HOME && (isAdmin || it.text != "Administrar")} )
+                items(menuItems.filter { it.category == MenuCategory.ADMIN})
                 { item ->
                     CardItem(
                         icon = item.icon,

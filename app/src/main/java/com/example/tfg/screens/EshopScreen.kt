@@ -76,10 +76,10 @@ fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel,
                 ),
                 title = { Text("E-Shop") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate("Login") }) {
+                    IconButton(onClick = { navController.navigate("Home") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "volver",
+                            contentDescription = "back",
                             tint = Color.White
                         )
                     }
