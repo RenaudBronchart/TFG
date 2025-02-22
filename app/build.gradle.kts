@@ -99,6 +99,7 @@ dependencies {
 
     // AsyncImage
     implementation(libs.coil.compose)
+    implementation(libs.androidx.core.i18n)
 
 
 

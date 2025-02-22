@@ -18,7 +18,7 @@ class ProductViewModel: ViewModel() {
     private val name_collection = "productos"
 
     private val _nombre = MutableLiveData<String>()
-    val nombre: LiveData<String> = _nombre // Live data en vez de MutableLiveData para que no se pueda modificar
+    val nombre: LiveData<String> = _nombre //
 
     private val _precio = MutableLiveData<Double>()
     val precio: LiveData<Double> = _precio

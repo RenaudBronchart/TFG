@@ -16,7 +16,7 @@ data class MenuItem(val icon: ImageVector, val text: String, val route: String, 
 enum class MenuCategory {HOME,PROFILE,ADMIN}
 
 val menuItems = listOf(
-    MenuItem(Icons.Default.SportsTennis, "Reservar pista", "ReserveCourt",MenuCategory.HOME),
+    MenuItem(Icons.Default.SportsTennis, "Reservar pista", "BookingPadelScreen",MenuCategory.HOME),
     MenuItem(Icons.Default.ShoppingCart, "Tienda", "EshopScreen",MenuCategory.HOME),
     MenuItem(Icons.Default.Person, "Mi Perfil", "Profile",MenuCategory.HOME),
     MenuItem(Icons.Default.AdminPanelSettings, "Administrar", "AdminPanel",MenuCategory.HOME),

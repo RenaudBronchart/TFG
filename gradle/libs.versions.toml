@@ -33,6 +33,7 @@ storage = "1.5.0"
 
 animationCoreLint = "1.8.0-beta01"
 uiTestAndroid = "1.8.0-beta01"
+coreI18n = "1.0.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -77,6 +78,7 @@ androidx-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-v
 androidx-liveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "liveData" }
 androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
+androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref = "coreI18n" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
