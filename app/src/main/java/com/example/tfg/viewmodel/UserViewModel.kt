@@ -5,8 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.tfg.models.User
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -57,6 +59,9 @@ class UserViewModel: ViewModel() {
     private val _isButtonEnable = MutableLiveData<Boolean>()
     val isButtonEnable: LiveData<Boolean> = _isButtonEnable
 
+    private val _messageConfirmation = MutableStateFlow("")
+    val messageConfirmation: StateFlow<String> get() = _messageConfirmation
+
     init {
         getUsersFromFirestore()
     }
@@ -98,8 +103,45 @@ class UserViewModel: ViewModel() {
         }
     }
 
+    fun registerUser(authViewModel: AuthViewModel, navController: NavHostController, onResult: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            val result = authViewModel.createUserWithEmailAndPassword(email.value ?: "", contraseña.value ?: "")
+            val user = result?.user
 
+            if (user != null) {
+                val usuario = User(
+                    nombre = nombre.value ?: "",
+                    apellido = apellido.value ?: "",
+                    email = email.value ?: "",
+                    dni = dni.value ?: "",
+                    fechaNacimiento = fechaNacimiento.value ?: "",
+                    telefono = telefono.value ?: "",
+                    genero = genero.value ?: "",
+                    role = "user"
+                )
 
+                db.collection(name_collection)
+                    .document(user.uid)
+                    .set(usuario)
+                    .addOnSuccessListener {
+                        _messageConfirmation.value = "Cuenta creada correctamente"
+                        viewModelScope.launch {
+                            delay(1000)
+                            resetFields()
+                            navController.navigate("Home") {
+                                popUpTo("SignUp") { inclusive = true }
+                            }
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        _messageConfirmation.value = "No se ha podido crear la cuenta: ${exception.message}"
+                    }
+            } else {
+                onResult("Error al crear cuenta")
+            }
+        }
+    }
 
     fun onCompletedFields(
         nombre: String,
@@ -140,6 +182,8 @@ class UserViewModel: ViewModel() {
         _fechaNacimiento.value = ""
         _contraseña.value = ""
     }
-
+    fun setMessageConfirmation(message: String) {
+        _messageConfirmation.value = message
+    }
 
 }

@@ -1,12 +1,19 @@
 package com.example.tfg.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,8 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -24,64 +29,46 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.tfg.components.DataField
 import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
-import com.example.tfg.viewmodel.UserViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel,
-             editUserViewModel: EditUserViewModel) {
-
+fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel) {
     val currentUser by authViewModel.user.collectAsState()
-    val userData by userViewModel.usuario.collectAsState()
+    val usuario by editUserViewModel.usuario.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
     val message by editUserViewModel.mensajeConfirmacion.collectAsState()
-    val nombre by editUserViewModel.nombre
-    val apellido by editUserViewModel.apellido
-    val email by editUserViewModel.email
-    val dni by editUserViewModel.dni
-    val telefono by editUserViewModel.telefono
-    val genero by editUserViewModel.genero
-    val fechaNacimiento by editUserViewModel.fechaNacimiento
+    val isLoading by editUserViewModel.isLoading.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
-    // Liste des champs
-    val fields = listOf(
-        Field("Nombre", nombre, editUserViewModel::setNombre),
-        Field("Apellido", apellido, editUserViewModel::setApellido),
-        Field("Email", email, editUserViewModel::setEmail),
-        Field("DNI", dni, editUserViewModel::setDni),
-        Field("Teléfono", telefono, editUserViewModel::setTelefono),
-    )
-
+    // Resetear mensaje de confirmación cuando se carga la pantalla
     LaunchedEffect(Unit) {
-        editUserViewModel.setMensajeConfirmacion("")
+        editUserViewModel.resetMessage()
     }
 
-    // Charger les données de l'utilisateur
+    // Cargar datos del usuario cuando el UID cambie
     LaunchedEffect(currentUser?.uid) {
-        currentUser?.uid?.let { uid ->
-            userViewModel.loadUser(uid)  // Charger l'utilisateur depuis Firestore
-        }
+        currentUser?.uid?.let { editUserViewModel.loadUser(it) }
     }
 
-    // Charger les données dans editUserViewModel
-    LaunchedEffect(userData) {
-        userData?.let {
-            editUserViewModel.loadDataUser(it)
-        }
-    }
-
-    // Afficher un Snackbar quand le message change
+    // Mostrar mensaje en Snackbar si hay un mensaje de confirmación
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
-            snackbarHostState.showSnackbar(message)  // Afficher le Snackbar
+            snackbarHostState.showSnackbar(message)
+            editUserViewModel.resetMessage() // Limpiar mensaje después de mostrarlo
         }
     }
 
@@ -97,7 +84,7 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, use
                     IconButton(onClick = { navController.navigate("Profile") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "Volver",
                             tint = Color.White
                         )
                     }
@@ -106,73 +93,62 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, use
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        if (userData != null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp)
-            ) {
-                fields.forEach { field ->
-                    DataField(
-                        label = field.label,
-                        value = field.value,
-                        onValueChange = field.onValueChange
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            LazyColumn {
+                item {
+                    DataField(label = "Nombre", value = usuario.nombre, onValueChange = editUserViewModel::setNombre)
+                    DataField(label = "Apellido", value = usuario.apellido, onValueChange = editUserViewModel::setApellido)
+                    DataField(label = "Email", value = usuario.email, onValueChange = editUserViewModel::setEmail)
+                    DataField(label = "Teléfono", value = usuario.telefono, onValueChange = editUserViewModel::setTelefono)
+                    DataField(label = "DNI", value = usuario.dni, onValueChange = editUserViewModel::setDni)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SelectGender(
+                        selectedGender = usuario.genero,
+                        onGenderChange = editUserViewModel::setGenero
                     )
-                }
-                // selecionar el genero
-                SelectGender(
-                    selectedGender = genero,
-                    onGenderChange = {
-                        newGender -> editUserViewModel.setGenero(newGender)
-                    }
-                )
-                Date(
-                    selectedDate = fechaNacimiento,
-                    onDateChange = { newDate ->
-                        editUserViewModel.setFechaNacimiento(newDate)
-                    }
-                )
-                Button(
-                    onClick = {
-                        currentUser?.uid?.let { uid ->
-                            editUserViewModel.saveUsuario(uid) { mensaje ->
-                                editUserViewModel.setMensajeConfirmacion(mensaje)
+                    Date(
+                        selectedDate = usuario.fechaNacimiento,
+                        onDateChange = editUserViewModel::setFechaNacimiento
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            currentUser?.uid?.let { uid ->
+                                editUserViewModel.updateUser(uid) { message ->
+                                    editUserViewModel.setMessageConfirmation(message)
+                                    coroutineScope.launch {
+                                        delay(500)
+                                    }
+                                    navController.popBackStack()
+                                }
                             }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isLoading) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .padding(end = 8.dp)
+                                )
+                                Text("Actualizando...")
+                            }
+                        } else {
+                            Text("Guardar cambios")
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Guardar cambios")
+                    }
                 }
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DataField(label: String, value: String, onValueChange: (String) -> Unit) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange ,
-        label = { Text(label) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        enabled = true,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-        colors = TextFieldDefaults.colors(
-            disabledTextColor = MaterialTheme.colorScheme.onSurface,
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            disabledContainerColor = MaterialTheme.colorScheme.surface,
-        )
-    )
-}
-
-data class Field(
-    val label: String,
-    val value: String,
-    val onValueChange: (String) -> Unit
-)
+    }}

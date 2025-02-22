@@ -11,5 +11,4 @@ data class Producto(
     val imagen:String = "",
     val stock:Int = 0,
     val marca:String = "",
-
     )

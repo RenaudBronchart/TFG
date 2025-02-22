@@ -1,12 +1,10 @@
 package com.example.tfg.screens
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -15,10 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -30,19 +26,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.SelectProductCategory
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.ProductViewModel
+import com.example.tfg.components.DataField
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel , productoviewModel: ProductViewModel)    {
-
 
     val selectedCategory: String by productoviewModel.categoria.observeAsState("Selecciona una categoría")
     val nombre:String by productoviewModel.nombre.observeAsState("")
@@ -52,8 +47,6 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
     val imagen:String by productoviewModel.imagen.observeAsState("")
     val stock:Int by productoviewModel.stock.observeAsState(0)
     val marca:String by productoviewModel.marca.observeAsState("")
-
-    // verificar si los datos estan rellandos
     val isButtonEnable:Boolean by productoviewModel.isButtonEnable.observeAsState(initial = false)
     val snackbarHostState = remember { SnackbarHostState() }
     val message by productoviewModel.messageConfirmation.collectAsState()
@@ -62,12 +55,28 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
         productoviewModel.setMessageConfirmation("")
     }
 
+    // permite lanzar el message configurado
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
-            snackbarHostState.showSnackbar(message)  // Afficher le Snackbar
+            snackbarHostState.showSnackbar(message)
+            productoviewModel.resetFields()
         }
     }
 
+
+    // creamos una lista TRIPLE de los campos //
+    // label → Se usa para mostrar el texto en la UI.
+    // value → Se usa para llenar el campo con su valor actual.
+    //key → Se usa en when para actualizar el campo correcto.
+    val fields = listOf(
+        Triple("Nombre", nombre, "nombre"), // 1) Se usa para mostrar el texto en la UI.
+        Triple("Precio", precio.toString(), "precio"),// 2
+        Triple("Descripción", descripcion, "descripcion"),
+        Triple("Imagen", imagen, "imagen"),
+        Triple("Stock", stock.toString(), "stock"),
+        Triple("Marca", marca, "marca")
+    )
+    // configurar TOPBAR
     Scaffold(
         topBar = {
             TopAppBar(
@@ -86,8 +95,7 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
                     }
                 }
             )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        }
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -96,75 +104,35 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-
             SelectProductCategory(
-                selectedCategory = selectedCategory,
-                onCategorySelected = { newCategory ->
-                    productoviewModel.onCompletedFields(nombre, precio, descripcion, newCategory, imagen, stock, marca)
-                }
+                selectedCategory = categoria,
+                onCategorySelected = { newCategory -> productoviewModel.onCompletedFields(nombre, precio, descripcion, newCategory, imagen, stock, marca) }
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextField(
-                value = nombre,
-                onValueChange = {
-                    productoviewModel.onCompletedFields(it, precio, descripcion, categoria, imagen, stock, marca)
-                },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = if (precio == 0.0) "" else precio.toString(),
-                onValueChange = {
-                    val newPrecio = it.toDoubleOrNull() ?: 0.0 // si entrada no es valida(abc) devuelve 0
-                    productoviewModel.onCompletedFields(nombre, newPrecio, descripcion, categoria, imagen, stock, marca)
-                },
-                label = { Text("Precio") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number) // teclado numerico
-            )
-
-            TextField(
-                value = descripcion,
-                onValueChange = { productoviewModel.onCompletedFields(nombre = nombre, precio = precio, descripcion = it, categoria = categoria, imagen = imagen, stock = stock, marca = marca) },
-                label = { Text("Descripción") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = imagen,
-                onValueChange = { productoviewModel.onCompletedFields(nombre = nombre, precio = precio, descripcion = descripcion, categoria = categoria, imagen = it, stock = stock, marca = marca) },
-                label = { Text("Imagen") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-
-            TextField(
-                value = if (stock == 0) "" else stock.toString(),
-                onValueChange = {
-                    val newStock = it.toIntOrNull() ?: 0
-                    productoviewModel.onCompletedFields(nombre, precio, descripcion, categoria, imagen, newStock, marca)
-                },
-                label = { Text("Stock") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-            )
-
-            TextField(
-                value = marca,
-                onValueChange = { productoviewModel.onCompletedFields(nombre = nombre, precio = precio, descripcion = descripcion, categoria = categoria, imagen = imagen, stock = stock, marca = it) },
-                label = { Text("Marca") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
+            // bucle para mostrar cada campos y poder ecribrir // design de los campos hecho con  la fucion de DataField
+            fields.forEach { (label, value, key) ->
+               DataField(
+                    label = label,
+                    value = value,
+                    onValueChange = { newValue ->
+                        when (key) {
+                            "nombre" -> productoviewModel.onCompletedFields(newValue, precio, descripcion, selectedCategory, imagen, stock, marca)
+                            "precio" -> productoviewModel.onCompletedFields(nombre, newValue.toDoubleOrNull() ?: 0.0, descripcion, selectedCategory, imagen, stock, marca)
+                            "descripcion" -> productoviewModel.onCompletedFields(nombre, precio, newValue, selectedCategory, imagen, stock, marca)
+                            "imagen" -> productoviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, newValue, stock, marca)
+                            "stock" -> productoviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, imagen, newValue.toIntOrNull() ?: 0, marca)
+                            "marca" -> productoviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, imagen, stock, newValue
+                            )
+                        }
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            // buton para pinchar y guardar los datos // funcion de logica hecho en productoviwModel
             Button(
                 onClick = {
-                    productoviewModel.addProduct(nombre, precio, descripcion, categoria, imagen, stock, marca) { message ->
+                    productoviewModel.addProduct(nombre, precio, descripcion, selectedCategory, imagen, stock, marca) { message ->
                         productoviewModel.setMessageConfirmation(message)
-                            productoviewModel.resetFields()
-
+                        productoviewModel.resetFields()
                     }
                 },
                 enabled = isButtonEnable,
@@ -173,8 +141,11 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
                 Text("Añadir producto")
             }
         }
+
+
     }
 }
+
 
 
 

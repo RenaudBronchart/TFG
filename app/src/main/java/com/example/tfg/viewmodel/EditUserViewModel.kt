@@ -1,6 +1,7 @@
 package com.example.tfg.viewmodel
 
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.tfg.models.User
@@ -8,86 +9,98 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 class EditUserViewModel : ViewModel() {
 
+    private val db = FirebaseFirestore.getInstance()
+    private val name_collection = "usuarios"
 
-    private val _nombre = mutableStateOf("")
-    val nombre: State<String> get() = _nombre
-
-    private val _apellido = mutableStateOf("")
-    val apellido: State<String> get() = _apellido
-
-    private val _email = mutableStateOf("")
-    val email: State<String> get() = _email
-
-    private val _telefono = mutableStateOf("")
-    val telefono: State<String> get() = _telefono
-
-    private val _dni = mutableStateOf("")
-    val dni: State<String> get() = _dni
-
-    private val _genero = mutableStateOf("")
-    val genero: State<String> get() = _genero
-
-    private val _fechaNacimiento = mutableStateOf("")
-    val fechaNacimiento: State<String> get() = _fechaNacimiento
+    private val _usuario = MutableStateFlow(User())  // Nunca es null
+    val usuario: StateFlow<User> = _usuario
 
     private val _messageConfirmation = MutableStateFlow("")
     val mensajeConfirmacion: StateFlow<String> get() = _messageConfirmation
 
-    // 🛠 Fonctions pour mettre à jour les champs (au lieu d'accéder aux variables privées)
-    fun setNombre(value: String) { _nombre.value = value }
-    fun setApellido(value: String) { _apellido.value = value }
-    fun setEmail(value: String) { _email.value = value }
-    fun setTelefono(value: String) { _telefono.value = value }
-    fun setDni(value: String) { _dni.value = value }
-    fun setGenero(value: String) { _genero.value = value }
-    fun setFechaNacimiento(value: String) { _fechaNacimiento.value = value }
+    private var currentUid: String? = null  // Guardamos el UID para evitar recargar datos innecesariamente
 
-    // Permet de charger les données utilisateur depuis Usuario
-    fun loadDataUser(usuario: User?) {
-        usuario?.let {
-            setNombre(it.nombre ?: "")
-            setApellido(it.apellido ?: "")
-            setEmail(it.email ?: "")
-            setTelefono(it.telefono ?: "")
-            setDni(it.dni ?: "")
-            setGenero(it.genero ?: "")
-            setFechaNacimiento(it.fechaNacimiento ?: "")
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+
+    fun loadUser(uid: String) {
+        if (currentUid == uid) return  // Evitar recargar si ya tenemos los datos correctos
+        currentUid = uid
+
+        viewModelScope.launch {
+            try {
+                val document = db.collection(name_collection).document(uid).get().await()
+                val user = document.toObject(User::class.java)
+
+                if (user != null) {
+                    _usuario.value = user
+                } else {
+                    Log.e("EditUserViewModel", "Error: Usuario no encontrado")
+                }
+            } catch (e: Exception) {
+                Log.e("EditUserViewModel", "Error al cargar usuario: ${e.message}")
+            }
         }
     }
 
-    fun saveUsuario(uid: String, onSuccess: (String) -> Unit) {
-        val usuario = User(
-            nombre = _nombre.value,
-            apellido = _apellido.value,
-            email = _email.value,
-            telefono = _telefono.value,
-            dni = _dni.value,
-            genero = _genero.value,
-            fechaNacimiento = _fechaNacimiento.value
-        )
+        // se podria pasar un map of en User y utilizar un emit?
+    fun updateUser(uid: String, onSuccess: (String) -> Unit) {
+            _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val user = usuario.value
+                val userUpdates = mapOf(
+                    "nombre" to user.nombre,
+                    "apellido" to user.apellido,
+                    "email" to user.email,
+                    "telefono" to user.telefono,
+                    "dni" to user.dni,
+                    "genero" to user.genero,
+                    "fechaNacimiento" to user.fechaNacimiento
+                )
 
-        FirebaseFirestore.getInstance()
-            .collection("usuarios")
-            .document(uid)
-            .set(usuario)
-            .addOnSuccessListener {
-                // On envoie un message de succès lorsque la sauvegarde réussit
-                _messageConfirmation.value = "Usuario actualizado correctamente"
-                onSuccess(_messageConfirmation.value) // Appeler la fonction `onSuccess` et passer le message
-            }
-            .addOnFailureListener { exception ->
-                // En cas d'erreur, on envoie un message d'échec
-                _messageConfirmation.value = "Error al actualizar el usuario: ${exception.message}"
-                onSuccess(_messageConfirmation.value) // Appeler `onSuccess` avec le message d'erreur
-            }
-    }    // Fonction pour mettre à jour les données de l'utilisateur
+                db.collection(name_collection).document(uid).update(userUpdates).await()
+                delay(2000)
+                val successMessage = "Usuario actualizado correctamente"
+                _messageConfirmation.value = successMessage
+                onSuccess(successMessage)
 
-    fun setMensajeConfirmacion(mensaje: String) {
-        _messageConfirmation.value = mensaje
+            } catch (exception: Exception) {
+                val errorMessage = "Error al actualizar usuario: ${exception.message}"
+                _messageConfirmation.value = errorMessage
+                Log.e("UpdateUser", "Error: ${exception.message}")
+                onSuccess(errorMessage)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    // Métodos para actualizar los valores del usuario
+    fun setNombre(value: String) { _usuario.update { it.copy(nombre = value) } }
+    fun setApellido(value: String) { _usuario.update { it.copy(apellido = value) } }
+    fun setEmail(value: String) { _usuario.update { it.copy(email = value) } }
+    fun setTelefono(value: String) { _usuario.update { it.copy(telefono = value) } }
+    fun setDni(value: String) { _usuario.update { it.copy(dni = value) } }
+    fun setGenero(value: String) { _usuario.update { it.copy(genero = value) } }
+    fun setFechaNacimiento(value: String) { _usuario.update { it.copy(fechaNacimiento = value) } }
+
+    fun setMessageConfirmation(message: String) {
+        _messageConfirmation.value = message
+    }
+
+    fun resetMessage() {
+        _messageConfirmation.value = ""
     }
 }
 

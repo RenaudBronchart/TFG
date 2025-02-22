@@ -55,9 +55,10 @@ fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel,
     val productos by productViewModel.productos.collectAsState()
     val isAdmin by authViewModel.isAdmin.collectAsState()
 
-
     authViewModel.fetchCurrentUser()
-
+    LaunchedEffect(navController) {
+        productViewModel.getProductosFromFirestore()
+    }
 
     LaunchedEffect(isAdmin) {
         Log.d("EshopScreen", "isAdmin: $isAdmin")

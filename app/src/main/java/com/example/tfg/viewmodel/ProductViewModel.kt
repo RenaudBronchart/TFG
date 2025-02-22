@@ -53,8 +53,6 @@ class ProductViewModel: ViewModel() {
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> get() = _messageConfirmation
 
-
-
     init {
         getProductosFromFirestore()
     }
@@ -74,11 +72,10 @@ class ProductViewModel: ViewModel() {
                 }
             }
             _productos.value = productos
-            Log.d("ProductosUpdated", "Productos updated: ${productos.size}")
         }
     }
 
-    fun getProductById(productId: String) {
+    /*fun getProductById(productId: String) {
         viewModelScope.launch {
             try {
                 val document = db.collection(name_collection)
@@ -86,15 +83,12 @@ class ProductViewModel: ViewModel() {
                     .get()
                     .await()
 
-                document.toObject(Producto::class.java)?.let {
-                    _producto.value = it //
-                }
+                _producto.value = document.toObject(Producto::class.java)
             } catch (e: Exception) {
-
+                Log.e("GetProductById", "Error al obtener producto: ${e.message}")
             }
         }
-    }
-
+    }*/
 
     fun addProduct(
         nombre: String, precio: Double, descripcion: String,
@@ -111,17 +105,18 @@ class ProductViewModel: ViewModel() {
                 stock = stock,
                 marca = marca
             )
-                    db.collection(name_collection)
-                        .document(producto.id)
-                        .set(producto)
-                        .addOnSuccessListener {
-                            _messageConfirmation.value = "Producto añadido correctamente"
-                            onSuccess(_messageConfirmation.value)
-                        }
-                        .addOnFailureListener { exception ->
-                            _messageConfirmation.value = "No se ha podido añadir un producto: ${exception.message}"
-                            onSuccess(_messageConfirmation.value)
-                        }
+            db.collection(name_collection)
+                .document(producto.id)
+                .set(producto)
+                .addOnSuccessListener {
+                    _messageConfirmation.value = "Producto añadido correctamente"
+                    getProductosFromFirestore()
+                    onSuccess(_messageConfirmation.value)
+                }
+                .addOnFailureListener { exception ->
+                    _messageConfirmation.value = "No se ha podido añadir un producto: ${exception.message}"
+                    onSuccess(_messageConfirmation.value)
+                }
         }
     }
 
@@ -131,53 +126,17 @@ class ProductViewModel: ViewModel() {
             .document(productId)
             .delete()
             .addOnSuccessListener {
-                _messageConfirmation.value = "Producto añadido correctamente"
+                _messageConfirmation.value = "Producto eliminado correctamente"
                 getProductosFromFirestore()
                 onSuccess(_messageConfirmation.value)
 
             }
             .addOnFailureListener { exception ->
-                _messageConfirmation.value = "No se ha podido añadir un producto: ${exception.message}"
+                _messageConfirmation.value = "No se ha podido eliminar el producto: ${exception.message}"
                 onSuccess(_messageConfirmation.value)
             }
 
     }
-
-    fun updateProduct(
-        productId: String,
-        nombre: String, precio: Double, descripcion: String,
-        categoria: String, imagen: String, stock: Int, marca: String,
-        onComplete: () -> Unit
-    ) {
-        val productUpdates = mapOf(
-            "nombre" to nombre,
-            "precio" to precio,
-            "descripcion" to descripcion,
-            "categoria" to categoria,
-            "imagen" to imagen,
-            "stock" to stock,
-            "marca" to marca
-        )
-
-        viewModelScope.launch {
-            try {
-                db.collection(name_collection)
-                    .document(productId)
-                    .update(productUpdates)
-                    .await()
-                Log.d("UpdateProduct", "Product updated successfully")
-
-                _messageConfirmation.value = "Producto actualizado correctamente"
-                getProductosFromFirestore()
-                onComplete()
-            } catch (exception: Exception) {
-                _messageConfirmation.value = "Error al actualizar el producto"
-            }
-        }
-    }
-
-
-
 
     fun onCompletedFields(nombre: String, precio: Double, descripcion: String, categoria: String, imagen: String, stock: Int, marca: String) {
         _nombre.value = nombre
@@ -209,7 +168,5 @@ class ProductViewModel: ViewModel() {
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }
-
-
 
 }

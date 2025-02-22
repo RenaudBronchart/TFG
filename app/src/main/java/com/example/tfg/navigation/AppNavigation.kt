@@ -16,6 +16,7 @@ import com.example.tfg.screens.Profile
 import com.example.tfg.screens.ListUsers
 import com.example.tfg.screens.EditUser
 import com.example.tfg.viewmodel.AuthViewModel
+import com.example.tfg.viewmodel.EditProductViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 import com.example.tfg.viewmodel.UserViewModel
@@ -27,6 +28,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
     val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
     val userViewModel: UserViewModel = viewModel() // De nuevo, obtener usuarioViewModel si es necesario
     val productViewModel : ProductViewModel = viewModel()
+    val editProductViewModel: EditProductViewModel = viewModel()
 
     NavHost(
         navController =  navigationController, // recordar la navigation
@@ -41,13 +43,13 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel,viewModel())}
 
         composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, viewModel())}
-        composable(AppScreens.EditUser.ruta) { EditUser(navigationController, authViewModel, userViewModel, editUserViewModel) }
+        composable(AppScreens.EditUser.ruta) { EditUser(navigationController, authViewModel,  editUserViewModel) }
         composable(AppScreens.EditProduct.ruta + "/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
             EditProduct(
                 navController = navigationController,
                 authViewModel = authViewModel,
-                productViewModel = productViewModel,
+                editProductViewModel = editProductViewModel,
                 productId = productId
             )
         }
