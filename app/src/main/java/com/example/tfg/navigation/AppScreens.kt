@@ -13,4 +13,8 @@ sealed class AppScreens(val ruta: String) {
     object EditProduct: AppScreens("editProduct")
     object AdminPanel: AppScreens("adminPanel")
     object BookingPadelScreen: AppScreens("bookingPadelScreen")
+    object CheckoutBooking : AppScreens("checkoutScreen/{courtId}/{courtName}/{date}/{timeSlot}") {
+        fun createRoute(courtId: String, courtName: String, date: String, timeSlot: String) =
+            "checkoutScreen/$courtId/$courtName/$date/$timeSlot"
+    }
 }

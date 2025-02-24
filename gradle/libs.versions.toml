@@ -34,6 +34,8 @@ storage = "1.5.0"
 animationCoreLint = "1.8.0-beta01"
 uiTestAndroid = "1.8.0-beta01"
 coreI18n = "1.0.0-alpha01"
+media3CommonKtx = "1.5.1"
+benchmarkMacro = "1.3.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,6 +81,8 @@ androidx-liveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-k
 androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref = "coreI18n" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro", version.ref = "benchmarkMacro" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

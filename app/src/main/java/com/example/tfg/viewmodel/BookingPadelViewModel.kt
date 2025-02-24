@@ -85,7 +85,7 @@ class BookingPadelViewModel : ViewModel() {
     }
 
     // Vérifier si le terrain est disponible à un créneau donné
-    fun isCourtAvailable(courtId: String, date: String, startTime: String, endTime: String): Boolean {
-        return _bookingsPadel.value.none { it.courtId == courtId && it.date == date && it.startTime == startTime }
+    fun isCourtAvailable(courtId: String, date: String, timeSlot: String): Boolean {
+        return _bookingsPadel.value.none { it.courtId == courtId && it.date == date && it.startTime == timeSlot }
     }
 }

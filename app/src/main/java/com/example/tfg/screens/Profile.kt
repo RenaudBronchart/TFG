@@ -49,7 +49,7 @@ fun Profile(navController: NavHostController, authViewModel: AuthViewModel, User
     val nombre = usuarioData?.nombre ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value
 
-    LaunchedEffect(firebaseUser?.uid) {  // Se déclenche uniquement si l'UID change
+    LaunchedEffect(firebaseUser?.uid) {
         firebaseUser?.let {
             UserViewModel.loadUser(it.uid)
         }

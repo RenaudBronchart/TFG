@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tfg.screens.AddProduct
 import com.example.tfg.screens.AdminPage
 import com.example.tfg.screens.BookingPadelScreen
+import com.example.tfg.screens.CheckoutBookingScreen
 import com.example.tfg.screens.EditProduct
 import com.example.tfg.screens.EshopScreen
 import com.example.tfg.screens.Home
@@ -62,7 +63,15 @@ fun AppNavigation(authViewModel: AuthViewModel) {
                 productId = productId
             )
         }
-
+        composable(AppScreens.CheckoutBooking.ruta) { backStackEntry ->
+            CheckoutBookingScreen(
+                navController = navigationController,
+                courtId = backStackEntry.arguments?.getString("courtId") ?: "",
+                courtName = backStackEntry.arguments?.getString("courtName") ?: "",
+                date = backStackEntry.arguments?.getString("date") ?: "",
+                timeSlot = backStackEntry.arguments?.getString("timeSlot") ?: ""
+            )
+        }
 
         }
 

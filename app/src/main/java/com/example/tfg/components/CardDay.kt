@@ -26,33 +26,29 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DayCard(day: LocalDate, isToday: Boolean) {
-    // Utilisation de la couleur primaire du thème pour le jour actuel
-    val backgroundColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-    val textColor = if (isToday) Color.White else MaterialTheme.colorScheme.onSurface
+fun DayCard(day: LocalDate, isToday: Boolean, isSelected: Boolean, onClick: () -> Unit) {
+    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary
+    else MaterialTheme.colorScheme.surfaceVariant
+    val textColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
 
-    // para poder definir si queremos mas grande o pequenas las card
     Card(
         modifier = Modifier
             .padding(4.dp)
             .width(75.dp)
             .height(75.dp)
-            .clickable {
-            },
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        shape = MaterialTheme.shapes.medium, // Forme arrondie pour les coins
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)) // Bordure discrète
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp),
-            contentAlignment = Alignment.Center // para centrar el contenido
+            contentAlignment = Alignment.Center
         ) {
-            // Para mostrar los datos dia mes
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // el dia con la modificacion ingles -> esp
                 Text(
                     day.format(DateTimeFormatter.ofPattern("EEE")).let {
                         it.replace("Mon", "Lun")
@@ -65,12 +61,10 @@ fun DayCard(day: LocalDate, isToday: Boolean) {
                     },
                     style = MaterialTheme.typography.bodySmall.copy(color = textColor)
                 )
-                // "el dia en numero
                 Text(
                     day.format(DateTimeFormatter.ofPattern("dd")),
                     style = MaterialTheme.typography.bodySmall.copy(color = textColor)
                 )
-                // el mes con el cambio de nombre ingles -> es
                 Text(
                     day.format(DateTimeFormatter.ofPattern("MMM")).let {
                         it.replace("Jan", "Ene")

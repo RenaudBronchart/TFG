@@ -100,6 +100,8 @@ dependencies {
     // AsyncImage
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.i18n)
+    implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.benchmark.macro)
 
 
 
@@ -117,4 +119,8 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
     //implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    dependencies {
+        implementation("com.google.accompanist:accompanist-flowlayout:0.30.1")
+    }
 }

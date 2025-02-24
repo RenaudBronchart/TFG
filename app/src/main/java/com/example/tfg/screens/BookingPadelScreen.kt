@@ -2,25 +2,18 @@ package com.example.tfg.screens
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.BookingPadelViewModel
@@ -41,14 +38,24 @@ import com.example.tfg.viewmodel.CourtPadelViewModel
 import java.time.LocalDate
 import com.example.tfg.components.DayCard
 import com.example.tfg.components.getWeekDays
+import com.example.tfg.navigation.AppScreens
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingPadelScreen(navController: NavHostController, authViewModel: AuthViewModel, bookingPadelViewModel: BookingPadelViewModel, courtPadelViewModel: CourtPadelViewModel) {
-
+fun BookingPadelScreen(
+    navController: NavHostController, authViewModel: AuthViewModel, bookingPadelViewModel: BookingPadelViewModel, courtPadelViewModel: CourtPadelViewModel
+) {
     val weekDays = getWeekDays(LocalDate.now())
+    val selectedDate = remember { mutableStateOf(LocalDate.now()) } //
+    val courts = courtPadelViewModel.courtsPadel.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        courtPadelViewModel.getCourtsPadelFromFirestore()
+        Log.d("DEBU", "chargement des cours")
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -71,22 +78,42 @@ fun BookingPadelScreen(navController: NavHostController, authViewModel: AuthView
     ) { innerPadding ->
 
         Column(modifier = Modifier.padding(innerPadding)) {
-            // box para poner todos los items -- back en blanco
+            // LazyRow pour afficher les jours de la semaine
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White)
-                    .padding(vertical = 8.dp) // Espacement vertical autour des cartes
+                    .padding(vertical = 8.dp)
             ) {
-                // LazyRow que va a permitir poder hacer como un LazyColumn pero en row par los dias
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
                     items(weekDays) { day ->
-                        DayCard(day = day, isToday = day == LocalDate.now())
+                        DayCard(
+                            day = day,
+                            isToday = day == LocalDate.now(),
+                            isSelected = day == selectedDate.value,
+                            onClick = { selectedDate.value = day }
+                        )
                     }
                 }
             }
-            CardCourt()
 
+            // LazyColumn pour afficher les courts
+            LazyColumn {
+                items(courts) { court ->
+                    CardCourt(
+                        courtId = court.id,
+                        date = selectedDate.value.toString(), // ✅ Convertir LocalDate en String
+                        courtName = court.nombre,
+                        bookingPadelViewModel = bookingPadelViewModel
+                    ) { timeSlot ->
+                        navController.navigate(
+                            AppScreens.CheckoutBooking.createRoute(
+                                court.id, court.nombre, selectedDate.value.toString(), timeSlot
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 }
