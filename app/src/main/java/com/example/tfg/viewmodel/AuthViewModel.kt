@@ -28,14 +28,15 @@ class AuthViewModel: ViewModel() {
     val user: StateFlow<FirebaseUser?> = _user
 
     private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-        _user.value = firebaseAuth.currentUser
+        val currentUser = firebaseAuth.currentUser
+        _user.value = currentUser
+        _currentUserId.value = currentUser?.uid
     }
 
     init {
         auth.addAuthStateListener(authStateListener)
     }
 
-    // Appelle cette méthode pour supprimer le listener quand ce n'est plus nécessaire
     fun removeAuthListener() {
         auth.removeAuthStateListener(authStateListener)
     }

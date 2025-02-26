@@ -43,7 +43,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
 
     LaunchedEffect(currentUser?.uid) {
         currentUser?.uid?.let { uid ->
-            userViewModel.loadUser(uid)  // Charger l'utilisateur depuis Firestore
+            userViewModel.loadUser(uid)  // cargar usuario
         }
     }
 

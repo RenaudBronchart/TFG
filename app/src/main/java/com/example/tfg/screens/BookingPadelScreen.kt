@@ -53,7 +53,10 @@ fun BookingPadelScreen(
 
     LaunchedEffect(Unit) {
         courtPadelViewModel.getCourtsPadelFromFirestore()
-        Log.d("DEBU", "chargement des cours")
+    }
+
+    LaunchedEffect(Unit) {
+        bookingPadelViewModel.loadBookings()
     }
 
     Scaffold(
@@ -89,7 +92,7 @@ fun BookingPadelScreen(
                     items(weekDays) { day ->
                         DayCard(
                             day = day,
-                            isToday = day == LocalDate.now(),
+
                             isSelected = day == selectedDate.value,
                             onClick = { selectedDate.value = day }
                         )
@@ -102,7 +105,7 @@ fun BookingPadelScreen(
                 items(courts) { court ->
                     CardCourt(
                         courtId = court.id,
-                        date = selectedDate.value.toString(), // ✅ Convertir LocalDate en String
+                        date = selectedDate.value.toString(),
                         courtName = court.nombre,
                         bookingPadelViewModel = bookingPadelViewModel
                     ) { timeSlot ->

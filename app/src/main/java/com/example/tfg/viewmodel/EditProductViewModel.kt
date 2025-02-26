@@ -54,7 +54,7 @@ class EditProductViewModel: ViewModel() {
 
     fun updateProduct(productId: String, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
-            _isLoading.value = true  // decimos que loading es verdad
+            _isLoading.value = true
 
             try {
                 val product = producto.value

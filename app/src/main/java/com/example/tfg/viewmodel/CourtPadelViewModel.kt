@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.CourtPadel
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,17 +28,18 @@ class CourtPadelViewModel : ViewModel() {
             _isLoading.value = true
             try {
                 val query = db.collection(name_collection).get().await()
-                val courts = query.documents.mapNotNull { it.toObject(CourtPadel::class.java) }
-                Log.d("DEBUG", "Nombre de courts récupérés: ${courts.size}")
+                val courts = query.documents.mapNotNull { doc ->
+                    doc.toObject(CourtPadel::class.java)?.copy(id = doc.id) // anadir id
+                }
                 _courtsPadel.value = courts
+                Log.d("FirestoreDebug", "Courts récupérés: $courts")
             } catch (e: Exception) {
-                // Gestion des erreurs ici
+                Log.e("FirestoreError", "Erreur: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
         }
     }
-
 
 
     // Ajouter un court de padel

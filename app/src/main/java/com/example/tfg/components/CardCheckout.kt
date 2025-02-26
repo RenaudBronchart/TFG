@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CardCheckout(courtName: String, date: String, timeSlot: String, onReserveClick: () -> Unit) {
+fun CardCheckout(courtName: String, date: String, timeSlot: String,showReserveButton: Boolean = true, onReserveClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -86,22 +86,26 @@ fun CardCheckout(courtName: String, date: String, timeSlot: String, onReserveCli
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(imageVector = Icons.Filled.Schedule, contentDescription = "Horaire", tint = MaterialTheme.colorScheme.primary)
+                    Icon(imageVector = Icons.Filled.Schedule, contentDescription = "Horario", tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "Horario: $timeSlot", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onReserveClick,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(imageVector = Icons.Filled.Check, contentDescription = "Reservar", tint = Color.White)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Reservar", color = Color.White)
+
+            if(showReserveButton) {
+                Button(
+                    onClick = onReserveClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(imageVector = Icons.Filled.Check, contentDescription = "Reservar", tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Reservar", color = Color.White)
+                }
             }
+
         }
     }
 }

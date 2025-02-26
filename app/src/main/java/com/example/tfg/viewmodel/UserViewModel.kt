@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 class UserViewModel: ViewModel() {
     // instancia de la base de datos FB
@@ -93,12 +94,12 @@ class UserViewModel: ViewModel() {
 
                 if (usuario != null) {
                     _usuario.value = usuario
-                    Log.d("UsuarioViewModel", "Données récupérées : ${usuario.nombre}")
+                    Log.d("UsuarioViewModel", "data : ${usuario.nombre}")
                 } else {
-                    Log.e("UsuarioViewModel", "Aucune donnée trouvée pour cet UID")
+                    Log.e("UsuarioViewModel", "no data UID")
                 }
             } catch (e: Exception) {
-                Log.e("UsuarioViewModel", "Erreur lors du chargement des données : ${e.message}")
+                Log.e("UsuarioViewModel", "error para cargar datos : ${e.message}")
             }
         }
     }
@@ -110,7 +111,9 @@ class UserViewModel: ViewModel() {
             val user = result?.user
 
             if (user != null) {
+                val userId = "user-" + UUID.randomUUID().toString().take(4)
                 val usuario = User(
+                    id = userId,
                     nombre = nombre.value ?: "",
                     apellido = apellido.value ?: "",
                     email = email.value ?: "",

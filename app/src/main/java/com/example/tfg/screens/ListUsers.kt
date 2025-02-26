@@ -2,13 +2,17 @@ package com.example.tfg.screens
 
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,9 +38,9 @@ import com.example.tfg.models.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListUsers(navController: NavHostController, authViewModel: AuthViewModel, UserViewModel: UserViewModel) {
+fun ListUsers(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
 
-val userData by UserViewModel.usuarios.collectAsState()
+val userData by userViewModel.usuarios.collectAsState()
 
     Scaffold(
         topBar = {
@@ -74,7 +78,9 @@ val userData by UserViewModel.usuarios.collectAsState()
             // Affichage des utilisateurs dans une liste
             LazyColumn {
                 items(userData) { usuario ->
-                    UserCard(usuario = usuario)
+                    UserCard(usuario = usuario) { userId ->
+                        navController.navigate("editUser/$userId")
+                    }
                 }
             }
         }
@@ -82,7 +88,7 @@ val userData by UserViewModel.usuarios.collectAsState()
     }
 
 @Composable
-fun UserCard(usuario: User) {
+fun UserCard(usuario: User, onEditClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,9 +99,25 @@ fun UserCard(usuario: User) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(text = "Nombre: ${usuario.nombre}", fontWeight = FontWeight.Bold)
+            Text(text = "Id: ${usuario.id}")
             Text(text = "Apellido: ${usuario.apellido}")
             Text(text = "Email: ${usuario.email}")
-            Text(text = "Teléfono: ${usuario.telefono}")
+            Text(text = "Dni: ${usuario.dni}")
+            Text(text = "Telefono: ${usuario.telefono}")
+            Text(text = "Fecha nacimiento: ${usuario.fechaNacimiento}")
+            Text(text = "Genero: ${usuario.genero}")
+            Text(text = "Role: ${usuario.role}")
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = { onEditClick(usuario.id) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("Modifier")
+            }
+
+
         }
 
     }

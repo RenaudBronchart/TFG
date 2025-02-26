@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SportsTennis
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -34,15 +35,14 @@ import com.google.accompanist.flowlayout.FlowRow
 
 
 @Composable
-fun CardCourt(
-    courtId: String,
-    date: String,
-    courtName: String,
-    bookingPadelViewModel: BookingPadelViewModel,
-    onTimeSlotClick: (String) -> Unit
+fun CardCourt(courtId: String, date: String, courtName: String, bookingPadelViewModel: BookingPadelViewModel, onTimeSlotClick: (String) -> Unit
 ) {
     val timeSlots = listOf("9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00")
-        .windowed(2, 1) { "${it[0]} - ${it[1]}" } // Génère des créneaux horaires
+        .windowed(2, 1) { "${it[0]} - ${it[1]}" }
+
+    // stateflow que contiene la lista des reserva, convertido en un State
+    // -->cada vez que hay una reserva anadido o borado, se actualiza
+    val bookings = bookingPadelViewModel.bookingsPadel.collectAsState().value
 
     Card(
         modifier = Modifier
@@ -57,7 +57,7 @@ fun CardCourt(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Titre avec une icône
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -75,17 +75,18 @@ fun CardCourt(
                     fontWeight = FontWeight.Bold
                 )
             }
-
-            // Disposition des créneaux horaires sous forme de grille
+            // para mostrar horario de forma fluida
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 mainAxisSpacing = 8.dp,
                 crossAxisSpacing = 8.dp
             ) {
                 timeSlots.forEach { timeSlot ->
-                    val isAvailable = bookingPadelViewModel.isCourtAvailable(courtId, date, timeSlot)
+                    val isAvailable = bookings.none { // si no hay reserva qui corresponde -> none
+                        it.courtId == courtId && it.date == date && it.startTime == timeSlot.split(" - ")[0]
+                    }
                     TimeCourtCard(timeSlot, isAvailable) {
-                        onTimeSlotClick(timeSlot)
+                        if (isAvailable) onTimeSlotClick(timeSlot) // si disponible, se ve el timeCourtCar sino en gris se pone
                     }
                 }
             }
@@ -97,14 +98,14 @@ fun CardCourt(
 fun TimeCourtCard(timeSlot: String, isAvailable: Boolean, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .width(110.dp)  // Largeur ajustée pour un affichage propre
+            .width(110.dp)
             .height(50.dp)
             .clickable(enabled = isAvailable, onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isAvailable) MaterialTheme.colorScheme.primary else Color.Gray
         ),
-        shape = RoundedCornerShape(12.dp), // Coins arrondis pour un design plus moderne
+        shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
     ) {
         Box(
@@ -112,7 +113,7 @@ fun TimeCourtCard(timeSlot: String, isAvailable: Boolean, onClick: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = timeSlot.replace("-", " - "), // Ajout d'espaces autour du "-"
+                text = timeSlot.replace("-", " - "),
                 color = if (isAvailable) Color.White else Color.LightGray,
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                 fontWeight = FontWeight.Bold,

@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 fun SelectProductCategory(
     selectedCategory: String,
     onCategorySelected: (String) -> Unit,
-    categories: List<String> = listOf("Palas de pádel", "Pelotas") // Permet d'être flexible
+    categories: List<String> = listOf("Palas de pádel", "Pelotas") //
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -37,7 +37,7 @@ fun SelectProductCategory(
         onExpandedChange = { expanded = it }
     ) {
         TextField(
-            value = selectedCategory.ifEmpty { "Selecciona una categoría" }, // Affiche un texte par défaut si vide
+            value = selectedCategory.ifEmpty { "Selecciona una categoría" },
             onValueChange = {},
             readOnly = true,
             label = { Text("Categoría") },

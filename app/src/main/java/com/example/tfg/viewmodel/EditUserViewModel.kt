@@ -27,7 +27,7 @@ class EditUserViewModel : ViewModel() {
     private val _messageConfirmation = MutableStateFlow("")
     val mensajeConfirmacion: StateFlow<String> get() = _messageConfirmation
 
-    private var currentUid: String? = null  // Guardamos el UID para evitar recargar datos innecesariamente
+    private var currentUid: String? = null  //
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading

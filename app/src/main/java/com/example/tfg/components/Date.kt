@@ -62,7 +62,7 @@ fun Date(selectedDate: String, onDateChange: (String) -> Unit) {
         readOnly = true,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp), // Ajout du padding pour correspondre au design des autres champs
+            .padding(bottom = 16.dp),
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.CalendarToday,

@@ -128,7 +128,7 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, userV
                 }
             )
 
-            // Champ du mot de passe
+            // campo para la contrasena
             PasswordField(
                 value = contraseña,
                 onValueChange = { userViewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, fechaNacimiento, it) }

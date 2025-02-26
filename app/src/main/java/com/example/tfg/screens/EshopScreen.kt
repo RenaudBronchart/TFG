@@ -65,8 +65,7 @@ fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel,
     }
 
     LaunchedEffect(productos) {
-        // Cette effect sera déclenchée dès que 'productos' est mis à jour
-        Log.d("EshopScreen", "Productos mis à jour!")
+        Log.d("EshopScreen", "Productos mis a jour!")
     }
     Scaffold(
         topBar = {
@@ -109,7 +108,7 @@ fun EshopScreen(navController: NavHostController, authViewModel : AuthViewModel,
                 }
             }
 
-            // Affichage des produits
+            // Lazy de Grid
             LazyVerticalGrid(
 
                 columns = GridCells.Fixed(2),

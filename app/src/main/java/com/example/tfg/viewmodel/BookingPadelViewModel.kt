@@ -1,11 +1,12 @@
 package com.example.tfg.viewmodel
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.tfg.models.BookingPadel
 import com.google.firebase.firestore.FirebaseFirestore
-
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +26,11 @@ class BookingPadelViewModel : ViewModel() {
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> = _messageConfirmation
 
-    // Charger les réservations depuis Firestore
+    fun setMessageConfirmation(message: String) {
+        _messageConfirmation.value = message
+    }
+
+    // Cargar datos
     fun getBookingsPadelFromFirestore() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -34,28 +39,44 @@ class BookingPadelViewModel : ViewModel() {
                 val bookings = query.documents.mapNotNull { it.toObject(BookingPadel::class.java) }
                 _bookingsPadel.value = bookings
             } catch (e: Exception) {
-                _messageConfirmation.value = "Erreur lors du chargement des réservations"
+                _messageConfirmation.value = "Error para cargar las reservas"
             } finally {
                 _isLoading.value = false
             }
         }
     }
+    fun loadBookings() {
+        viewModelScope.launch {
+            try {
+                val result = db.collection(name_collection).get().await()
+                val bookings = result.toObjects(BookingPadel::class.java)
+                _bookingsPadel.value = bookings // Stocke en mémoire
+                Log.d("DEBUG", "Réservations chargées : $bookings")
+            } catch (e: Exception) {
+                Log.e("DEBUG", "Erreur de chargement des réservations", e)
+            }
+        }
+    }
 
-    // Réserver un terrain de padel
-    fun bookCourt(courtId: String, date: String, startTime: String, endTime: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+
+    // Reservar una pista de padel
+    fun bookCourt(authViewModel: AuthViewModel, navController: NavHostController, courtId: String, date: String, startTime: String, endTime: String,  onSuccess: (String) -> Unit) {
+        val userId = authViewModel.currentUserId.value ?: ""
         val booking = BookingPadel(
             id = UUID.randomUUID().toString(),
             courtId = courtId,
             date = date,
             startTime = startTime,
             endTime = endTime,
-            userId = "currentUserId",  // Vous devrez probablement remplacer cette partie par un utilisateur authentifié
-            status = false  // Marquer la réservation comme non disponible
+            userId = userId,
+            status = false
         )
 
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                Log.d("BookingDebug", "CourtId: $courtId, Date: $date, StartTime: $startTime, EndTime: $endTime, UserId: $userId")
+               // Verificar si la pista ya está reservada en la misma fecha y hora
                 val existingBooking = db.collection(name_collection)
                     .whereEqualTo("courtId", courtId)
                     .whereEqualTo("date", date)
@@ -63,7 +84,7 @@ class BookingPadelViewModel : ViewModel() {
                     .get().await()
 
                 if (!existingBooking.isEmpty) {
-                    onFailure("Ce créneau est déjà réservé")
+                    onSuccess("Este horario no está disponible")
                     _isLoading.value = false
                     return@launch
                 }
@@ -72,20 +93,26 @@ class BookingPadelViewModel : ViewModel() {
                     .document(booking.id)
                     .set(booking)
                     .await()
-
-                _messageConfirmation.value = "Réservation réussie !"
-                getBookingsPadelFromFirestore() // Actualiser la liste des réservations
-                onSuccess()
+               val successMessage = "Reserva realizada con éxito!!"
+                _messageConfirmation.value = successMessage
+                onSuccess(successMessage)
+                getBookingsPadelFromFirestore() //
             } catch (e: Exception) {
-                onFailure("Erreur lors de la réservation")
+                onSuccess("Error al realizar la reserva: ${e.message ?: "Desconocido"}") //
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    // Vérifier si le terrain est disponible à un créneau donné
-    fun isCourtAvailable(courtId: String, date: String, timeSlot: String): Boolean {
-        return _bookingsPadel.value.none { it.courtId == courtId && it.date == date && it.startTime == timeSlot }
+    // Verificar si la pista est disponible
+    suspend fun isCourtAvailable(courtId: String, date: String, timeSlot: String): Boolean {
+        val existingBooking = db.collection(name_collection)
+            .whereEqualTo("courtId", courtId)
+            .whereEqualTo("date", date)
+            .whereEqualTo("startTime", timeSlot.split(" - ")[0])
+            .get().await()
+
+        return existingBooking.isEmpty
     }
 }

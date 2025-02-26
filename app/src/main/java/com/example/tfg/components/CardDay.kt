@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DayCard(day: LocalDate, isToday: Boolean, isSelected: Boolean, onClick: () -> Unit) {
+fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary
     else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface

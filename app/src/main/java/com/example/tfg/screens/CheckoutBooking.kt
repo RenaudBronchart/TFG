@@ -21,20 +21,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.navigation.NavController
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.navigation.NavHostController
 import com.example.tfg.components.CardCheckout
+import com.example.tfg.viewmodel.AuthViewModel
+import com.example.tfg.viewmodel.BookingPadelViewModel
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckoutBookingScreen(
-    navController: NavController,
-    courtId: String,
-    courtName: String,
-    date: String,
-    timeSlot: String
-) {
+fun CheckoutBookingScreen(navController: NavHostController, authViewModel: AuthViewModel, bookingPadelViewModel: BookingPadelViewModel, courtId: String,
+                          courtName: String, date: String, timeSlot: String) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val message by bookingPadelViewModel.messageConfirmation.collectAsState()
+
+    LaunchedEffect(message) {
+        if (message.isNotEmpty()) {
+            snackbarHostState.showSnackbar(message) //
+            bookingPadelViewModel.setMessageConfirmation("") //
+            navController.popBackStack() //
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -53,7 +70,8 @@ fun CheckoutBookingScreen(
                     }
                 }
             )
-        }
+        },
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -68,9 +86,22 @@ fun CheckoutBookingScreen(
                 date = date,
                 timeSlot = timeSlot,
                 onReserveClick = {
-                    // TODO: Acción de reserva
+                    bookingPadelViewModel.bookCourt(
+                        authViewModel = authViewModel,
+                        navController = navController,
+                        courtId = courtId,
+                        date = date,
+                        startTime = timeSlot.split(" - ")[0], // 🔹 hora inicio
+                        endTime = timeSlot.split(" - ")[1]   // 🔹 hora para el fin
+                    ) {  confirmationMessage ->
+                        bookingPadelViewModel.setMessageConfirmation(confirmationMessage)
+
+                    }
                 }
             )
         }
     }
 }
+
+
+

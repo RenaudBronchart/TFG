@@ -19,6 +19,7 @@ import com.example.tfg.screens.SignUp
 import com.example.tfg.screens.Profile
 import com.example.tfg.screens.ListUsers
 import com.example.tfg.screens.EditUser
+import com.example.tfg.screens.MyBookings
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditProductViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
@@ -46,13 +47,14 @@ fun AppNavigation(authViewModel: AuthViewModel) {
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
         composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel,userViewModel)}
-        composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,viewModel())}
-        composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, viewModel()) }
+        composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
+        composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel) }
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel)}
-        composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,viewModel())}
-        composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel,viewModel())}
+        composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel)}
+        composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel, productViewModel)}
         composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel)}
-        composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, viewModel())}
+        composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, userViewModel)}
+        composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
         composable(AppScreens.EditUser.ruta) { EditUser(navigationController, authViewModel,  editUserViewModel) }
         composable(AppScreens.EditProduct.ruta + "/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
@@ -66,13 +68,13 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.CheckoutBooking.ruta) { backStackEntry ->
             CheckoutBookingScreen(
                 navController = navigationController,
+                authViewModel = authViewModel,
+                bookingPadelViewModel = bookingPadelViewModel,
                 courtId = backStackEntry.arguments?.getString("courtId") ?: "",
                 courtName = backStackEntry.arguments?.getString("courtName") ?: "",
                 date = backStackEntry.arguments?.getString("date") ?: "",
                 timeSlot = backStackEntry.arguments?.getString("timeSlot") ?: ""
             )
         }
-
         }
-
 }

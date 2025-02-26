@@ -37,29 +37,29 @@ import com.example.tfg.components.DataField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel , productoviewModel: ProductViewModel)    {
+fun AddProduct (navController: NavHostController, authViewModel : AuthViewModel, productviewModel: ProductViewModel)    {
 
-    val selectedCategory: String by productoviewModel.categoria.observeAsState("Selecciona una categoría")
-    val nombre:String by productoviewModel.nombre.observeAsState("")
-    val precio:Double by productoviewModel.precio.observeAsState(0.0)
-    val descripcion:String by productoviewModel.descripcion.observeAsState("")
-    val categoria:String by productoviewModel.categoria.observeAsState("")
-    val imagen:String by productoviewModel.imagen.observeAsState("")
-    val stock:Int by productoviewModel.stock.observeAsState(0)
-    val marca:String by productoviewModel.marca.observeAsState("")
-    val isButtonEnable:Boolean by productoviewModel.isButtonEnable.observeAsState(initial = false)
+    val selectedCategory: String by productviewModel.categoria.observeAsState("Selecciona una categoría")
+    val nombre:String by productviewModel.nombre.observeAsState("")
+    val precio:Double by productviewModel.precio.observeAsState(0.0)
+    val descripcion:String by productviewModel.descripcion.observeAsState("")
+    val categoria:String by productviewModel.categoria.observeAsState("")
+    val imagen:String by productviewModel.imagen.observeAsState("")
+    val stock:Int by productviewModel.stock.observeAsState(0)
+    val marca:String by productviewModel.marca.observeAsState("")
+    val isButtonEnable:Boolean by productviewModel.isButtonEnable.observeAsState(initial = false)
     val snackbarHostState = remember { SnackbarHostState() }
-    val message by productoviewModel.messageConfirmation.collectAsState()
+    val message by productviewModel.messageConfirmation.collectAsState()
 
     LaunchedEffect(Unit) {
-        productoviewModel.setMessageConfirmation("")
+        productviewModel.setMessageConfirmation("")
     }
 
     // permite lanzar el message configurado
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
             snackbarHostState.showSnackbar(message)
-            productoviewModel.resetFields()
+            productviewModel.resetFields()
         }
     }
 
@@ -106,7 +106,7 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
         ) {
             SelectProductCategory(
                 selectedCategory = categoria,
-                onCategorySelected = { newCategory -> productoviewModel.onCompletedFields(nombre, precio, descripcion, newCategory, imagen, stock, marca) }
+                onCategorySelected = { newCategory -> productviewModel.onCompletedFields(nombre, precio, descripcion, newCategory, imagen, stock, marca) }
             )
             // bucle para mostrar cada campos y poder ecribrir // design de los campos hecho con  la fucion de DataField
             fields.forEach { (label, value, key) ->
@@ -115,12 +115,12 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
                     value = value,
                     onValueChange = { newValue ->
                         when (key) {
-                            "nombre" -> productoviewModel.onCompletedFields(newValue, precio, descripcion, selectedCategory, imagen, stock, marca)
-                            "precio" -> productoviewModel.onCompletedFields(nombre, newValue.toDoubleOrNull() ?: 0.0, descripcion, selectedCategory, imagen, stock, marca)
-                            "descripcion" -> productoviewModel.onCompletedFields(nombre, precio, newValue, selectedCategory, imagen, stock, marca)
-                            "imagen" -> productoviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, newValue, stock, marca)
-                            "stock" -> productoviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, imagen, newValue.toIntOrNull() ?: 0, marca)
-                            "marca" -> productoviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, imagen, stock, newValue
+                            "nombre" -> productviewModel.onCompletedFields(newValue, precio, descripcion, selectedCategory, imagen, stock, marca)
+                            "precio" -> productviewModel.onCompletedFields(nombre, newValue.toDoubleOrNull() ?: 0.0, descripcion, selectedCategory, imagen, stock, marca)
+                            "descripcion" -> productviewModel.onCompletedFields(nombre, precio, newValue, selectedCategory, imagen, stock, marca)
+                            "imagen" -> productviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, newValue, stock, marca)
+                            "stock" -> productviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, imagen, newValue.toIntOrNull() ?: 0, marca)
+                            "marca" -> productviewModel.onCompletedFields(nombre, precio, descripcion, selectedCategory, imagen, stock, newValue
                             )
                         }
                     }
@@ -130,9 +130,9 @@ fun AddProduct (navController: NavHostController,authViewModel : AuthViewModel ,
             // buton para pinchar y guardar los datos // funcion de logica hecho en productoviwModel
             Button(
                 onClick = {
-                    productoviewModel.addProduct(nombre, precio, descripcion, selectedCategory, imagen, stock, marca) { message ->
-                        productoviewModel.setMessageConfirmation(message)
-                        productoviewModel.resetFields()
+                    productviewModel.addProduct(nombre, precio, descripcion, selectedCategory, imagen, stock, marca) { message ->
+                        productviewModel.setMessageConfirmation(message)
+                        productviewModel.resetFields()
                     }
                 },
                 enabled = isButtonEnable,
