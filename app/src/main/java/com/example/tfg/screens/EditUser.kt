@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel) {
+fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel,  userId: String) {
     val currentUser by authViewModel.user.collectAsState()
     val usuario by editUserViewModel.usuario.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }

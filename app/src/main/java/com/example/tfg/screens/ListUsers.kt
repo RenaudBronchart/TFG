@@ -34,6 +34,7 @@ import com.example.tfg.viewmodel.UserViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.example.tfg.models.User
+import com.example.tfg.navigation.AppScreens
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +63,6 @@ val userData by userViewModel.usuarios.collectAsState()
             )
         }
     ) { innerPadding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -74,8 +74,7 @@ val userData by userViewModel.usuarios.collectAsState()
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
-            // Affichage des utilisateurs dans une liste
+            // mostra lista de usuaruios
             LazyColumn {
                 items(userData) { usuario ->
                     UserCard(usuario = usuario) { userId ->

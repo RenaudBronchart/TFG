@@ -110,9 +110,7 @@ fun BookingPadelScreen(
                         bookingPadelViewModel = bookingPadelViewModel
                     ) { timeSlot ->
                         navController.navigate(
-                            AppScreens.CheckoutBooking.createRoute(
-                                court.id, court.nombre, selectedDate.value.toString(), timeSlot
-                            )
+                            "checkoutScreen/${court.id}/${court.nombre}/${selectedDate.value}/$timeSlot"
                         )
                     }
                 }

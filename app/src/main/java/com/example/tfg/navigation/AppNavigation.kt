@@ -55,26 +55,23 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel)}
         composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, userViewModel)}
         composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
-        composable(AppScreens.EditUser.ruta) { EditUser(navigationController, authViewModel,  editUserViewModel) }
-        composable(AppScreens.EditProduct.ruta + "/{productId}") { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId") ?: ""
-            EditProduct(
-                navController = navigationController,
-                authViewModel = authViewModel,
-                editProductViewModel = editProductViewModel,
-                productId = productId
-            )
+        composable(AppScreens.EditUser.ruta) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            EditUser(navigationController, authViewModel, editUserViewModel, userId)
         }
+
+        composable(AppScreens.EditProduct.ruta)  { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            EditProduct(navigationController, authViewModel, editProductViewModel, productId)
+        }
+
         composable(AppScreens.CheckoutBooking.ruta) { backStackEntry ->
-            CheckoutBookingScreen(
-                navController = navigationController,
-                authViewModel = authViewModel,
-                bookingPadelViewModel = bookingPadelViewModel,
+            CheckoutBookingScreen(navigationController, authViewModel, bookingPadelViewModel,
                 courtId = backStackEntry.arguments?.getString("courtId") ?: "",
                 courtName = backStackEntry.arguments?.getString("courtName") ?: "",
                 date = backStackEntry.arguments?.getString("date") ?: "",
                 timeSlot = backStackEntry.arguments?.getString("timeSlot") ?: ""
             )
         }
-        }
+    }
 }

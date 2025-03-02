@@ -38,6 +38,7 @@ import androidx.navigation.NavHostController
 import com.example.tfg.components.CardItem
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
+import com.example.tfg.navigation.AppScreens
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
@@ -48,6 +49,7 @@ fun Profile(navController: NavHostController, authViewModel: AuthViewModel, User
     val usuarioData by UserViewModel.usuario.collectAsState()
     val nombre = usuarioData?.nombre ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value
+    val userId = authViewModel.currentUserId.value ?: ""
 
     LaunchedEffect(firebaseUser?.uid) {
         firebaseUser?.let {
@@ -121,9 +123,11 @@ fun Profile(navController: NavHostController, authViewModel: AuthViewModel, User
                             if (item.route == "Logout") {
                                 authViewModel.signOut()
                                 navController.navigate("Login") {
-                                    popUpTo("Login") {inclusive = true} }
+                                    popUpTo("Login") { inclusive = true }
                                 }
-                            else{ navController.navigate(item.route) }
+                            } else {
+                                navController.navigate("editUser/$userId")
+                            }
                         }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
