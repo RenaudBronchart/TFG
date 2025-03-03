@@ -34,12 +34,12 @@ import com.example.tfg.components.SelectGender
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.UserViewModel
 import com.example.tfg.components.PasswordField
-
+import com.example.tfg.components.TopBarComponent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
+fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
     val nombre by userViewModel.nombre.observeAsState("")
     val apellido by userViewModel.apellido.observeAsState("")
     val dni by userViewModel.dni.observeAsState("")
@@ -67,24 +67,7 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, userV
         }
     }
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                ),
-                title = { Text("Crear cuenta") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigate("Login") }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        },
+        topBar = { TopBarComponent("Crear cuenta", navHostController) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
@@ -135,7 +118,7 @@ fun SignUp(navController: NavHostController, authViewModel: AuthViewModel, userV
             )
             Button(
                 onClick = {
-                    userViewModel.registerUser(authViewModel, navController) { message ->
+                    userViewModel.registerUser(authViewModel, navHostController) { message ->
                         userViewModel.setMessageConfirmation(message)
                     }
                 },

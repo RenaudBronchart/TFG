@@ -52,7 +52,7 @@ fun CardCheckout(courtName: String, date: String, timeSlot: String,showReserveBu
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Reservation de la Pista",
+                text = "Reservacion de la Pista",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

@@ -11,16 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,48 +30,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.tfg.components.BottomBarComponent
 import com.example.tfg.components.CardItem
+import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
-import com.example.tfg.navigation.AppScreens
 import com.example.tfg.viewmodel.AuthViewModel
+import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(navController: NavHostController, authViewModel: AuthViewModel, UserViewModel: UserViewModel) {
+fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
-    val usuarioData by UserViewModel.usuario.collectAsState()
+    val usuarioData by userViewModel.usuario.collectAsState()
     val nombre = usuarioData?.nombre ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value
     val userId = authViewModel.currentUserId.value ?: ""
+    val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
     LaunchedEffect(firebaseUser?.uid) {
         firebaseUser?.let {
-            UserViewModel.loadUser(it.uid)
+            userViewModel.loadUser(it.uid)
         }
     }
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                ),
-                title = { Text("Mi Perfil") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigate("Home") }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "back",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
+        topBar = { TopBarComponent("Perfil",navHostController) },
+        bottomBar = { BottomBarComponent(navHostController, cartItems) }
+    )  { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -120,13 +100,19 @@ fun Profile(navController: NavHostController, authViewModel: AuthViewModel, User
                         icon = item.icon,
                         text = item.text,
                         onClick = {
-                            if (item.route == "Logout") {
-                                authViewModel.signOut()
-                                navController.navigate("Login") {
-                                    popUpTo("Login") { inclusive = true }
+                            when (item.route) {
+                                "Logout" -> {
+                                    authViewModel.signOut()
+                                    navHostController.navigate("Login") {
+                                        popUpTo("Login") { inclusive = true }
+                                    }
                                 }
-                            } else {
-                                navController.navigate("editUser/$userId")
+                                "EditUser" -> {
+                                    navHostController.navigate("editUser/$userId")
+                                }
+                                else -> {
+                                    navHostController.navigate(item.route)
+                                }
                             }
                         }
                     )

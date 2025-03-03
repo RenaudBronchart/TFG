@@ -1,6 +1,5 @@
 package com.example.tfg.screens
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,20 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,13 +30,13 @@ import androidx.navigation.NavHostController
 import com.example.tfg.components.DataField
 import com.example.tfg.components.Date
 import com.example.tfg.components.SelectGender
+import com.example.tfg.components.TopBarComponent
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel,  userId: String) {
     val currentUser by authViewModel.user.collectAsState()
@@ -58,12 +50,10 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
     LaunchedEffect(Unit) {
         editUserViewModel.resetMessage()
     }
-
     // Cargar datos del usuario cuando el UID cambie
     LaunchedEffect(currentUser?.uid) {
         currentUser?.uid?.let { editUserViewModel.loadUser(it) }
     }
-
     // Mostrar mensaje en Snackbar si hay un mensaje de confirmación
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
@@ -71,26 +61,8 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
             editUserViewModel.resetMessage() // Limpiar mensaje después de mostrarlo
         }
     }
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                ),
-                title = { Text("Mis datos") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigate("Profile") }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        },
+        topBar = { TopBarComponent("Datos", navController)},
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(

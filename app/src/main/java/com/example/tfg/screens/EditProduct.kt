@@ -37,13 +37,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.tfg.components.SelectProductCategory
 import com.example.tfg.components.DataField
+import com.example.tfg.components.TopBarComponent
 import com.example.tfg.viewmodel.EditProductViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, editProductViewModel: EditProductViewModel, productId: String) {
+fun EditProduct(navHostController: NavHostController, authViewModel: AuthViewModel, editProductViewModel: EditProductViewModel, productId: String) {
     val isLoading by editProductViewModel.isLoading.collectAsState()
     val producto by editProductViewModel.producto.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
@@ -66,24 +67,7 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
 
     // para poder configurar TOPBAR
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                ),
-                title = { Text("Editar producto") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "volver",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        },
+        topBar = { TopBarComponent("Editar producto", navHostController) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
@@ -109,7 +93,7 @@ fun EditProduct(navController: NavHostController, authViewModel: AuthViewModel, 
                         editProductViewModel.setMessageConfirmation(message)
                         coroutineScope.launch {
                             delay(500) // ponemos delay
-                            navController.popBackStack() // para volver a la pagina de Etienda
+                            navHostController.popBackStack() // para volver a la pagina de Etienda
                         }
                     }
                 },

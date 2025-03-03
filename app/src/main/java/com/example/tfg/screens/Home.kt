@@ -24,20 +24,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.tfg.components.BottomBarComponent
 import com.example.tfg.components.CardItem
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
 import com.example.tfg.viewmodel.AuthViewModel
+import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
+fun Home(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
     val usuarioData by userViewModel.usuario.collectAsState()
     val currentUser by authViewModel.user.collectAsState()
     val nombre = usuarioData?.nombre ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
+    val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
     authViewModel.fetchCurrentUser()
 
@@ -56,7 +59,8 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
                 ),
                 title = { Text("¡Hola, $nombre! 👋") },
             )
-        }
+        },
+        bottomBar = { BottomBarComponent(navController, cartItems) }
     ) { innerPadding ->
         Box(
             modifier = Modifier

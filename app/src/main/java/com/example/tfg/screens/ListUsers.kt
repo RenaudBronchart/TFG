@@ -33,35 +33,20 @@ import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.UserViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.User
 import com.example.tfg.navigation.AppScreens
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListUsers(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
+fun ListUsers(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
 
 val userData by userViewModel.usuarios.collectAsState()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                ),
-                title = { Text("Mis datos") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigate("Profile") }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "volver",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        }
+        topBar = { TopBarComponent("Datos", navHostController) },
+
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -78,7 +63,7 @@ val userData by userViewModel.usuarios.collectAsState()
             LazyColumn {
                 items(userData) { usuario ->
                     UserCard(usuario = usuario) { userId ->
-                        navController.navigate("editUser/$userId")
+                        navHostController.navigate("editUser/$userId")
                     }
                 }
             }

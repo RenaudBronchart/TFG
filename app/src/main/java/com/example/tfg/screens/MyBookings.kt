@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.CardCheckout
+import com.example.tfg.components.TopBarComponent
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.BookingPadelViewModel
 import com.example.tfg.viewmodel.CourtPadelViewModel
@@ -36,7 +37,7 @@ import com.example.tfg.viewmodel.CourtPadelViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyBookings(navController: NavHostController, authViewModel : AuthViewModel, bookingPadelViewModel: BookingPadelViewModel,courtPadelViewModel: CourtPadelViewModel)  {
+fun MyBookings(navHostController: NavHostController, authViewModel : AuthViewModel, bookingPadelViewModel: BookingPadelViewModel,courtPadelViewModel: CourtPadelViewModel)  {
     val currentUser by authViewModel.user.collectAsState()
     // bookingPadelViewModel.bookingsPadel = stateFlowList de BookingPadel
     // collectAstate permite leer y actualizar AllBookings cada vez que los datos cambian
@@ -54,24 +55,7 @@ fun MyBookings(navController: NavHostController, authViewModel : AuthViewModel, 
     val userBookings = allBookings.filter { it.userId == currentUser?.uid }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                ),
-                title = { Text("Mis reservas") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigate("Profile") }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        }
+        topBar = { TopBarComponent("Mis reservas",navHostController) },
     ) { innerPadding ->
         Column(
             modifier = Modifier

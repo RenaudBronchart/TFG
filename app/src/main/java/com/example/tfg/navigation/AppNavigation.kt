@@ -26,6 +26,7 @@ import com.example.tfg.viewmodel.EditUserViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 import com.example.tfg.viewmodel.UserViewModel
 import com.example.tfg.viewmodel.BookingPadelViewModel
+import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.CourtPadelViewModel
 
 
@@ -40,19 +41,20 @@ fun AppNavigation(authViewModel: AuthViewModel) {
     val editProductViewModel: EditProductViewModel = viewModel()
     val bookingPadelViewModel: BookingPadelViewModel = viewModel()
     val courtPadelViewModel: CourtPadelViewModel = viewModel()
+    val cartShoppingViewModel : CartShoppingViewModel = viewModel()
 
     NavHost(
         navController =  navigationController, // recordar la navigation
         startDestination = AppScreens.Home.ruta // indicar la ruta donde empezamos la app
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
-        composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel,userViewModel)}
+        composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel,userViewModel,cartShoppingViewModel)}
         composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
-        composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel) }
-        composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel)}
+        composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
+        composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel, cartShoppingViewModel)}
         composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel)}
         composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel, productViewModel)}
-        composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel)}
+        composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel,cartShoppingViewModel)}
         composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, userViewModel)}
         composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
         composable(AppScreens.EditUser.ruta) { backStackEntry ->
