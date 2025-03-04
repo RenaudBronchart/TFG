@@ -54,10 +54,7 @@ fun CheckoutBookingScreen(navHostController: NavHostController, authViewModel: A
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CardCheckout(
-                courtName = courtName,
-                date = date,
-                timeSlot = timeSlot,
+            CardCheckout( courtName, date, timeSlot,
                 onReserveClick = {
                     bookingPadelViewModel.bookCourt(authViewModel, navHostController, courtId, date,
                         startTime = timeSlot.split(" - ")[0], // 🔹 hora inicio

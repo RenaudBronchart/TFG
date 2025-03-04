@@ -64,7 +64,7 @@ fun BottomBarComponent(navController: NavHostController, cartItems: List<Product
                     }
                 },
                 modifier = Modifier.clickable {
-                    navController.navigate("EshopScreen")
+                    navController.navigate("CheckoutShopping")
                 }
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {

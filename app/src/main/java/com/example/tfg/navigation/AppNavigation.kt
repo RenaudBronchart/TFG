@@ -11,6 +11,7 @@ import com.example.tfg.screens.AddProduct
 import com.example.tfg.screens.AdminPage
 import com.example.tfg.screens.BookingPadelScreen
 import com.example.tfg.screens.CheckoutBookingScreen
+import com.example.tfg.screens.CheckoutShopping
 import com.example.tfg.screens.EditProduct
 import com.example.tfg.screens.EshopScreen
 import com.example.tfg.screens.Home
@@ -57,6 +58,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel,cartShoppingViewModel)}
         composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, userViewModel)}
         composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
+        composable(AppScreens.CheckoutShopping.ruta) { CheckoutShopping(navigationController,cartShoppingViewModel) }
         composable(AppScreens.EditUser.ruta) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             EditUser(navigationController, authViewModel, editUserViewModel, userId)
