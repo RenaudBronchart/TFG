@@ -170,4 +170,7 @@ class ProductViewModel: ViewModel() {
         _messageConfirmation.value = message
     }
 
+
+
+
 }

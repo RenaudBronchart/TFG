@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -35,7 +40,13 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
 @Composable
-fun CardCheckoutShopping(navHostController : NavHostController, cartShoppingViewModel: CartShoppingViewModel, producto: Producto){
+fun CardCheckoutShopping(
+    navHostController: NavHostController,
+    cartShoppingViewModel: CartShoppingViewModel,
+    producto: Producto
+) {
+
+
 
     Card(
         modifier = Modifier
@@ -44,23 +55,26 @@ fun CardCheckoutShopping(navHostController : NavHostController, cartShoppingView
             .clip(RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(6.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
+            // imagen producto
             AsyncImage(
-                model = producto.imagen, //
+                model = producto.imagen,
                 contentDescription = producto.nombre,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(16.dp)),
                 contentScale = ContentScale.Crop
             )
-           Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // info sobre el producto
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -75,12 +89,87 @@ fun CardCheckoutShopping(navHostController : NavHostController, cartShoppingView
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
+
+                val stockRestante = producto.stock - producto.quantity
+                val stockMessage = if (stockRestante > 0) {
+                    "Stock disponible: $stockRestante"
+                } else {
+                    "No hay suficiente stock!"
+                }
+
+                // Muestra el mensaje de stock con el color adecuado
+                if (producto.stock <= producto.quantity) {
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Stock limitado",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "¡Stock limitado!",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else {
+                    // mensaje para mostrar
+                    Text(
+                        text = stockMessage,
+                        fontSize = 14.sp,
+                        color = if (stockRestante > 0) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                    )
+                }
+
+                // visual para buton cantidad + y -
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp), //
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Cantidad: ${producto.quantity}",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+
+                    //button -
+                    IconButton(
+                        onClick = {
+                            cartShoppingViewModel.decreaseQuantity(producto)
+                        },
+                        modifier = Modifier.size(24.dp) // talla button
+                    ) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Remove,
+                            contentDescription = "RemoveQuantity",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    // Button +
+                    IconButton(
+                        onClick = {
+                            cartShoppingViewModel.increaseQuantity(producto)
+                        },
+                        modifier = Modifier.size(24.dp) // talla button
+                    ) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Add,
+                            contentDescription = "AddQuantity",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
 
+            // button borrar
             IconButton(
                 onClick = {
                     cartShoppingViewModel.removeToCart(producto)
-                }
+                },
+                modifier = Modifier.align(Alignment.CenterVertically) //
             ) {
                 Icon(
                     imageVector = androidx.compose.material.icons.Icons.Default.Delete,
@@ -103,7 +192,7 @@ fun TotalToPay(navHostController : NavHostController, cartShoppingViewModel: Car
         modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
         Text(
-            text = "Total: ${productos.sumOf { it.precio }} €",
+            text = "Total: ${cartShoppingViewModel.calcularTotal()} €",
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp,
             color = MaterialTheme.colorScheme.primary

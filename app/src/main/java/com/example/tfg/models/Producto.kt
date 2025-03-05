@@ -10,5 +10,6 @@ data class Producto(
     val categoria:String = "",
     val imagen:String = "",
     val stock:Int = 0,
+    val quantity:Int = 1,
     val marca:String = "",
     )

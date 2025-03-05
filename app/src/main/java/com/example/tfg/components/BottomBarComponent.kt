@@ -57,9 +57,10 @@ fun BottomBarComponent(navController: NavHostController, cartItems: List<Product
 
             BadgedBox(
                 badge = {
-                    if (cartItems.size > 0) {
+                    val totalQuantity = cartItems.sumOf { it.quantity } // total cantidad
+                    if (totalQuantity > 0) {
                         Badge(containerColor = Color.Red) {
-                            Text("${cartItems.size}", color = Color.White)
+                            Text("$totalQuantity", color = Color.White)
                         }
                     }
                 },

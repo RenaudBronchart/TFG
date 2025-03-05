@@ -1,7 +1,11 @@
 package com.example.tfg.components
 
+import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,97 +41,120 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostController, productViewModel: ProductViewModel, cartShoppingViewModel: CartShoppingViewModel) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val existingItem = cartShoppingViewModel.CartShopping.value.find { it.id == producto.id }
+    val isOutOfStock = producto.stock == 0
+
+    val cardBackgroundColor = if (isOutOfStock) Color.Gray else Color.White
+    val isClickable = !isOutOfStock
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .height(290.dp),
+            .height(290.dp)
+            .clickable(enabled = isClickable, onClick = {
+                if (!isOutOfStock) {
+
+                }
+            }),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AsyncImage(
-                model = producto.imagen, //
-                contentDescription = producto.nombre,
+            Column(
                 modifier = Modifier
-                    .size(140.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = producto.nombre, fontWeight = FontWeight.Bold)
-            Text(text = "${producto.precio} €", color = Color.Black)
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            if (isAdmin) {
+                    .fillMaxSize()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AsyncImage(
+                    model = producto.imagen, //
+                    contentDescription = producto.nombre,
+                    modifier = Modifier
+                        .size(140.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
-                        onClick = {
-                            navController.navigate("EditProduct/${producto.id}") // Redirige vers l'édition
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                Text(text = producto.nombre, fontWeight = FontWeight.Bold)
+                Text(text = "${producto.precio} €", color = Color.Black)
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (isAdmin) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp) // Taille plus grande
-                        )
-                        Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
-                        /* Text("Editar", color = Color.White, fontSize = 11.sp)*/
+                        Button(
+                            modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
+                            onClick = {
+                                navController.navigate("EditProduct/${producto.id}") // Redirige vers l'édition
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp) // Taille plus grande
+                            )
+                            Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
+                            /* Text("Editar", color = Color.White, fontSize = 11.sp)*/
+                        }
+
+                        Button(
+                            modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
+                            onClick = {
+                                productViewModel.deleteProduct(producto.id) { message ->
+                                    productViewModel.setMessageConfirmation(message)
+
+                                }
+                            },
+
+                            ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
+                            /*Text("Eliminar", color = Color.White, fontSize = 11.sp)*/
+                        }
                     }
-
+                } else { // no admin
                     Button(
-                        modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
+                        modifier = Modifier.padding(2.dp).height(38.dp).fillMaxWidth(),
                         onClick = {
-                            productViewModel.deleteProduct(producto.id) { message ->
-                                productViewModel.setMessageConfirmation(message)
-
+                            // ver si hay producto y la cantidad
+                            if (existingItem == null || existingItem.quantity < producto.stock) {
+                                cartShoppingViewModel.addToCart(producto) //
+                                Toast.makeText(
+                                    context,
+                                    "${producto.nombre} añadido a la cesta",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                // Si el stock es limitado, mostramos un mensaje
+                                Toast.makeText(
+                                    context,
+                                    "¡Stock limitado a ${producto.stock} unidades!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         },
 
                         ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Eliminar",
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
-                        /*Text("Eliminar", color = Color.White, fontSize = 11.sp)*/
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "Añadir")
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Añadir", color = Color.White)
                     }
-                }
-            } else {
-                Button(
-                    modifier = Modifier.padding(2.dp).height(38.dp).fillMaxWidth(),
-                    onClick = {
-                        cartShoppingViewModel.addToCart(producto)
-                        Toast.makeText(context, "${producto.nombre} añadido a la cesta", Toast.LENGTH_SHORT).show()
-                    }
-
-                ) {
-                    Icon(Icons.Default.ShoppingCart, contentDescription = "Añadir")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Añadir", color = Color.White)
-
                 }
             }
         }
-
     }
-
-}
