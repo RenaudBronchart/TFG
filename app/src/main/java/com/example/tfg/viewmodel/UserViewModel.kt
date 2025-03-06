@@ -89,7 +89,7 @@ class UserViewModel: ViewModel() {
         viewModelScope.launch {
 
             try {
-                val document = db.collection("usuarios").document(uid).get().await()
+                val document = db.collection(name_collection).document(uid).get().await()
                 val usuario = document.toObject(User::class.java)
 
                 if (usuario != null) {

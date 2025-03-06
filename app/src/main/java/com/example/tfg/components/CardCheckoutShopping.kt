@@ -36,17 +36,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.tfg.models.Producto
+import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
 @Composable
-fun CardCheckoutShopping(
-    navHostController: NavHostController,
-    cartShoppingViewModel: CartShoppingViewModel,
-    producto: Producto
+fun CardCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, producto: Producto
 ) {
-
-
 
     Card(
         modifier = Modifier
@@ -142,7 +138,7 @@ fun CardCheckoutShopping(
                         modifier = Modifier.size(24.dp) // talla button
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Remove,
+                            imageVector = Icons.Default.Remove,
                             contentDescription = "RemoveQuantity",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -156,7 +152,7 @@ fun CardCheckoutShopping(
                         modifier = Modifier.size(24.dp) // talla button
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Add,
+                            imageVector = Icons.Default.Add,
                             contentDescription = "AddQuantity",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -186,7 +182,7 @@ fun CardCheckoutShopping(
 
 
 @Composable
-fun TotalToPay(navHostController : NavHostController, cartShoppingViewModel: CartShoppingViewModel, productos: List<Producto>){
+fun TotalToPay(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, productos: List<Producto>, authViewModel: AuthViewModel){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth().padding(16.dp)
@@ -200,8 +196,8 @@ fun TotalToPay(navHostController : NavHostController, cartShoppingViewModel: Car
 
         Button(
             onClick = {
+                cartShoppingViewModel.createOrder(authViewModel, navHostController)
                 cartShoppingViewModel.clearCart()
-                navHostController.navigate("Confirmacion")
             },
             modifier = Modifier
                 .fillMaxWidth()

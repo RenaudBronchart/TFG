@@ -58,6 +58,8 @@ class ProductViewModel: ViewModel() {
         getProductosFromFirestore()
     }
 
+
+
     fun getProductosFromFirestore() {
         viewModelScope.launch {
             // almacenar el nombre de la colección

@@ -18,10 +18,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.tfg.components.CardCheckoutShopping
 import com.example.tfg.components.TotalToPay
+import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 @Composable
-fun CheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel) {
+fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthViewModel ,cartShoppingViewModel: CartShoppingViewModel) {
     val productos by cartShoppingViewModel.CartShopping.collectAsState()
 
     Scaffold(
@@ -48,7 +49,7 @@ fun CheckoutShopping(navHostController: NavHostController, cartShoppingViewModel
                     }
                 }
             }
-            TotalToPay(navHostController, cartShoppingViewModel,productos)
+            TotalToPay(navHostController, cartShoppingViewModel,productos, authViewModel)
         }
     }
 }

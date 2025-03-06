@@ -50,7 +50,7 @@ class BookingPadelViewModel : ViewModel() {
             try {
                 val result = db.collection(name_collection).get().await()
                 val bookings = result.toObjects(BookingPadel::class.java)
-                _bookingsPadel.value = bookings // Stocke en mémoire
+                _bookingsPadel.value = bookings
                 Log.d("DEBUG", "Réservations chargées : $bookings")
             } catch (e: Exception) {
                 Log.e("DEBUG", "Erreur de chargement des réservations", e)

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.DataField
-import com.example.tfg.components.Date
+import com.example.tfg.components.SelectDate
 import com.example.tfg.components.SelectGender
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.viewmodel.AuthViewModel
@@ -85,7 +84,7 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
                         selectedGender = usuario.genero,
                         onGenderChange = editUserViewModel::setGenero
                     )
-                    Date(
+                    SelectDate(
                         selectedDate = usuario.fechaNacimiento,
                         onDateChange = editUserViewModel::setFechaNacimiento
                     )

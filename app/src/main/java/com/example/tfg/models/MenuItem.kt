@@ -24,7 +24,7 @@ val menuItems = listOf(
     MenuItem(Icons.Default.Checklist, "Lista de usuarios", "ListUsers",MenuCategory.ADMIN),
     MenuItem(Icons.Default.Person, "Editar mi perfil", "EditUser", MenuCategory.PROFILE),
     MenuItem(Icons.Default.Book, "Mis reservas", "MyBookings", MenuCategory.PROFILE),
-    MenuItem(Icons.Default.ShoppingCart, "Mis compras", "MyPurchases", MenuCategory.PROFILE),
+    MenuItem(Icons.Default.ShoppingCart, "Mis compras", "MyOrders", MenuCategory.PROFILE),
     MenuItem(Icons.AutoMirrored.Filled.ExitToApp, "Desconectar", "Logout", MenuCategory.PROFILE)
 
 )
