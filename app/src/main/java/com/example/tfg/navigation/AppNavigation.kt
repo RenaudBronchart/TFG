@@ -65,7 +65,6 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
         composable(AppScreens.MyOrders.ruta) { MyOrders (navigationController,authViewModel, orderViewModel )}
 
-
         composable(AppScreens.EditUser.ruta) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             EditUser(navigationController, authViewModel, editUserViewModel, userId)

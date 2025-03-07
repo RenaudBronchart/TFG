@@ -16,5 +16,5 @@ sealed class AppScreens(val ruta: String) {
     object MyBookings: AppScreens("myBookings")
     object CheckoutBooking: AppScreens("checkoutScreen/{courtId}/{courtName}/{date}/{timeSlot}")
     object CheckoutShopping: AppScreens("checkoutShopping")
-    object MyOrders : AppScreens("MyOrders")
+    object MyOrders : AppScreens("myOrders")
 }

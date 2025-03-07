@@ -18,18 +18,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
 import com.example.tfg.components.BottomBarComponent
+import com.example.tfg.components.CardProductDetail
 import com.example.tfg.components.ProductCard
 import com.example.tfg.components.TopBarComponent
+import com.example.tfg.models.Producto
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
 @Composable
 fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewModel, productViewModel: ProductViewModel, cartShoppingViewModel: CartShoppingViewModel) {
-   var selectedCategory by remember { mutableStateOf("All") }
     val productos by productViewModel.productos.collectAsState()
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
+
+    var selectedProduct by remember { mutableStateOf<Producto?>(null) }
+    var showSheet by remember { mutableStateOf(false) }
 
     authViewModel.fetchCurrentUser()
     LaunchedEffect(navHostController) {
@@ -51,21 +55,6 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
                 .padding(innerPadding)
                 .padding(16.dp),
         ) {
-            /*// Filtres
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                CategoryIcon("Pala", Icons.Default.SportsTennis, selectedCategory) {
-                    selectedCategory = "Pala"
-                }
-                CategoryIcon("Pelotas", Icons.Default.SportsBaseball, selectedCategory) {
-                    selectedCategory = "Pelotas"
-                }
-            }*/
-
             // Lazy de Grid
             LazyVerticalGrid(
 
@@ -73,38 +62,35 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(productos, key = { it.id }) { producto ->
-                    ProductCard(producto, isAdmin, navHostController, productViewModel, cartShoppingViewModel)
+                    ProductCard(producto, isAdmin, navHostController, productViewModel, cartShoppingViewModel,
+                        onProductClick = {
+                            selectedProduct = producto
+                            showSheet = true
+                        }
+                    )
 
                 }
             }
         }
+        if (showSheet && selectedProduct != null) {
+            CardProductDetail(
+                navController = navHostController,
+                producto = selectedProduct!!,
+                cartShoppingViewModel = cartShoppingViewModel,
+                productViewModel = productViewModel,
+                onAddToCart = {
+                    cartShoppingViewModel.addToCart(selectedProduct!!)
+                },
+                onDismiss = {
+                    showSheet = false
+                    selectedProduct = null
+                }
+            )
+        }
     }
 }
 
-/*@Composable
-fun CategoryIcon(name: String, icon: ImageVector, selectedCategory: String, onClick: () -> Unit) {
-  Card(
-      shape = RoundedCornerShape(12.dp),
-      colors = CardDefaults.cardColors(containerColor = if (selectedCategory == name) Color.LightGray else Color.White),
-      modifier = Modifier
-          .size(60.dp)  // size caja
-          .shadow(8.dp, RoundedCornerShape(12.dp)) // shape caja
-          .clickable(onClick = onClick)
-  ) {
-      Column(
-          modifier = Modifier.fillMaxSize(),
-          verticalArrangement = Arrangement.Center,
-          horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-          Icon(
-              imageVector = icon,
-              contentDescription = name,
-              tint = if (selectedCategory == name) Color.Blue else Color.Gray
-          )
-          Text(text = name, color = Color.Black)
-      }
-  }
-}*/
+
 
 
 
