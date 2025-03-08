@@ -22,6 +22,7 @@ import com.example.tfg.screens.Profile
 import com.example.tfg.screens.ListUsers
 import com.example.tfg.screens.EditUser
 import com.example.tfg.screens.MyBookings
+import com.example.tfg.screens.OrderDoneScreen
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditProductViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
@@ -64,6 +65,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.CheckoutShopping.ruta) { CheckoutShopping(navigationController,authViewModel,cartShoppingViewModel) }
         composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
         composable(AppScreens.MyOrders.ruta) { MyOrders (navigationController,authViewModel, orderViewModel )}
+        composable(AppScreens.OrderDoneScreen.ruta) { OrderDoneScreen (navigationController,authViewModel, orderViewModel,cartShoppingViewModel )}
 
         composable(AppScreens.EditUser.ruta) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""

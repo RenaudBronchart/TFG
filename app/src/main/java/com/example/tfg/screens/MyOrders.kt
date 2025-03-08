@@ -23,7 +23,7 @@ import com.example.tfg.viewmodel.OrderViewModel
 fun MyOrders(navHostController: NavHostController, authViewModel: AuthViewModel, orderViewModel: OrderViewModel) {
     val userId = authViewModel.currentUserId.value ?: ""
 
-    // Charger les commandes quand la composante est affichée
+    // Cargar
     LaunchedEffect(userId) {
         if (userId.isNotEmpty()) {
             orderViewModel.loadOrders(userId)

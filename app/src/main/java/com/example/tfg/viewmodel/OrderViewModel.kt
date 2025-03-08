@@ -61,6 +61,23 @@ class OrderViewModel:ViewModel() {
         }
     }
 
+    fun loadLastOrder(orderId: String) {
+        viewModelScope.launch {
+            try {
+                val result = db.collection(name_collection)
+                    .document(orderId)
+                    .get()
+                    .await()
+
+                val order = result.toObject(Order::class.java)
+                _orders.value = listOfNotNull(order) // On ne garde que cette commande
+                Log.d("DEBUG", "Dernière commande chargée : $order")
+            } catch (e: Exception) {
+                Log.e("DEBUG", "Erreur de chargement de la commande", e)
+            }
+        }
+    }
+
 
 
 }

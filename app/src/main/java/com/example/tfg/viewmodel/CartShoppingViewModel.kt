@@ -27,6 +27,9 @@ class CartShoppingViewModel : ViewModel() {
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
     val orders: StateFlow<List<Order>> = _orders
 
+    private val _lastOrderId = MutableStateFlow<String?>(null)
+    val lastOrderId: StateFlow<String?> = _lastOrderId
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -60,7 +63,7 @@ class CartShoppingViewModel : ViewModel() {
         Log.d("CartShopping", "Producto agregado: ${producto.nombre}")
     }
 
-    fun createOrder(authViewModel: AuthViewModel, navHostController: NavHostController) {
+    fun createOrder(authViewModel: AuthViewModel, onOrderCreated: () -> Unit) {
         val userId = authViewModel.currentUserId.value ?: ""
         val totalAmount = calcularTotal()
 
@@ -84,9 +87,9 @@ class CartShoppingViewModel : ViewModel() {
                     .document(order.id)
                     .set(order)
                     .await()
-
                 _messageConfirmation.value  = "Compra realizada con éxito!!"
-
+                _lastOrderId.value = order.id // se asigna id de order creado
+                onOrderCreated() // para ejecutar el calllbacka
             } catch (e: Exception) {
                 _messageConfirmation.value = "Error al realizar la compra: ${e.message ?: "Desconocido"}"
             } finally {

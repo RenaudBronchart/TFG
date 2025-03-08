@@ -196,8 +196,13 @@ fun TotalToPay(navHostController: NavHostController, cartShoppingViewModel: Cart
 
         Button(
             onClick = {
-                cartShoppingViewModel.createOrder(authViewModel, navHostController)
-                cartShoppingViewModel.clearCart()
+                // creamos el order
+                cartShoppingViewModel.createOrder(authViewModel) {
+                    // pedido hecho, poner a 0
+                    cartShoppingViewModel.clearCart()
+                    // rederigmos el usuario a la pagina que los datos del pedido
+                    navHostController.navigate("OrderDoneScreen")
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
