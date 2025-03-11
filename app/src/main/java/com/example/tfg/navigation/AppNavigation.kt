@@ -38,6 +38,8 @@ import com.example.tfg.viewmodel.OrderViewModel
 @Composable
 fun AppNavigation(authViewModel: AuthViewModel) {
 
+    // rememberNavController() crea y recuerda una instancia de NavController,
+    // que permite manejar la navegación entre pantallas en Jetpack Compose.
     val navigationController = rememberNavController()
     val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
     val userViewModel: UserViewModel = viewModel() // De nuevo, obtener usuarioViewModel si es necesario
@@ -50,7 +52,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
 
 
     NavHost(
-        navController =  navigationController, // recordar la navigation
+        navController =  navigationController,
         startDestination = AppScreens.Home.ruta // indicar la ruta donde empezamos la app
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
@@ -66,7 +68,10 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
         composable(AppScreens.MyOrders.ruta) { MyOrders (navigationController,authViewModel, orderViewModel )}
         composable(AppScreens.OrderDoneScreen.ruta) { OrderDoneScreen (navigationController,authViewModel, orderViewModel,cartShoppingViewModel )}
-
+        // declaramos una ruta en la navigation con composable para llegar a la pagina de Edituser
+        // backStackEntry va a permitir obtener los parametros de navagacion de backStackEntry
+         //   ?: ""
+        //→ Si userId es null, devuelve una cadena vacía "" en su lugar.
         composable(AppScreens.EditUser.ruta) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             EditUser(navigationController, authViewModel, editUserViewModel, userId)

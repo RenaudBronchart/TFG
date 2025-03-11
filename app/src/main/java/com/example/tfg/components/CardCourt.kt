@@ -37,7 +37,10 @@ import com.google.accompanist.flowlayout.FlowRow
 @Composable
 fun CardCourt(courtId: String, date: String, courtName: String, bookingPadelViewModel: BookingPadelViewModel, onTimeSlotClick: (String) -> Unit
 ) {
+    // se define una lista de horarario con format hora y minutos hh:mm
     val timeSlots = listOf("9:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00")
+        // aqui creamos 2 elementos que avanza de 1 para tener las franjas
+        // 9 11 , coge el ultimo 11-13 // 13-15 // etc
         .windowed(2, 1) { "${it[0]} - ${it[1]}" }
 
     // stateflow que contiene la lista des reserva, convertido en un State
@@ -81,10 +84,13 @@ fun CardCourt(courtId: String, date: String, courtName: String, bookingPadelView
                 mainAxisSpacing = 8.dp,
                 crossAxisSpacing = 8.dp
             ) {
+                // recorremos la lista de horarios para ver si una esta disponible o no
                 timeSlots.forEach { timeSlot ->
                     val isAvailable = bookings.none { // si no hay reserva qui corresponde -> none
+                        // split(" - ") divide el string en dos partes // [0] -> cogemos el primer elemento
                         it.courtId == courtId && it.date == date && it.startTime == timeSlot.split(" - ")[0]
                     }
+                    // Card timeCourtCard con la franja y si la pista disponible
                     TimeCourtCard(timeSlot, isAvailable) {
                         if (isAvailable) onTimeSlotClick(timeSlot) // si disponible, se ve el timeCourtCar sino en gris se pone
                     }

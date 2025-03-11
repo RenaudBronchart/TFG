@@ -49,7 +49,7 @@ class UserViewModel: ViewModel() {
     val contraseña: LiveData<String> = _contraseña
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
-    // A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
+    // MutableStateFlow A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
     private val _usuarios = MutableStateFlow<List<User>>(emptyList())
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
     val usuarios: StateFlow<List<User>> = _usuarios
@@ -70,7 +70,6 @@ class UserViewModel: ViewModel() {
     fun getUsersFromFirestore() {
         viewModelScope.launch {
 
-
             val query = db.collection(name_collection).get().await()
 
             val usuarios = mutableListOf<User>()
@@ -87,17 +86,9 @@ class UserViewModel: ViewModel() {
 
     fun loadUser(uid: String) {
         viewModelScope.launch {
-
             try {
                 val document = db.collection(name_collection).document(uid).get().await()
                 val usuario = document.toObject(User::class.java)
-
-                if (usuario != null) {
-                    _usuario.value = usuario
-                    Log.d("UsuarioViewModel", "data : ${usuario.nombre}")
-                } else {
-                    Log.e("UsuarioViewModel", "no data UID")
-                }
             } catch (e: Exception) {
                 Log.e("UsuarioViewModel", "error para cargar datos : ${e.message}")
             }

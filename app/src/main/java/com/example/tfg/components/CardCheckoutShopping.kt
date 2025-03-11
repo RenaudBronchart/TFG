@@ -66,7 +66,7 @@ fun CardCheckoutShopping(navHostController: NavHostController, cartShoppingViewM
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop // permite ajustar la imagen con el espacio disponible
             )
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -130,7 +130,7 @@ fun CardCheckoutShopping(navHostController: NavHostController, cartShoppingViewM
                         color = MaterialTheme.colorScheme.secondary
                     )
 
-                    //button -
+                    //button - // gracias a viewmodel y mutable, al pinchar, decrease
                     IconButton(
                         onClick = {
                             cartShoppingViewModel.decreaseQuantity(producto)

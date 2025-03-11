@@ -25,11 +25,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SelectGender(selectedGender: String, onGenderChange: (String) -> Unit) {
     val options = listOf("Hombre", "Mujer")
+    // expanded controla si el menú desplegable, configurado como false
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it }
+        onExpandedChange = { expanded = it } // // Aquí se cambia el estado
     ) {
         TextField(
             value = selectedGender,
@@ -50,10 +51,10 @@ fun SelectGender(selectedGender: String, onGenderChange: (String) -> Unit) {
                 disabledTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
-
+        // componente que representa el menú desplegable con la lista
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false } //  // Cerrar el menú si el usuario toca fuera
         ) {
             options.forEach { option ->
                 DropdownMenuItem(

@@ -45,11 +45,13 @@ import androidx.navigation.NavHostController
 import com.example.tfg.R
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.example.tfg.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -58,6 +60,8 @@ fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) } // Estado para mostrar/ocultar la contraseña
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope() // Para lanzar corrutinas en @Composable
 
     // Contenedor principal con fondo de color primario
     Box(
@@ -141,27 +145,23 @@ fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
             Spacer(modifier = Modifier.height(32.dp)) // Espaciado más grande
 
             // Botón "Iniciar Sesión"
-            Button(onClick = {
-                if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(context,"Los campos no pueden estar vacios", Toast.LENGTH_SHORT).show()
-                } else {
-                    authViewModel.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                        if(task.isSuccessful) {
-                            navController.navigate("Home")
-                            Log.i("jc","inicio de sesion correcto")
-                        } else {
-                            val exception = task.exception
-                            val errorMessage = when(exception) {
-                                is FirebaseAuthInvalidUserException -> "Usuario o Contraseña incorrecta"
-                                is FirebaseAuthInvalidCredentialsException -> "Usuario o Contraseña incorrecta"
-                                else -> "Error de conexión, intenta más tarde"
+            Button(
+                onClick = {
+                    if (email.isEmpty() || password.isEmpty()) {
+                        Toast.makeText(context, "Los campos no pueden estar vacíos", Toast.LENGTH_SHORT).show()
+                    } else {
+                        coroutineScope.launch {
+                            val result = authViewModel.signInWithEmailAndPassword(email, password)
+                            if (result == null) {
+                                navController.navigate("Home")
+                                Log.i("jc", "Inicio de sesión correcto")
+                            } else {
+                                errorMessage = result
+                                Log.i("jc", "Inicio de sesión fallido: $errorMessage")
                             }
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                            Log.i("jc", "Inicio de sesión fallado")
                         }
                     }
-                }
-            },
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -174,6 +174,8 @@ fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
                     fontSize = 16.sp
                 )
             }
+
+
 
             Spacer(modifier = Modifier.height(12.dp)) // Espaciado entre botones
 
@@ -193,6 +195,10 @@ fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 16.sp
                 )
+            }
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(errorMessage!!, color = Color.Red, fontSize = 22.sp)
             }
         }
     }

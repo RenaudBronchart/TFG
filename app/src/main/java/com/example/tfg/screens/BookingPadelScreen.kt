@@ -43,19 +43,20 @@ fun BookingPadelScreen(
     val courts = courtPadelViewModel.courtsPadel.collectAsState().value
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
+    // cargemos con la funcion // Lanuched permite que estas funciones se ejecutan directamente
+    //
     LaunchedEffect(Unit) {
         courtPadelViewModel.getCourtsPadelFromFirestore()
-    }
-    LaunchedEffect(Unit) {
         bookingPadelViewModel.loadBookings()
     }
+
     Scaffold(
         topBar = { TopBarComponent("Reservar pista", navHostController) },
         bottomBar = { BottomBarComponent(navHostController, cartItems) }
     ) { innerPadding ->
 
         Column(modifier = Modifier.padding(innerPadding)) {
-            // LazyRow pour afficher les jours de la semaine
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,6 +64,7 @@ fun BookingPadelScreen(
                     .padding(vertical = 8.dp)
             ) {
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    // dentro de LazyRow -> items
                     items(weekDays) { day ->
                         DayCard(
                             day = day,
@@ -76,6 +78,7 @@ fun BookingPadelScreen(
 
             // LazyColumn pour afficher les courts
             LazyColumn {
+                // dentro de LazyColumn-> items
                 items(courts) { court ->
                     CardCourt(
                         courtId = court.id,

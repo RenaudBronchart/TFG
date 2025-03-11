@@ -33,7 +33,7 @@ class BookingPadelViewModel : ViewModel() {
     // Cargar datos
     fun getBookingsPadelFromFirestore() {
         viewModelScope.launch {
-            _isLoading.value = true
+            _isLoading.value = true // se inicia la carga de datos
             try {
                 val query = db.collection(name_collection).get().await()
                 val bookings = query.documents.mapNotNull { it.toObject(BookingPadel::class.java) }
@@ -41,7 +41,7 @@ class BookingPadelViewModel : ViewModel() {
             } catch (e: Exception) {
                 _messageConfirmation.value = "Error para cargar las reservas"
             } finally {
-                _isLoading.value = false
+                _isLoading.value = false // operacion terminado
             }
         }
     }
@@ -61,7 +61,7 @@ class BookingPadelViewModel : ViewModel() {
 
     // Reservar una pista de padel
     fun bookCourt(authViewModel: AuthViewModel, navController: NavHostController, courtId: String, date: String, startTime: String, endTime: String,  onSuccess: (String) -> Unit) {
-        val userId = authViewModel.currentUserId.value ?: ""
+        val userId = authViewModel.currentUserId.value ?: "" // si null, valor = ""
         val booking = BookingPadel(
             id = UUID.randomUUID().toString(),
             courtId = courtId,
@@ -69,7 +69,8 @@ class BookingPadelViewModel : ViewModel() {
             startTime = startTime,
             endTime = endTime,
             userId = userId,
-            status = false
+            status = false // not esta reservado
+
         )
 
         viewModelScope.launch {
@@ -78,7 +79,7 @@ class BookingPadelViewModel : ViewModel() {
                 Log.d("BookingDebug", "CourtId: $courtId, Date: $date, StartTime: $startTime, EndTime: $endTime, UserId: $userId")
                // Verificar si la pista ya está reservada en la misma fecha y hora
                 val existingBooking = db.collection(name_collection)
-                    .whereEqualTo("courtId", courtId)
+                    .whereEqualTo("courtId", courtId) // verificacion para ver si existe
                     .whereEqualTo("date", date)
                     .whereEqualTo("startTime", startTime)
                     .get().await()
@@ -96,7 +97,7 @@ class BookingPadelViewModel : ViewModel() {
                val successMessage = "Reserva realizada con éxito!!"
                 _messageConfirmation.value = successMessage
                 onSuccess(successMessage)
-                getBookingsPadelFromFirestore() //
+                getBookingsPadelFromFirestore() // para  actualizar y mostrar las reservas en la UI actualizados
             } catch (e: Exception) {
                 onSuccess("Error al realizar la reserva: ${e.message ?: "Desconocido"}") //
             } finally {
@@ -105,14 +106,14 @@ class BookingPadelViewModel : ViewModel() {
         }
     }
 
-    // Verificar si la pista est disponible
+    // Verificar si la pista est disponible // funcion asincrona
     suspend fun isCourtAvailable(courtId: String, date: String, timeSlot: String): Boolean {
         val existingBooking = db.collection(name_collection)
             .whereEqualTo("courtId", courtId)
             .whereEqualTo("date", date)
             .whereEqualTo("startTime", timeSlot.split(" - ")[0])
-            .get().await()
+            .get().await() // espera la repuesta de firbase sin bloquear
 
-        return existingBooking.isEmpty
+        return existingBooking.isEmpty // si no hay reserva, disponible
     }
 }

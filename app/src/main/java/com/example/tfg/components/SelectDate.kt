@@ -24,6 +24,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SelectDate(selectedDate: String, onDateChange: (String) -> Unit) {
+    //LocalContext.current  da acceso al contexto actual en una función composable.
     val context = LocalContext.current
 
     val openDatePicker: () -> Unit = {

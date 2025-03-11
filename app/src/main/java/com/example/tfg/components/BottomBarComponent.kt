@@ -31,7 +31,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tfg.models.Producto
 
-@Composable
+@Composable // carItems :list-> para obtener la lista de productos en la cesta
+// lista objetos de productos
 fun BottomBarComponent(navController: NavHostController, cartItems: List<Producto>) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primary,
@@ -43,6 +44,7 @@ fun BottomBarComponent(navController: NavHostController, cartItems: List<Product
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
+            // funcion bottombarIcon que permite tener icon,Stringlabel,route,navcontroller
             BottomBarIcon(Icons.Filled.Home, "Inicio", "Home", navController)
             Spacer(modifier = Modifier.width(32.dp))
 
@@ -55,6 +57,7 @@ fun BottomBarComponent(navController: NavHostController, cartItems: List<Product
             BottomBarIcon(Icons.Filled.Person, "Perfil", "Profile", navController)
             Spacer(modifier = Modifier.width(32.dp))
 
+            // BadgedBox se utiliza para mostrar contador o notificacion
             BadgedBox(
                 badge = {
                     val totalQuantity = cartItems.sumOf { it.quantity } // total cantidad

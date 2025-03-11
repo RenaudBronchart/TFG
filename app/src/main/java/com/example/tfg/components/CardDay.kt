@@ -31,6 +31,7 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
     else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
 
+    //  card -> estrctura con bordes y elevacion y fondo
     Card(
         modifier = Modifier
             .padding(4.dp)
@@ -42,6 +43,7 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
     ) {
+        // box para alignar el contenido
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -89,7 +91,8 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getWeekDays(currentDay: LocalDate): List<LocalDate> {
-    val days = mutableListOf<LocalDate>()
+    val days = mutableListOf<LocalDate>() // mutablelistof en vez de Listof para agegrear dinacamente los dias
+
     for (i in 0..6) {
         days.add(currentDay.plusDays(i.toLong()))
     }
