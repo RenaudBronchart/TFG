@@ -27,19 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CardItem(icon: ImageVector, text: String, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed = interactionSource.collectIsPressedAsState()
-
+fun CardItemProfile(icon: ImageVector, text: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .clickable(interactionSource, indication = null) { onClick() }
-            .graphicsLayer {
-                scaleX = if (pressed.value) 0.97f else 1f
-                scaleY = if (pressed.value) 0.97f else 1f
-            },
+            .clickable() { onClick() },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {

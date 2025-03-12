@@ -24,7 +24,7 @@ import com.example.tfg.models.Order
 
 
 @Composable
-fun CardOrder(order: Order) {
+fun CardOrderProfile(order: Order) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +53,8 @@ fun CardOrder(order: Order) {
                 tint = MaterialTheme.colorScheme.primary
             )
 
-            Text(
+            Text( // los productos del order // firstorNull para que devuelve el primero o null si vacia//
+                //?.nombre nos va a permirtar evitar el error si es un valor nulo , si null -> Producto desconocido
                 text = order.products.firstOrNull()?.nombre ?: "Producto desconocido",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
@@ -69,7 +70,7 @@ fun CardOrder(order: Order) {
                 textAlign = TextAlign.End
             )
         }
-
+        // para poner linea despues de un pago/order
         HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
     }
 }

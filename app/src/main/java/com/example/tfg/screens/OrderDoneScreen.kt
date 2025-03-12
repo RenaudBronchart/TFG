@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tfg.components.CardOrderDone
+import com.example.tfg.components.CardOrderMessageConfirmation
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -85,7 +85,7 @@ fun OrderDoneScreen( navHostController: NavHostController,authViewModel: AuthVie
             // Card con detalles de la orden
             orders.forEach { order ->
                 order.products.firstOrNull()?.let { producto ->
-                    CardOrderDone(
+                    CardOrderMessageConfirmation(
                         navHostController = navHostController,
                         producto = producto,
                         order = order

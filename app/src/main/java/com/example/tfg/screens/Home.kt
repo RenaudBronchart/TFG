@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.BottomBarComponent
-import com.example.tfg.components.CardItem
+import com.example.tfg.components.CardItemProfile
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
 import com.example.tfg.viewmodel.AuthViewModel
@@ -77,7 +77,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
             ) {
                 items(menuItems.filter { it.category == MenuCategory.HOME && (isAdmin || it.text != "Administrar")} )
                 { item ->
-                    CardItem(
+                    CardItemProfile(
                         icon = item.icon,
                         text = item.text,
                         onClick = { navController.navigate(item.route) }

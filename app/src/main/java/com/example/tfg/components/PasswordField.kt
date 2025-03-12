@@ -27,19 +27,23 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PasswordField(value: String, onValueChange: (String) -> Unit) {
+    // remeember matiene el estado de la cariable
+    // sin el remember se veolveria a su valor inicial
     var errorMessage by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     fun validatePassword(password: String): Boolean {
-        val hasUpperCase = password.any { it.isUpperCase() }
-        val hasDigit = password.any { it.isDigit() }
-        val isLongEnough = password.length >= 6
+        val hasUpperCase = password.any { it.isUpperCase() } // al menos un uppdercase
+        val hasDigit = password.any { it.isDigit() } // al menos un digit
+        val isLongEnough = password.length >= 6 // mas de 6 tiene tener el password
+        // para agregar mas seguridad, se podria anadir !it.isLetterOrDigit, y tenemos un caractere special
 
         errorMessage = when {
             password.isEmpty() -> "La contraseña no puede ser vacía"
             !isLongEnough -> "La contraseña debe tener al menos 6 caracteres"
             !hasUpperCase -> "La contraseña debe contener al menos una letra mayúscula"
             !hasDigit -> "La contraseña debe contener al menos un número"
+
             else -> ""
         }
 
@@ -57,15 +61,19 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit) {
             .fillMaxWidth()
             .padding(bottom = 16.dp),
         textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+        // ocultar ***
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+        // para colocar un icono derecha
         trailingIcon = {
+            // permitir al usuario de ver el pw o
             val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                Icon(imageVector = image, contentDescription = "Toggle password visibility")
+                Icon(imageVector = image, contentDescription = "contrasena visibilidad")
             }
         },
-        isError = errorMessage.isNotEmpty(), // ✅ Placé correctement
+        // si el password no tiene lo que tiene que tener, 6car, Maj ,chiffra, mensaje en error, no empty y se ve
+        isError = errorMessage.isNotEmpty(), //
         colors = TextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             focusedContainerColor = MaterialTheme.colorScheme.surface,

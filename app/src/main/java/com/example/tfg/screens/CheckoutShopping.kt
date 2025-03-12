@@ -16,7 +16,7 @@ import com.example.tfg.components.TopBarComponent
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.tfg.components.CardCheckoutShopping
+import com.example.tfg.components.CardOrderCheckoutShopping
 import com.example.tfg.components.TotalToPay
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
@@ -39,7 +39,7 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
                 modifier = Modifier.weight(1f)
             ) {
                 itemsIndexed(productos) {index, producto ->
-                    CardCheckoutShopping(navHostController, cartShoppingViewModel,producto)
+                    CardOrderCheckoutShopping(navHostController, cartShoppingViewModel,producto)
                     if (index < productos.size - 1) {
                         HorizontalDivider(
                             thickness = 2.dp,

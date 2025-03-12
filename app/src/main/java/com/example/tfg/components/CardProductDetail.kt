@@ -3,7 +3,6 @@ package com.example.tfg.components
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,13 +39,8 @@ import com.example.tfg.viewmodel.ProductViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardProductDetail(
-    navController: NavHostController,
-    producto: Producto,
-    productViewModel: ProductViewModel,
-    cartShoppingViewModel: CartShoppingViewModel,
-    onAddToCart: () -> Unit,
-    onDismiss: () -> Unit
+fun CardProductDetail(navController: NavHostController, producto: Producto, productViewModel: ProductViewModel,
+                      cartShoppingViewModel: CartShoppingViewModel, onAddToCart: () -> Unit, onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val existingItem = cartShoppingViewModel.CartShopping.value.find { it.id == producto.id }

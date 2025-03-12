@@ -24,10 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -41,7 +37,7 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
 @Composable
-fun CardCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, producto: Producto
+fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, producto: Producto
 ) {
 
     Card(
@@ -85,7 +81,8 @@ fun CardCheckoutShopping(navHostController: NavHostController, cartShoppingViewM
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
-
+                // calculemos lo que queda, en relacion a la cantidad que se pone en la ceste y lo
+                // que queda de stock
                 val stockRestante = producto.stock - producto.quantity
                 val stockMessage = if (stockRestante > 0) {
                     "Stock disponible: $stockRestante"

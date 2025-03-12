@@ -29,7 +29,7 @@ import com.example.tfg.models.Order
 import com.example.tfg.models.Producto
 
 @Composable
-fun CardOrderDone (navHostController: NavHostController,producto: Producto,order: Order) {
+fun CardOrderMessageConfirmation (navHostController: NavHostController, producto: Producto, order: Order) {
 
         Card(
             modifier = Modifier

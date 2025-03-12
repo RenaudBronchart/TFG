@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.BottomBarComponent
-import com.example.tfg.components.CardItem
+import com.example.tfg.components.CardItemProfile
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
@@ -96,7 +96,7 @@ fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, 
                     .padding(16.dp)
             ) {
                 items(menuItems.filter { it.category == MenuCategory.PROFILE }) { item ->
-                    CardItem(
+                    CardItemProfile(
                         icon = item.icon,
                         text = item.text,
                         onClick = {

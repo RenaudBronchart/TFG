@@ -15,7 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.tfg.components.CardItem
+import com.example.tfg.components.CardItemProfile
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
@@ -46,7 +46,7 @@ fun AdminPage(navHostController: NavHostController, authViewModel: AuthViewModel
             ) {
                 items(menuItems.filter { it.category == MenuCategory.ADMIN})
                 { item ->
-                    CardItem(
+                    CardItemProfile(
                         icon = item.icon,
                         text = item.text,
                         onClick = { navHostController.navigate(item.route) }

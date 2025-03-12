@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -55,7 +54,7 @@ fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostCont
 
 
     val cardBackgroundColor = if (isOutOfStock) Color.LightGray else Color.White
-    val isClickable = !isOutOfStock
+
 
     Card(
         modifier = Modifier

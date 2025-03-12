@@ -29,9 +29,12 @@ fun formatDate(timeStamp: String):String {
 
     return try {
         val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        // convertimos tueStemp string a un long
         val date = Date(timeStamp.toLong())
+        // queremos tener la fecha en el format predefinido antes de simpleDateFormat
         return simpleDateFormat.format((date))
     } catch (e: Exception) {
+        // si error, tenemos como datos fecha desconocida
     return "Fecha desconocida"
     }
 

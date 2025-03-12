@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.tfg.components.CardOrder
+import com.example.tfg.components.CardOrderProfile
 
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.viewmodel.AuthViewModel
@@ -47,7 +47,7 @@ fun MyOrders(navHostController: NavHostController, authViewModel: AuthViewModel,
                 // On affiche chaque commande ici
                 items(orderViewModel.orders.value) { order ->
                     // Affichage de l'ordre
-                    CardOrder(order = order)
+                    CardOrderProfile(order = order)
                 }
             }
         }
