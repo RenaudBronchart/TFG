@@ -1,5 +1,6 @@
 package com.example.tfg.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import com.example.tfg.viewmodel.UserViewModel
 fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
     val usuarioData by userViewModel.usuario.collectAsState()
+    Log.d("DEBUG", "Usuario Data: $usuarioData")
     val nombre = usuarioData?.nombre ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value
     val userId = authViewModel.currentUserId.value ?: ""
@@ -51,6 +53,7 @@ fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, 
     LaunchedEffect(firebaseUser?.uid) {
         firebaseUser?.let {
             userViewModel.loadUser(it.uid)
+            Log.d("DEBUG", "Firebase User ID: ${it.uid}")
         }
     }
     Scaffold(

@@ -89,6 +89,7 @@ class UserViewModel: ViewModel() {
             try {
                 val document = db.collection(name_collection).document(uid).get().await()
                 val usuario = document.toObject(User::class.java)
+                _usuario.value = usuario
             } catch (e: Exception) {
                 Log.e("UsuarioViewModel", "error para cargar datos : ${e.message}")
             }

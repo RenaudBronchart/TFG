@@ -22,6 +22,7 @@ class CartShoppingViewModel : ViewModel() {
 
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val name_collection = "orders"
+    private val name_collection2 = "productos"
 
     // emptyList() se usa para inicializar la lista como vacía
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
@@ -41,13 +42,17 @@ class CartShoppingViewModel : ViewModel() {
     }
 
     fun addToCart(producto: Producto) {
+        // _CartShopping.value contiente la lista de productos y hacemos una copia para modifiar
         val newList = _CartShopping.value.toMutableList()
         // ver si hay un producto que existe o no
         val existingProduct = newList.find { it.id == producto.id }
-
-        if (existingProduct != null) { // si ya existe
-            if (existingProduct.quantity < producto.stock) { // verificar la cantidad menos que stock
+    // si  existe un producto seguimos sino vamos al else y anademos
+        if (existingProduct != null) {
+            // verificar la cantidad menos que stock sino vamos a else y indicamos outstock del producto
+            if (existingProduct.quantity < producto.stock) {
+                // cantidad ok, podemos copiar el producto y anadir uno mas
                 val updatedProduct = existingProduct.copy(quantity = existingProduct.quantity + 1)
+                // vamos a poder reemplzar el producto actual con el nuevo y la nueva cantidad
                 val index = newList.indexOf(existingProduct)
                 newList[index] = updatedProduct
             } else {
@@ -59,6 +64,7 @@ class CartShoppingViewModel : ViewModel() {
             // se anade normalmente
             newList.add(producto.copy(quantity = 1))
         }
+        // actualizamos la newlist
         _CartShopping.value = newList
         Log.d("CartShopping", "Producto agregado: ${producto.nombre}")
     }
@@ -80,6 +86,7 @@ class CartShoppingViewModel : ViewModel() {
             createdAt = System.currentTimeMillis().toString()
         )
 
+        // operacion asincronoa con firestore
         viewModelScope.launch {
             _isLoading.value = true
             try {
@@ -87,15 +94,46 @@ class CartShoppingViewModel : ViewModel() {
                     .document(order.id)
                     .set(order)
                     .await()
+
+                 // actualizamos el stock de los productos en firebase gracias a la funcion
+                updateStockAfterOrder()
+
                 _messageConfirmation.value  = "Compra realizada con éxito!!"
                 _lastOrderId.value = order.id // se asigna id de order creado
-                onOrderCreated() // para ejecutar el calllbacka
+                onOrderCreated() // para ejecutar el calllback y navigar a una pagina
             } catch (e: Exception) {
                 _messageConfirmation.value = "Error al realizar la compra: ${e.message ?: "Desconocido"}"
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun updateStockAfterOrder() {
+        //sin viewModelScope.launch, el stock no se actualiza correctemente, problema con await
+        //  viewModelScope es como " un hilo ",   viewModelScope.launch crea una coroutine
+        // que espera que la bdd termine ac actualizar antes de continuar el codigo
+        viewModelScope.launch {
+            CartShopping.value.forEach { producto ->
+                try {
+                    val newStock = producto.stock - producto.quantity
+
+                    if (newStock > 0 ) {
+                        db.collection(name_collection2)
+                            .document(producto.id)
+                            .update("stock", newStock)
+                            .await()
+                    } else {
+                        _messageConfirmation.value = "Stock insuficiente para ${producto.nombre}"
+                    }
+                } catch (e: Exception) {
+                    _messageConfirmation.value = "Error al actualizar stock: ${e.message}"
+                }
+
+            }
+
+        }
+
     }
 
         fun removeToCart(producto: Producto) {
