@@ -3,9 +3,8 @@ package com.example.tfg.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.example.tfg.models.Order
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +13,8 @@ import kotlinx.coroutines.tasks.await
 
 class CartShoppingViewModel : ViewModel() {
 
-    private val _CartShopping = MutableStateFlow<List<Producto>>(emptyList())
-    val CartShopping : StateFlow<List<Producto>> = _CartShopping
+    private val _CartShopping = MutableStateFlow<List<Product>>(emptyList())
+    val CartShopping : StateFlow<List<Product>> = _CartShopping
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
@@ -40,16 +39,19 @@ class CartShoppingViewModel : ViewModel() {
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }
+    private val _isOrderInProgress = MutableStateFlow(false)
+    val isOrderInProgress: StateFlow<Boolean> = _isOrderInProgress
 
-    fun addToCart(producto: Producto) {
+
+    fun addToCart(product: Product) {
         // _CartShopping.value contiente la lista de productos y hacemos una copia para modifiar
         val newList = _CartShopping.value.toMutableList()
         // ver si hay un producto que existe o no
-        val existingProduct = newList.find { it.id == producto.id }
+        val existingProduct = newList.find { it.id == product.id }
     // si  existe un producto seguimos sino vamos al else y anademos
         if (existingProduct != null) {
             // verificar la cantidad menos que stock sino vamos a else y indicamos outstock del producto
-            if (existingProduct.quantity < producto.stock) {
+            if (existingProduct.quantity < product.stock) {
                 // cantidad ok, podemos copiar el producto y anadir uno mas
                 val updatedProduct = existingProduct.copy(quantity = existingProduct.quantity + 1)
                 // vamos a poder reemplzar el producto actual con el nuevo y la nueva cantidad
@@ -57,16 +59,16 @@ class CartShoppingViewModel : ViewModel() {
                 newList[index] = updatedProduct
             } else {
                 // cantidad igual o mayor, no se anade
-                _errorMessage.value = "El stock está limitado a ${producto.stock} unidades."
+                _errorMessage.value = "El stock está limitado a ${product.stock} unidades."
                 return
             }
         } else {
             // se anade normalmente
-            newList.add(producto.copy(quantity = 1))
+            newList.add(product.copy(quantity = 1))
         }
         // actualizamos la newlist
         _CartShopping.value = newList
-        Log.d("CartShopping", "Producto agregado: ${producto.nombre}")
+        Log.d("CartShopping", "Producto agregado: ${product.nombre}")
     }
 
     fun createOrder(authViewModel: AuthViewModel, onOrderCreated: () -> Unit) {
@@ -94,7 +96,7 @@ class CartShoppingViewModel : ViewModel() {
                     .document(order.id)
                     .set(order)
                     .await()
-
+                Log.d("CartShopping", "Mise à jour du stock après la commande.")
                  // actualizamos el stock de los productos en firebase gracias a la funcion
                 updateStockAfterOrder()
 
@@ -117,12 +119,13 @@ class CartShoppingViewModel : ViewModel() {
             CartShopping.value.forEach { producto ->
                 try {
                     val newStock = producto.stock - producto.quantity
-
-                    if (newStock > 0 ) {
+                    Log.d("CartShopping", "Produit: ${producto.nombre}, Stock avant mise à jour: ${producto.stock}, Quantité commandée: ${producto.quantity}, Nouveau stock calculé: $newStock")
+                    if (newStock >= 0 ) {
                         db.collection(name_collection2)
                             .document(producto.id)
                             .update("stock", newStock)
                             .await()
+                        Log.d("CartShopping", "Stock mis à jour pour ${producto.nombre}: $newStock")
                     } else {
                         _messageConfirmation.value = "Stock insuficiente para ${producto.nombre}"
                     }
@@ -136,11 +139,11 @@ class CartShoppingViewModel : ViewModel() {
 
     }
 
-        fun removeToCart(producto: Producto) {
+        fun removeToCart(product: Product) {
             val newList = _CartShopping.value.toMutableList()
-            newList.remove(producto)
+            newList.remove(product)
             _CartShopping.value = newList
-            Log.d("CartShoping", " Producto eleminado: ${producto.nombre}")
+            Log.d("CartShoping", " Producto eleminado: ${product.nombre}")
         }
 
         fun clearCart() {
@@ -148,9 +151,9 @@ class CartShoppingViewModel : ViewModel() {
             Log.d("CartShopping", "vacio")
         }
 
-        fun increaseQuantity(producto: Producto) {
+        fun increaseQuantity(product: Product) {
             val productosActualizados = CartShopping.value.map { // map va a recorer toda  la lista
-                if (it.id == producto.id) {
+                if (it.id == product.id) {
 
                     if (it.quantity < it.stock) { // ver si cantidad menor o no
                         it.copy(quantity = it.quantity + 1)  // si es menor se augmenta
@@ -167,9 +170,9 @@ class CartShoppingViewModel : ViewModel() {
         }
 
 
-    fun decreaseQuantity(producto: Producto){
+    fun decreaseQuantity(product: Product){
         val productosActualizados = CartShopping.value.map { // map va a recorer toda  la lista
-            if( it.id == producto.id && it.quantity > 1) { //.it representa cada producto  para ver si mismo producto
+            if( it.id == product.id && it.quantity > 1) { //.it representa cada producto  para ver si mismo producto
                 it.copy(quantity = it.quantity - 1 ) // metodo para copiar un objeto y solo unas propiedades
             } else  {
                 it // si el ID no corresponde, guardamos lo que tenemos ahora

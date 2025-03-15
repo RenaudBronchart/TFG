@@ -5,13 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 
 class ProductViewModel: ViewModel() {
 
@@ -41,12 +40,12 @@ class ProductViewModel: ViewModel() {
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
-    private val _productos = MutableStateFlow<List<Producto>>(emptyList())
+    private val _productos = MutableStateFlow<List<Product>>(emptyList())
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
-    val productos: StateFlow<List<Producto>> = _productos
+    val productos: StateFlow<List<Product>> = _productos
 
-    private val _producto = MutableStateFlow<Producto?>(null)
-    val producto: StateFlow<Producto?> = _producto
+    private val _product = MutableStateFlow<Product?>(null)
+    val product: StateFlow<Product?> = _product
 
     private val _isButtonEnable = MutableLiveData<Boolean>()
     val isButtonEnable: LiveData<Boolean> = _isButtonEnable
@@ -66,15 +65,15 @@ class ProductViewModel: ViewModel() {
 
             val query = db.collection(name_collection).get().await()
 
-            val productos = mutableListOf<Producto>()
+            val products = mutableListOf<Product>()
 
             for (document in query.documents) {
-                val producto = document.toObject(Producto::class.java)
-                if (producto != null) {
-                    productos.add(producto)
+                val product = document.toObject(Product::class.java)
+                if (product != null) {
+                    products.add(product)
                 }
             }
-            _productos.value = productos
+            _productos.value = products
         }
     }
 
@@ -99,7 +98,7 @@ class ProductViewModel: ViewModel() {
         onSuccess: (String) -> Unit
     ) {
         viewModelScope.launch {
-            val producto = Producto(
+            val product = Product(
                 nombre = nombre,
                 precio = precio,
                 descripcion = descripcion,
@@ -109,8 +108,8 @@ class ProductViewModel: ViewModel() {
                 marca = marca
             )
             db.collection(name_collection)
-                .document(producto.id)
-                .set(producto)
+                .document(product.id)
+                .set(product)
                 .addOnSuccessListener {
                     _messageConfirmation.value = "Producto añadido correctamente"
                     getProductosFromFirestore()

@@ -20,11 +20,11 @@ val menuItems = listOf(
     MenuItem(Icons.Default.ShoppingCart, "Tienda", "EshopScreen",MenuCategory.HOME),
     MenuItem(Icons.Default.Person, "Mi Perfil", "Profile",MenuCategory.HOME),
     MenuItem(Icons.Default.AdminPanelSettings, "Administrar", "AdminPanel",MenuCategory.HOME),
-    MenuItem(Icons.Default.Addchart, "Agregar Producto", "AddProduct",MenuCategory.ADMIN),
-    MenuItem(Icons.Default.Checklist, "Lista de usuarios", "ListUsers",MenuCategory.ADMIN),
+    MenuItem(Icons.Default.Addchart, "Agregar Producto", "AdminAddProduct",MenuCategory.ADMIN),
+    MenuItem(Icons.Default.Checklist, "Lista de usuarios", "AdminListUsers",MenuCategory.ADMIN),
     MenuItem(Icons.Default.Person, "Editar mi perfil", "EditUser", MenuCategory.PROFILE),
-    MenuItem(Icons.Default.Book, "Mis reservas", "MyBookings", MenuCategory.PROFILE),
-    MenuItem(Icons.Default.ShoppingCart, "Mis compras", "MyOrders", MenuCategory.PROFILE),
+    MenuItem(Icons.Default.Book, "Mis reservas", "ProfileMyBookings", MenuCategory.PROFILE),
+    MenuItem(Icons.Default.ShoppingCart, "Mis compras", "ProfileMyOrders", MenuCategory.PROFILE),
     MenuItem(Icons.AutoMirrored.Filled.ExitToApp, "Desconectar", "Logout", MenuCategory.PROFILE)
 
 )

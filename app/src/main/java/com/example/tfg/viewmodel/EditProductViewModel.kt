@@ -3,7 +3,7 @@ package com.example.tfg.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +20,8 @@ class EditProductViewModel: ViewModel() {
     private val db = FirebaseFirestore.getInstance()
     private val name_collection = "productos"
 
-    private val _producto = MutableStateFlow(Producto())
-    val producto: StateFlow<Producto> = _producto
+    private val _product = MutableStateFlow(Product())
+    val product: StateFlow<Product> = _product
 
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> get() =  _messageConfirmation
@@ -39,9 +39,9 @@ class EditProductViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val document = db.collection(name_collection).document(productId).get().await()
-                val product = document.toObject(Producto::class.java)
+                val product = document.toObject(Product::class.java)
                 if (product != null) {
-                    _producto.value = product
+                    _product.value = product
                 } else {
                     Log.e("EditProductViewModel", "Error: Producto no encontrado")
                 }
@@ -57,7 +57,7 @@ class EditProductViewModel: ViewModel() {
             _isLoading.value = true
 
             try {
-                val product = producto.value
+                val product = product.value
                 val productUpdates = mapOf(
                     "nombre" to product.nombre,
                     "precio" to product.precio,
@@ -85,13 +85,13 @@ class EditProductViewModel: ViewModel() {
 
 
     // Métodos para actualizar los valores del producto
-    fun setNombre(value: String) { _producto.update { it.copy(nombre = value) } }
-    fun setPrecio(value: Double) { _producto.update { it.copy(precio = value) } }
-    fun setDescripcion(value: String) { _producto.update { it.copy(descripcion = value) } }
-    fun setCategoria(value: String) { _producto.update { it.copy(categoria = value) } }
-    fun setImagen(value: String) { _producto.update { it.copy(imagen = value) } }
-    fun setStock(value: Int) { _producto.update { it.copy(stock = value) } }
-    fun setMarca(value: String) { _producto.update { it.copy(marca = value) } }
+    fun setNombre(value: String) { _product.update { it.copy(nombre = value) } }
+    fun setPrecio(value: Double) { _product.update { it.copy(precio = value) } }
+    fun setDescripcion(value: String) { _product.update { it.copy(descripcion = value) } }
+    fun setCategoria(value: String) { _product.update { it.copy(categoria = value) } }
+    fun setImagen(value: String) { _product.update { it.copy(imagen = value) } }
+    fun setStock(value: Int) { _product.update { it.copy(stock = value) } }
+    fun setMarca(value: String) { _product.update { it.copy(marca = value) } }
 
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message

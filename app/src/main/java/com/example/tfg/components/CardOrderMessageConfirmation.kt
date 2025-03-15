@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.tfg.models.Order
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 
 @Composable
-fun CardOrderMessageConfirmation (navHostController: NavHostController, producto: Producto, order: Order) {
+fun CardOrderMessageConfirmation (navHostController: NavHostController, product: Product, order: Order) {
 
         Card(
             modifier = Modifier

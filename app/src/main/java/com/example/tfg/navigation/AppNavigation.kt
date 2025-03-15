@@ -7,21 +7,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tfg.screens.AddProduct
+import com.example.tfg.screens.AdminAddProduct
 import com.example.tfg.screens.AdminPage
 import com.example.tfg.screens.BookingPadelScreen
 import com.example.tfg.screens.CheckoutBookingScreen
 import com.example.tfg.screens.CheckoutShopping
-import com.example.tfg.screens.EditProduct
+import com.example.tfg.screens.AdminEditProduct
 import com.example.tfg.screens.EshopScreen
-import com.example.tfg.screens.MyOrders
+import com.example.tfg.screens.ProfileMyOrders
 import com.example.tfg.screens.Home
 import com.example.tfg.screens.Login
 import com.example.tfg.screens.SignUp
 import com.example.tfg.screens.Profile
-import com.example.tfg.screens.ListUsers
+import com.example.tfg.screens.AdminListUsers
 import com.example.tfg.screens.EditUser
-import com.example.tfg.screens.MyBookings
+import com.example.tfg.screens.ProfileMyBookings
 import com.example.tfg.screens.OrderDoneScreen
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditProductViewModel
@@ -61,12 +61,12 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel, cartShoppingViewModel)}
         composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel)}
-        composable(AppScreens.AddProduct.ruta) { AddProduct(navigationController, authViewModel, productViewModel)}
+        composable(AppScreens.AdminAddProduct.ruta) { AdminAddProduct(navigationController, authViewModel, productViewModel)}
         composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel,cartShoppingViewModel)}
-        composable(AppScreens.ListUsers.ruta) { ListUsers(navigationController, authViewModel, userViewModel)}
+        composable(AppScreens.AdminListUsers.ruta) { AdminListUsers(navigationController, authViewModel, userViewModel)}
         composable(AppScreens.CheckoutShopping.ruta) { CheckoutShopping(navigationController,authViewModel,cartShoppingViewModel) }
-        composable(AppScreens.MyBookings.ruta) { MyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
-        composable(AppScreens.MyOrders.ruta) { MyOrders (navigationController,authViewModel, orderViewModel )}
+        composable(AppScreens.ProfileMyBookings.ruta) { ProfileMyBookings(navigationController, authViewModel, bookingPadelViewModel,courtPadelViewModel) }
+        composable(AppScreens.ProfileMyOrders.ruta) { ProfileMyOrders (navigationController,authViewModel, orderViewModel )}
         composable(AppScreens.OrderDoneScreen.ruta) { OrderDoneScreen (navigationController,authViewModel, orderViewModel,cartShoppingViewModel )}
         // declaramos una ruta en la navigation con composable para llegar a la pagina de Edituser
         // backStackEntry va a permitir obtener los parametros de navagacion de backStackEntry
@@ -77,9 +77,9 @@ fun AppNavigation(authViewModel: AuthViewModel) {
             EditUser(navigationController, authViewModel, editUserViewModel, userId)
         }
 
-        composable(AppScreens.EditProduct.ruta)  { backStackEntry ->
+        composable(AppScreens.AdminEditProduct.ruta)  { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
-            EditProduct(navigationController, authViewModel, editProductViewModel, productId)
+            AdminEditProduct(navigationController, authViewModel, editProductViewModel, productId)
         }
 
         composable(AppScreens.CheckoutBooking.ruta) { backStackEntry ->

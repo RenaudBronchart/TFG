@@ -37,20 +37,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostController, productViewModel: ProductViewModel,
+fun ProductCard(product: Product, isAdmin:Boolean, navController : NavHostController, productViewModel: ProductViewModel,
                 cartShoppingViewModel: CartShoppingViewModel, onProductClick: () -> Unit) {
 
     val context = androidx.compose.ui.platform.LocalContext.current
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
-    val existingItem = cartItems.find { it.id == producto.id }
-    val isOutOfStock = producto.stock == 0 || (existingItem != null && existingItem.quantity >= producto.stock)
+    val existingItem = cartItems.find { it.id == product.id }
+    val isOutOfStock = product.stock == 0 || (existingItem != null && existingItem.quantity >= product.stock)
 
 
     val cardBackgroundColor = if (isOutOfStock) Color.LightGray else Color.White
@@ -73,16 +73,16 @@ fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostCont
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = producto.imagen, //
-                    contentDescription = producto.nombre,
+                    model = product.imagen, //
+                    contentDescription = product.nombre,
                     modifier = Modifier
                         .size(140.dp)
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = producto.nombre, fontWeight = FontWeight.Bold)
-                Text(text = "${producto.precio} €", color = Color.Black)
+                Text(text = product.nombre, fontWeight = FontWeight.Bold)
+                Text(text = "${product.precio} €", color = Color.Black)
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -95,7 +95,7 @@ fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostCont
                         Button(
                             modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
                             onClick = {
-                                navController.navigate("EditProduct/${producto.id}") // Redirige vers l'édition
+                                navController.navigate("AdminEditProduct/${product.id}") // Redirige vers l'édition
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                         ) {
@@ -112,7 +112,7 @@ fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostCont
                         Button(
                             modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
                             onClick = {
-                                productViewModel.deleteProduct(producto.id) { message ->
+                                productViewModel.deleteProduct(product.id) { message ->
                                     productViewModel.setMessageConfirmation(message)
 
                                 }
@@ -133,17 +133,17 @@ fun ProductCard(producto: Producto, isAdmin:Boolean, navController : NavHostCont
                         onClick = {
                             // ver si hay producto y la cantidad
                             if(!isOutOfStock) {
-                                cartShoppingViewModel.addToCart(producto) //
+                                cartShoppingViewModel.addToCart(product) //
                                 Toast.makeText(
                                     context,
-                                    "${producto.nombre} añadido a la cesta",
+                                    "${product.nombre} añadido a la cesta",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
                                 // Si el stock es limitado, mostramos un mensaje
                                 Toast.makeText(
                                     context,
-                                    "¡Stock limitado a ${producto.stock} unidades!",
+                                    "¡Stock limitado a ${product.stock} unidades!",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }

@@ -87,7 +87,7 @@ fun OrderDoneScreen( navHostController: NavHostController,authViewModel: AuthVie
                 order.products.firstOrNull()?.let { producto ->
                     CardOrderMessageConfirmation(
                         navHostController = navHostController,
-                        producto = producto,
+                        product = producto,
                         order = order
                     )
                 }

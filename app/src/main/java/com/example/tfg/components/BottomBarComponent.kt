@@ -29,11 +29,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 
 @Composable // carItems :list-> para obtener la lista de productos en la cesta
 // lista objetos de productos
-fun BottomBarComponent(navController: NavHostController, cartItems: List<Producto>) {
+fun BottomBarComponent(navController: NavHostController, cartItems: List<Product>) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primary,
         modifier = Modifier.height(80.dp)

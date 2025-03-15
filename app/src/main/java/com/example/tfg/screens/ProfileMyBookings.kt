@@ -28,7 +28,7 @@ import com.example.tfg.viewmodel.CourtPadelViewModel
 
 
 @Composable
-fun MyBookings(navHostController: NavHostController, authViewModel : AuthViewModel, bookingPadelViewModel: BookingPadelViewModel,courtPadelViewModel: CourtPadelViewModel)  {
+fun ProfileMyBookings(navHostController: NavHostController, authViewModel : AuthViewModel, bookingPadelViewModel: BookingPadelViewModel, courtPadelViewModel: CourtPadelViewModel)  {
     val currentUser by authViewModel.user.collectAsState()
     // bookingPadelViewModel.bookingsPadel = stateFlowList de BookingPadel
     // collectAstate permite leer y actualizar AllBookings cada vez que los datos cambian

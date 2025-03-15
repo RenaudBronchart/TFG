@@ -8,20 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,9 +37,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProduct(navHostController: NavHostController, authViewModel: AuthViewModel, editProductViewModel: EditProductViewModel, productId: String) {
+fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthViewModel, editProductViewModel: EditProductViewModel, productId: String) {
     val isLoading by editProductViewModel.isLoading.collectAsState()
-    val producto by editProductViewModel.producto.collectAsState() // Manejar el estado de usuario
+    val producto by editProductViewModel.product.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
     val message by editProductViewModel.messageConfirmation.collectAsState()
     val coroutineScope = rememberCoroutineScope()

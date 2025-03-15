@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 
@@ -39,12 +39,12 @@ import com.example.tfg.viewmodel.ProductViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardProductDetail(navController: NavHostController, producto: Producto, productViewModel: ProductViewModel,
+fun CardProductDetail(navController: NavHostController, product: Product, productViewModel: ProductViewModel,
                       cartShoppingViewModel: CartShoppingViewModel, onAddToCart: () -> Unit, onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    val existingItem = cartShoppingViewModel.CartShopping.value.find { it.id == producto.id }
-    val isOutOfStock = producto.stock == 0
+    val existingItem = cartShoppingViewModel.CartShopping.value.find { it.id == product.id }
+    val isOutOfStock = product.stock == 0
 
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
@@ -68,8 +68,8 @@ fun CardProductDetail(navController: NavHostController, producto: Producto, prod
 
             // Imagen con animación
             Image(
-                painter = rememberAsyncImagePainter(model = producto.imagen),
-                contentDescription = producto.nombre,
+                painter = rememberAsyncImagePainter(model = product.imagen),
+                contentDescription = product.nombre,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
@@ -78,19 +78,19 @@ fun CardProductDetail(navController: NavHostController, producto: Producto, prod
 
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = producto.nombre,
+                text = product.nombre,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = producto.descripcion,
+                text = product.descripcion,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "${producto.precio} €",
+                text = "${product.precio} €",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
@@ -100,18 +100,18 @@ fun CardProductDetail(navController: NavHostController, producto: Producto, prod
             Button(
                 onClick = {
                     if (!isOutOfStock) {
-                        if (existingItem == null || existingItem.quantity < producto.stock) {
-                            cartShoppingViewModel.addToCart(producto)
+                        if (existingItem == null || existingItem.quantity < product.stock) {
+                            cartShoppingViewModel.addToCart(product)
                             Toast.makeText(
                                 context,
-                                "${producto.nombre} Añadido ",
+                                "${product.nombre} Añadido ",
                                 Toast.LENGTH_SHORT
                             ).show()
                             onDismiss() // Cerrar Sheet
                         } else {
                             Toast.makeText(
                                 context,
-                                "Stock Limitado a ${producto.stock} unidades ",
+                                "Stock Limitado a ${product.stock} unidades ",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

@@ -26,7 +26,7 @@ import com.example.tfg.components.DataField
 import com.example.tfg.components.TopBarComponent
 
 @Composable
-fun AddProduct (navHostController: NavHostController, authViewModel : AuthViewModel, productviewModel: ProductViewModel)    {
+fun AdminAddProduct (navHostController: NavHostController, authViewModel : AuthViewModel, productviewModel: ProductViewModel)    {
 
     val selectedCategory: String by productviewModel.categoria.observeAsState("Selecciona una categoría")
     val nombre:String by productviewModel.nombre.observeAsState("")

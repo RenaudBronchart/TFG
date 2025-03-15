@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.test.espresso.util.filter
 import com.example.tfg.components.CardOrderProfile
 import com.example.tfg.components.FilterButton
 
@@ -36,7 +35,7 @@ import com.example.tfg.viewmodel.OrderViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun MyOrders(navHostController: NavHostController, authViewModel: AuthViewModel, orderViewModel: OrderViewModel) {
+fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthViewModel, orderViewModel: OrderViewModel) {
     val userId = authViewModel.currentUserId.value ?: ""
     var filter by remember { mutableStateOf("fecha") }
     var isAscending by remember { mutableStateOf(true)}

@@ -2,7 +2,7 @@ package com.example.tfg.models
 
 import java.util.UUID
 
-data class Producto(
+data class Product(
     val id: String = UUID.randomUUID().toString(), // para generar un id unico
     val nombre:String = "",
     val precio:Double = 0.0,

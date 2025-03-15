@@ -16,6 +16,7 @@ import com.example.tfg.components.TopBarComponent
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.tfg.components.CardEmptyShopping
 import com.example.tfg.components.CardOrderCheckoutShopping
 import com.example.tfg.components.TotalToPay
 import com.example.tfg.viewmodel.AuthViewModel
@@ -35,21 +36,40 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                itemsIndexed(productos) {index, producto ->
-                    CardOrderCheckoutShopping(navHostController, cartShoppingViewModel,producto)
-                    if (index < productos.size - 1) {
-                        HorizontalDivider(
-                            thickness = 2.dp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(vertical = 10.dp)
-                        )
+            if(productos.isEmpty()) {
+                CardEmptyShopping(navHostController)
+            }else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // con itemsIndexed, recogemos la lista con dos parametros
+                    // index la posicion y producto
+                    itemsIndexed(productos) {index, producto ->
+
+                        CardOrderCheckoutShopping(navHostController, cartShoppingViewModel,producto)
+                        if (index < productos.size - 1) { // se muestra la linea solo entre productos
+                            HorizontalDivider(
+                                thickness = 2.dp,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(vertical = 10.dp)
+                            )
+                        }
                     }
                 }
             }
-            TotalToPay(navHostController, cartShoppingViewModel,productos, authViewModel)
+
+            TotalToPay(
+                total = cartShoppingViewModel.calcularTotal(),
+                onClickPay = {
+                    // On crée la commande avant de vider le panier
+                    cartShoppingViewModel.createOrder(authViewModel) {
+                        // Ensuite, on vide le panier après que la commande a été créée et que le stock a été mis à jour
+                        cartShoppingViewModel.clearCart()
+                    }
+                    // Naviguer vers la page de confirmation
+                    navHostController.navigate("OrderDoneScreen")
+                }
+            )
         }
     }
 }

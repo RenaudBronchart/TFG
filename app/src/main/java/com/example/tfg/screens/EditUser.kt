@@ -78,8 +78,6 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
                     DataField(label = "Teléfono", value = usuario.telefono, onValueChange = editUserViewModel::setTelefono)
                     DataField(label = "DNI", value = usuario.dni, onValueChange = editUserViewModel::setDni)
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     SelectGender(
                         selectedGender = usuario.genero,
                         onGenderChange = editUserViewModel::setGenero

@@ -21,7 +21,7 @@ import com.example.tfg.components.BottomBarComponent
 import com.example.tfg.components.CardProductDetail
 import com.example.tfg.components.ProductCard
 import com.example.tfg.components.TopBarComponent
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
@@ -32,7 +32,7 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
-    var selectedProduct by remember { mutableStateOf<Producto?>(null) }
+    var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showSheet by remember { mutableStateOf(false) }
 
     authViewModel.fetchCurrentUser()
@@ -75,7 +75,7 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
         if (showSheet && selectedProduct != null) {
             CardProductDetail(
                 navController = navHostController,
-                producto = selectedProduct!!,
+                product = selectedProduct!!,
                 cartShoppingViewModel = cartShoppingViewModel,
                 productViewModel = productViewModel,
                 onAddToCart = {

@@ -31,13 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.tfg.models.Producto
+import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
 @Composable
-fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, producto: Producto
+fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, product: Product
 ) {
 
     Card(
@@ -57,8 +57,8 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
         ) {
             // imagen producto
             AsyncImage(
-                model = producto.imagen,
-                contentDescription = producto.nombre,
+                model = product.imagen,
+                contentDescription = product.nombre,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(16.dp)),
@@ -72,18 +72,18 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = producto.nombre,
+                    text = product.nombre,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
                 Text(
-                    text = "${producto.precio} €",
+                    text = "${product.precio} €",
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
                 // calculemos lo que queda, en relacion a la cantidad que se pone en la ceste y lo
                 // que queda de stock
-                val stockRestante = producto.stock - producto.quantity
+                val stockRestante = product.stock - product.quantity
                 val stockMessage = if (stockRestante > 0) {
                     "Stock disponible: $stockRestante"
                 } else {
@@ -91,7 +91,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                 }
 
                 // Muestra el mensaje de stock con el color adecuado
-                if (producto.stock <= producto.quantity) {
+                if (product.stock <= product.quantity) {
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -122,7 +122,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Cantidad: ${producto.quantity}",
+                        text = "Cantidad: ${product.quantity}",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -130,7 +130,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     //button - // gracias a viewmodel y mutable, al pinchar, decrease
                     IconButton(
                         onClick = {
-                            cartShoppingViewModel.decreaseQuantity(producto)
+                            cartShoppingViewModel.decreaseQuantity(product)
                         },
                         modifier = Modifier.size(24.dp) // talla button
                     ) {
@@ -144,7 +144,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     // Button +
                     IconButton(
                         onClick = {
-                            cartShoppingViewModel.increaseQuantity(producto)
+                            cartShoppingViewModel.increaseQuantity(product)
                         },
                         modifier = Modifier.size(24.dp) // talla button
                     ) {
@@ -160,7 +160,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
             // button borrar
             IconButton(
                 onClick = {
-                    cartShoppingViewModel.removeToCart(producto)
+                    cartShoppingViewModel.removeToCart(product)
                 },
                 modifier = Modifier.align(Alignment.CenterVertically) //
             ) {
@@ -179,38 +179,26 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
 
 
 @Composable
-fun TotalToPay(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, productos: List<Producto>, authViewModel: AuthViewModel){
+fun TotalToPay(total: Double, onClickPay: () -> Unit){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
         Text(
-            text = "Total: ${cartShoppingViewModel.calcularTotal()} €",
+            text = "Total: $total €",
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp,
             color = MaterialTheme.colorScheme.primary
         )
 
         Button(
-            onClick = {
-                // creamos el order
-                cartShoppingViewModel.createOrder(authViewModel) {
-                    // pedido hecho, poner a 0
-                    cartShoppingViewModel.clearCart()
-                    // rederigmos el usuario a la pagina que los datos del pedido
-                    navHostController.navigate("OrderDoneScreen")
-                }
-            },
+            onClick = onClickPay,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Text(
-                text = "Pagar",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Text("Pagar", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
