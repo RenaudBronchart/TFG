@@ -44,7 +44,7 @@ import com.example.tfg.viewmodel.ProductViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ProductCard(product: Product, isAdmin:Boolean, navController : NavHostController, productViewModel: ProductViewModel,
+fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostController, productViewModel: ProductViewModel,
                 cartShoppingViewModel: CartShoppingViewModel, onProductClick: () -> Unit) {
 
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -95,7 +95,7 @@ fun ProductCard(product: Product, isAdmin:Boolean, navController : NavHostContro
                         Button(
                             modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
                             onClick = {
-                                navController.navigate("AdminEditProduct/${product.id}") // Redirige vers l'édition
+                                navHostController.navigate("AdminEditProduct/${product.id}") // Redirige vers l'édition
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                         ) {
@@ -103,10 +103,10 @@ fun ProductCard(product: Product, isAdmin:Boolean, navController : NavHostContro
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "Edit",
                                 tint = Color.White,
-                                modifier = Modifier.size(20.dp) // Taille plus grande
+                                modifier = Modifier.size(20.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
-                            /* Text("Editar", color = Color.White, fontSize = 11.sp)*/
+                            Spacer(modifier = Modifier.width(4.dp))
+
                         }
 
                         Button(
@@ -124,7 +124,9 @@ fun ProductCard(product: Product, isAdmin:Boolean, navController : NavHostContro
                                 tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp)) // Espacement entre icône et texte
+                            Spacer(modifier = Modifier.width(4.dp)) // espacio icono texto
+
+
                         }
                     }
                 } else { // no admin
