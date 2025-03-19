@@ -28,6 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +51,7 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                 cartShoppingViewModel: CartShoppingViewModel, onProductClick: () -> Unit) {
 
     val context = androidx.compose.ui.platform.LocalContext.current
+    var showDialog by remember { mutableStateOf(false) } // Variable para el diálogo
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
     val existingItem = cartItems.find { it.id == product.id }
     val isOutOfStock = product.stock == 0 || (existingItem != null && existingItem.quantity >= product.stock)
@@ -112,10 +116,8 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                         Button(
                             modifier = Modifier.padding(2.dp).height(38.dp).weight(1f),
                             onClick = {
-                                productViewModel.deleteProduct(product.id) { message ->
-                                    productViewModel.setMessageConfirmation(message)
 
-                                }
+                                showDialog = true
                             },
                             ) {
                             Icon(
@@ -163,4 +165,21 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                 }
             }
         }
+
+    // como hemos definindos en el butotn de borrar true, se mostra, false = se cierra
+    if (showDialog) {
+        mostrarMessageConfirmation(
+            message = "¿Seguro que quieres eliminar ${product.nombre}?",
+            onConfirm = {
+                showDialog = false
+                productViewModel.deleteProduct(product.id) { message ->
+                    productViewModel.setMessageConfirmation(message)
+                }
+            },
+            // si pincha en cancelar, se cancela y nada sucede
+            onDismiss = { showDialog = false }
+        )
     }
+}
+
+

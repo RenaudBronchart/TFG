@@ -24,6 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -37,8 +41,8 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
 @Composable
-fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, product: Product
-) {
+fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, product: Product) {
+    var showDialog by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -55,18 +59,18 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // imagen producto
+            // Imagen del producto
             AsyncImage(
                 model = product.imagen,
                 contentDescription = product.nombre,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop // permite ajustar la imagen con el espacio disponible
+                contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
 
-            // info sobre el producto
+            // Información sobre el producto
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -81,8 +85,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
-                // calculemos lo que queda, en relacion a la cantidad que se pone en la ceste y lo
-                // que queda de stock
+
                 val stockRestante = product.stock - product.quantity
                 val stockMessage = if (stockRestante > 0) {
                     "Stock disponible: $stockRestante"
@@ -90,9 +93,8 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     "No hay suficiente stock!"
                 }
 
-                // Muestra el mensaje de stock con el color adecuado
+                // Mostrar mensaje de stock con color adecuado
                 if (product.stock <= product.quantity) {
-
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Warning,
@@ -107,7 +109,6 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                         )
                     }
                 } else {
-                    // mensaje para mostrar
                     Text(
                         text = stockMessage,
                         fontSize = 14.sp,
@@ -115,10 +116,10 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     )
                 }
 
-                // visual para buton cantidad + y -
+                // Visualización para botones de cantidad + y -
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp), //
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -127,12 +128,12 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                         color = MaterialTheme.colorScheme.secondary
                     )
 
-                    //button - // gracias a viewmodel y mutable, al pinchar, decrease
+                    // Botón - para disminuir la cantidad
                     IconButton(
                         onClick = {
                             cartShoppingViewModel.decreaseQuantity(product)
                         },
-                        modifier = Modifier.size(24.dp) // talla button
+                        modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Remove,
@@ -141,12 +142,12 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                         )
                     }
 
-                    // Button +
+                    // Botón + para aumentar la cantidad
                     IconButton(
                         onClick = {
-                            cartShoppingViewModel.increaseQuantity(product)
+                            showDialog = true // Mostrar el cuadro de confirmación
                         },
-                        modifier = Modifier.size(24.dp) // talla button
+                        modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -157,19 +158,31 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                 }
             }
 
-            // button borrar
+            // Botón de eliminar
             IconButton(
                 onClick = {
-                    cartShoppingViewModel.removeToCart(product)
+                    showDialog = true // Mostrar el cuadro de confirmación cuando se intenta eliminar
                 },
-                modifier = Modifier.align(Alignment.CenterVertically) //
+                modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.Delete,
+                    imageVector = Icons.Default.Delete,
                     contentDescription = "Eliminar",
                     tint = MaterialTheme.colorScheme.error
                 )
             }
+        }
+
+        // Mostrar el cuadro de confirmación si showDialog es verdadero
+        if (showDialog) {
+            mostrarMessageConfirmation(
+                message = "¿Estás seguro de que deseas eliminar este producto del carrito?",
+                onConfirm = {
+                    showDialog = false // Cerrar el cuadro de diálogo
+                    cartShoppingViewModel.removeToCart(product) // Eliminar producto del carrito
+                },
+                onDismiss = { showDialog = false } // Si el usuario cancela, cerrar el cuadro de diálogo
+            )
         }
     }
 }
@@ -177,9 +190,8 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
 
 
 
-
 @Composable
-fun TotalToPay(total: Double, onClickPay: () -> Unit){
+fun TotalToPay(total: Double, onClickPay: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth().padding(16.dp)
