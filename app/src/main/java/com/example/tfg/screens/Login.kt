@@ -125,14 +125,14 @@ fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
                     cursorColor = Color.White
                 ),
                 leadingIcon = {
-                    Icon(Icons.Default.Lock, contentDescription = "Contraseña", tint = Color.White)
+                    Icon(Icons.Default.Lock, contentDescription = "password", tint = Color.White)
                 },
                 trailingIcon = { // Botón para mostrar/ocultar contraseña
                     val icon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             imageVector = icon,
-                            contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                            contentDescription = if (passwordVisible) "hide password" else "show password",
                             tint = Color.White
                         )
                     }

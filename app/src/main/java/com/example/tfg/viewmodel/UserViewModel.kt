@@ -106,13 +106,13 @@ class UserViewModel: ViewModel() {
                 val userId = "user-" + UUID.randomUUID().toString().take(4)
                 val usuario = User(
                     id = userId,
-                    nombre = nombre.value ?: "",
-                    apellido = apellido.value ?: "",
+                    name = nombre.value ?: "",
+                    firstname = apellido.value ?: "",
                     email = email.value ?: "",
                     dni = dni.value ?: "",
-                    fechaNacimiento = fechaNacimiento.value ?: "",
-                    telefono = telefono.value ?: "",
-                    genero = genero.value ?: "",
+                    birthday = fechaNacimiento.value ?: "",
+                    phone = telefono.value ?: "",
+                    gender = genero.value ?: "",
                     role = "user"
                 )
 

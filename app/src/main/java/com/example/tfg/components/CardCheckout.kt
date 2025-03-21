@@ -46,7 +46,7 @@ fun CardCheckout(courtName: String, DisplayDate: String, timeSlot: String,showRe
         ) {
             Icon(
                 imageVector = Icons.Filled.SportsTennis,
-                contentDescription = "Court de padel",
+                contentDescription = "Padel court",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp)
             )
@@ -77,7 +77,7 @@ fun CardCheckout(courtName: String, DisplayDate: String, timeSlot: String,showRe
                 ) {
                     Icon(imageVector = Icons.Filled.CalendarToday, contentDescription = "Date", tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = "Fecha: ${DisplayDate}", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+                    Text(text = "Fecha: $DisplayDate", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -86,7 +86,7 @@ fun CardCheckout(courtName: String, DisplayDate: String, timeSlot: String,showRe
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(imageVector = Icons.Filled.Schedule, contentDescription = "Horario", tint = MaterialTheme.colorScheme.primary)
+                    Icon(imageVector = Icons.Filled.Schedule, contentDescription = "timetable", tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "Horario: $timeSlot", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
@@ -100,7 +100,7 @@ fun CardCheckout(courtName: String, DisplayDate: String, timeSlot: String,showRe
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Icon(imageVector = Icons.Filled.Check, contentDescription = "Reservar", tint = Color.White)
+                    Icon(imageVector = Icons.Filled.Check, contentDescription = "book", tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Reservar", color = Color.White)
                 }

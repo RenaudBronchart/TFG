@@ -77,16 +77,16 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(
-                    model = product.imagen, //
-                    contentDescription = product.nombre,
+                    model = product.image, //
+                    contentDescription = product.name,
                     modifier = Modifier
                         .size(140.dp)
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = product.nombre, fontWeight = FontWeight.Bold)
-                Text(text = "${product.precio} €", color = Color.Black)
+                Text(text = product.name, fontWeight = FontWeight.Bold)
+                Text(text = "${product.price} €", color = Color.Black)
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -122,7 +122,7 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                             ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Eliminar",
+                                contentDescription = "Delete",
                                 tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -140,7 +140,7 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                                 cartShoppingViewModel.addToCart(product) //
                                 Toast.makeText(
                                     context,
-                                    "${product.nombre} añadido a la cesta",
+                                    "${product.name} añadido a la cesta",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
@@ -169,7 +169,7 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
     // como hemos definindos en el butotn de borrar true, se mostra, false = se cierra
     if (showDialog) {
         mostrarMessageConfirmation(
-            message = "¿Seguro que quieres eliminar ${product.nombre}?",
+            message = "¿Seguro que quieres eliminar ${product.name}?",
             onConfirm = {
                 showDialog = false
                 productViewModel.deleteProduct(product.id) { message ->

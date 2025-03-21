@@ -99,13 +99,13 @@ class ProductViewModel: ViewModel() {
     ) {
         viewModelScope.launch {
             val product = Product(
-                nombre = nombre,
-                precio = precio,
-                descripcion = descripcion,
-                categoria = categoria,
-                imagen = imagen,
+                name = nombre,
+                price = precio,
+                description = descripcion,
+                category = categoria,
+                image = imagen,
                 stock = stock,
-                marca = marca
+                brand = marca
             )
             db.collection(name_collection)
                 .document(product.id)

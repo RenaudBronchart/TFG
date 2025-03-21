@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.tfg.models.Product
-import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 
@@ -61,8 +60,8 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
         ) {
             // Imagen del producto
             AsyncImage(
-                model = product.imagen,
-                contentDescription = product.nombre,
+                model = product.image,
+                contentDescription = product.name,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(16.dp)),
@@ -76,19 +75,19 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = product.nombre,
+                    text = product.name,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
                 Text(
-                    text = "${product.precio} €",
+                    text = "${product.price} €",
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                val stockRestante = product.stock - product.quantity
-                val stockMessage = if (stockRestante > 0) {
-                    "Stock disponible: $stockRestante"
+                val stockRemaining = product.stock - product.quantity
+                val stockMessage = if (stockRemaining > 0) {
+                    "Stock disponible: $stockRemaining"
                 } else {
                     "No hay suficiente stock!"
                 }
@@ -98,7 +97,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Warning,
-                            contentDescription = "Stock limitado",
+                            contentDescription = "Stock limit",
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(16.dp)
                         )
@@ -112,7 +111,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     Text(
                         text = stockMessage,
                         fontSize = 14.sp,
-                        color = if (stockRestante > 0) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                        color = if (stockRemaining > 0) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
                     )
                 }
 
@@ -167,7 +166,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar",
+                    contentDescription = "Delete",
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -176,7 +175,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
         // Mostrar el cuadro de confirmación si showDialog es verdadero
         if (showDialog) {
             mostrarMessageConfirmation(
-                message = "¿Estás seguro de que deseas eliminar este producto del carrito?",
+                message = "Estás seguro de que deseas eliminar este producto del carrito?",
                 onConfirm = {
                     showDialog = false // Cerrar el cuadro de diálogo
                     cartShoppingViewModel.removeToCart(product) // Eliminar producto del carrito

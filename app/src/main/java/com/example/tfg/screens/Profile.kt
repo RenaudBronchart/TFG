@@ -45,7 +45,7 @@ fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, 
 
     val usuarioData by userViewModel.usuario.collectAsState()
     Log.d("DEBUG", "Usuario Data: $usuarioData")
-    val nombre = usuarioData?.nombre ?: "Usuario desconocido"
+    val name = usuarioData?.name ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value
     val userId = authViewModel.currentUserId.value ?: ""
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
@@ -83,7 +83,7 @@ fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, 
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "¡Hola, $nombre! 👋",
+                text = "¡Hola, $name! 👋",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,

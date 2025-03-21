@@ -55,8 +55,8 @@ fun CardOrderMessageConfirmation (navHostController: NavHostController, product:
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             AsyncImage(
-                                model = producto.imagen,
-                                contentDescription = producto.nombre,
+                                model = producto.image,
+                                contentDescription = producto.name,
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clip(RoundedCornerShape(16.dp)), // par aponer los conrers rounded
@@ -71,12 +71,12 @@ fun CardOrderMessageConfirmation (navHostController: NavHostController, product:
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = producto.nombre,
+                                    text = producto.name,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp
                                 )
                                 Text(
-                                    text = "precio: ${producto.precio} €",
+                                    text = "precio: ${producto.price} €",
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colorScheme.primary
                                 )

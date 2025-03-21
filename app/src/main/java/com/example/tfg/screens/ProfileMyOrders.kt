@@ -44,8 +44,8 @@ fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthVie
         "fecha" -> if (isAscending) { orderViewModel.orders.value.sortedBy { it.createdAt }
                      } else { orderViewModel.orders.value.sortedByDescending { it.createdAt } }
 
-        "nombre" -> if (isAscending) { orderViewModel.orders.value.sortedBy { it.products.firstOrNull()?.nombre ?: "" }
-                     } else { orderViewModel.orders.value.sortedByDescending { it.products.firstOrNull()?.nombre ?: "" } }
+        "nombre" -> if (isAscending) { orderViewModel.orders.value.sortedBy { it.products.firstOrNull()?.name ?: "" }
+                     } else { orderViewModel.orders.value.sortedByDescending { it.products.firstOrNull()?.name ?: "" } }
 
         "precio" -> if (isAscending) { orderViewModel.orders.value.sortedBy { it.totalAmount }
         }           else { orderViewModel.orders.value.sortedByDescending { it.totalAmount } }

@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel,  userId: String) {
     val currentUser by authViewModel.user.collectAsState()
-    val usuario by editUserViewModel.usuario.collectAsState() // Manejar el estado de usuario
+    val user by editUserViewModel.usuario.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
     val message by editUserViewModel.mensajeConfirmacion.collectAsState()
     val isLoading by editUserViewModel.isLoading.collectAsState()
@@ -72,18 +72,18 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
         ) {
             LazyColumn {
                 item {
-                    DataField(label = "Nombre", value = usuario.nombre, onValueChange = editUserViewModel::setNombre)
-                    DataField(label = "Apellido", value = usuario.apellido, onValueChange = editUserViewModel::setApellido)
-                    DataField(label = "Email", value = usuario.email, onValueChange = editUserViewModel::setEmail)
-                    DataField(label = "Teléfono", value = usuario.telefono, onValueChange = editUserViewModel::setTelefono)
-                    DataField(label = "DNI", value = usuario.dni, onValueChange = editUserViewModel::setDni)
+                    DataField(label = "Nombre", value = user.name, onValueChange = editUserViewModel::setNombre)
+                    DataField(label = "Apellido", value = user.firstname, onValueChange = editUserViewModel::setApellido)
+                    DataField(label = "Email", value = user.email, onValueChange = editUserViewModel::setEmail)
+                    DataField(label = "Teléfono", value = user.phone, onValueChange = editUserViewModel::setTelefono)
+                    DataField(label = "DNI", value = user.dni, onValueChange = editUserViewModel::setDni)
 
                     SelectGender(
-                        selectedGender = usuario.genero,
+                        selectedGender = user.gender,
                         onGenderChange = editUserViewModel::setGenero
                     )
                     SelectDate(
-                        selectedDate = usuario.fechaNacimiento,
+                        selectedDate = user.birthday,
                         onDateChange = editUserViewModel::setFechaNacimiento
                     )
 

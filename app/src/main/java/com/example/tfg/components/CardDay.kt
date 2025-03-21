@@ -52,15 +52,14 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    day.format(DateTimeFormatter.ofPattern("EEE")).let {
-                        it.replace("Mon", "Lun")
+                    day.format(DateTimeFormatter.ofPattern("EEE"))
+                        .replace("Mon", "Lun")
                             .replace("Tue", "Mar")
                             .replace("Wed", "Mié")
                             .replace("Thu", "Jue")
                             .replace("Fri", "Vie")
                             .replace("Sat", "Sab")
-                            .replace("Sun", "Dom")
-                    },
+                            .replace("Sun", "Dom"),
                     style = MaterialTheme.typography.bodySmall.copy(color = textColor)
                 )
                 Text(
@@ -68,8 +67,8 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall.copy(color = textColor)
                 )
                 Text(
-                    day.format(DateTimeFormatter.ofPattern("MMM")).let {
-                        it.replace("Jan", "Ene")
+                    day.format(DateTimeFormatter.ofPattern("MMM"))
+                        .replace("Jan", "Ene")
                             .replace("Feb", "Feb")
                             .replace("Mar", "Mar")
                             .replace("Apr", "Abr")
@@ -80,8 +79,7 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
                             .replace("Sep", "Sep")
                             .replace("Oct", "Oct")
                             .replace("Nov", "Nov")
-                            .replace("Dec", "Dic")
-                    },
+                            .replace("Dec", "Dic"),
                     style = MaterialTheme.typography.bodySmall.copy(color = textColor)
                 )
             }

@@ -68,7 +68,7 @@ class CartShoppingViewModel : ViewModel() {
         }
         // actualizamos la newlist
         _CartShopping.value = newList
-        Log.d("CartShopping", "Producto agregado: ${product.nombre}")
+        Log.d("CartShopping", "Producto agregado: ${product.name}")
     }
 
     fun createOrder(authViewModel: AuthViewModel, onOrderCreated: () -> Unit) {
@@ -119,15 +119,15 @@ class CartShoppingViewModel : ViewModel() {
             CartShopping.value.forEach { producto ->
                 try {
                     val newStock = producto.stock - producto.quantity
-                    Log.d("CartShopping", "Produit: ${producto.nombre}, Stock avant mise à jour: ${producto.stock}, Quantité commandée: ${producto.quantity}, Nouveau stock calculé: $newStock")
+                    Log.d("CartShopping", "Produit: ${producto.name}, Stock avant mise à jour: ${producto.stock}, Quantité commandée: ${producto.quantity}, Nouveau stock calculé: $newStock")
                     if (newStock >= 0 ) {
                         db.collection(name_collection2)
                             .document(producto.id)
                             .update("stock", newStock)
                             .await()
-                        Log.d("CartShopping", "Stock mis à jour pour ${producto.nombre}: $newStock")
+                        Log.d("CartShopping", "Stock mis à jour pour ${producto.name}: $newStock")
                     } else {
-                        _messageConfirmation.value = "Stock insuficiente para ${producto.nombre}"
+                        _messageConfirmation.value = "Stock insuficiente para ${producto.name}"
                     }
                 } catch (e: Exception) {
                     _messageConfirmation.value = "Error al actualizar stock: ${e.message}"
@@ -143,7 +143,7 @@ class CartShoppingViewModel : ViewModel() {
             val newList = _CartShopping.value.toMutableList()
             newList.remove(product)
             _CartShopping.value = newList
-            Log.d("CartShoping", " Producto eleminado: ${product.nombre}")
+            Log.d("CartShoping", " Producto eleminado: ${product.name}")
         }
 
         fun clearCart() {
@@ -182,7 +182,7 @@ class CartShoppingViewModel : ViewModel() {
     }
 
     fun calcularTotal(): Double {
-        return CartShopping.value.sumOf { it.precio * it.quantity }
+        return CartShopping.value.sumOf { it.price * it.quantity }
     }
 
 }

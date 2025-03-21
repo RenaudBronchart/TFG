@@ -38,7 +38,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
 
     val usuarioData by userViewModel.usuario.collectAsState()
     val currentUser by authViewModel.user.collectAsState()
-    val nombre = usuarioData?.nombre ?: "Usuario desconocido"
+    val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
@@ -57,7 +57,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White
                 ),
-                title = { Text("¡Hola, $nombre! 👋") },
+                title = { Text("¡Hola, $name! 👋") },
             )
         },
         bottomBar = { BottomBarComponent(navController, cartItems) }

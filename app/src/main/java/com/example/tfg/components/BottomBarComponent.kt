@@ -31,7 +31,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tfg.models.Product
 
-@Composable // carItems :list-> para obtener la lista de productos en la cesta
+@Composable
+// carItems :list-> para obtener la lista de productos en la cesta
 // lista objetos de productos
 fun BottomBarComponent(navController: NavHostController, cartItems: List<Product>) {
     BottomAppBar(
@@ -72,7 +73,7 @@ fun BottomBarComponent(navController: NavHostController, cartItems: List<Product
                 }
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Filled.ShoppingCart, contentDescription = "Cesta", tint = Color.White)
+                    Icon(Icons.Filled.ShoppingCart, contentDescription = "ShoppingCart", tint = Color.White)
                     Text("Cesta", color = Color.White, fontSize = 14.sp)
                 }
 

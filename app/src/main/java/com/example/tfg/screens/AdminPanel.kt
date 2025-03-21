@@ -26,7 +26,7 @@ import com.example.tfg.viewmodel.UserViewModel
 @Composable
 fun AdminPage(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
     val usuarioData by userViewModel.usuario.collectAsState()
-    val nombre = usuarioData?.nombre ?: "Usuario desconocido"
+    val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
 
     Scaffold(

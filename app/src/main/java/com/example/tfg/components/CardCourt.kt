@@ -1,6 +1,6 @@
 package com.example.tfg.components
 
-import androidx.benchmark.perfetto.ExperimentalPerfettoTraceProcessorApi
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,7 +67,7 @@ fun CardCourt(courtId: String, date: String, courtName: String, bookingPadelView
             ) {
                 Icon(
                     imageVector = Icons.Filled.SportsTennis,
-                    contentDescription = "Court de padel",
+                    contentDescription = "PadelCourt",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -126,6 +126,6 @@ fun TimeCourtCard(timeSlot: String, isAvailable: Boolean, onClick: () -> Unit) {
                 textAlign = TextAlign.Center
             )
         }
-    }
+}
 }
 

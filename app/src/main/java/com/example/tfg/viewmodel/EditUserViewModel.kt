@@ -2,13 +2,11 @@ package com.example.tfg.viewmodel
 
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.tfg.models.User
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
@@ -60,13 +58,13 @@ class EditUserViewModel : ViewModel() {
             try {
                 val user = usuario.value
                 val userUpdates = mapOf(
-                    "nombre" to user.nombre,
-                    "apellido" to user.apellido,
+                    "nombre" to user.name,
+                    "apellido" to user.firstname,
                     "email" to user.email,
-                    "telefono" to user.telefono,
+                    "telefono" to user.phone,
                     "dni" to user.dni,
-                    "genero" to user.genero,
-                    "fechaNacimiento" to user.fechaNacimiento
+                    "genero" to user.gender,
+                    "fechaNacimiento" to user.birthday
                 )
 
                 db.collection(name_collection).document(uid).update(userUpdates).await()
@@ -87,13 +85,13 @@ class EditUserViewModel : ViewModel() {
     }
 
     // Métodos para actualizar los valores del usuario
-    fun setNombre(value: String) { _usuario.update { it.copy(nombre = value) } }
-    fun setApellido(value: String) { _usuario.update { it.copy(apellido = value) } }
+    fun setNombre(value: String) { _usuario.update { it.copy(name = value) } }
+    fun setApellido(value: String) { _usuario.update { it.copy(firstname = value) } }
     fun setEmail(value: String) { _usuario.update { it.copy(email = value) } }
-    fun setTelefono(value: String) { _usuario.update { it.copy(telefono = value) } }
+    fun setTelefono(value: String) { _usuario.update { it.copy(phone = value) } }
     fun setDni(value: String) { _usuario.update { it.copy(dni = value) } }
-    fun setGenero(value: String) { _usuario.update { it.copy(genero = value) } }
-    fun setFechaNacimiento(value: String) { _usuario.update { it.copy(fechaNacimiento = value) } }
+    fun setGenero(value: String) { _usuario.update { it.copy(gender = value) } }
+    fun setFechaNacimiento(value: String) { _usuario.update { it.copy(birthday = value) } }
 
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message

@@ -59,13 +59,13 @@ class EditProductViewModel: ViewModel() {
             try {
                 val product = product.value
                 val productUpdates = mapOf(
-                    "nombre" to product.nombre,
-                    "precio" to product.precio,
-                    "descripcion" to product.descripcion,
-                    "categoria" to product.categoria,
-                    "imagen" to product.imagen,
+                    "nombre" to product.name,
+                    "precio" to product.price,
+                    "descripcion" to product.description,
+                    "categoria" to product.category,
+                    "imagen" to product.image,
                     "stock" to product.stock,
-                    "marca" to product.marca
+                    "marca" to product.brand
                 )
 
                 db.collection("productos").document(productId).update(productUpdates).await()
@@ -85,13 +85,13 @@ class EditProductViewModel: ViewModel() {
 
 
     // Métodos para actualizar los valores del producto
-    fun setNombre(value: String) { _product.update { it.copy(nombre = value) } }
-    fun setPrecio(value: Double) { _product.update { it.copy(precio = value) } }
-    fun setDescripcion(value: String) { _product.update { it.copy(descripcion = value) } }
-    fun setCategoria(value: String) { _product.update { it.copy(categoria = value) } }
-    fun setImagen(value: String) { _product.update { it.copy(imagen = value) } }
+    fun setNombre(value: String) { _product.update { it.copy(name = value) } }
+    fun setPrecio(value: Double) { _product.update { it.copy(price = value) } }
+    fun setDescripcion(value: String) { _product.update { it.copy(description = value) } }
+    fun setCategoria(value: String) { _product.update { it.copy(category = value) } }
+    fun setImagen(value: String) { _product.update { it.copy(image = value) } }
     fun setStock(value: Int) { _product.update { it.copy(stock = value) } }
-    fun setMarca(value: String) { _product.update { it.copy(marca = value) } }
+    fun setMarca(value: String) { _product.update { it.copy(brand = value) } }
 
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message

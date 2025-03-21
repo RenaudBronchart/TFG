@@ -68,8 +68,8 @@ fun CardProductDetail(navController: NavHostController, product: Product, produc
 
             // Imagen con animación
             Image(
-                painter = rememberAsyncImagePainter(model = product.imagen),
-                contentDescription = product.nombre,
+                painter = rememberAsyncImagePainter(model = product.image),
+                contentDescription = product.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
@@ -78,19 +78,19 @@ fun CardProductDetail(navController: NavHostController, product: Product, produc
 
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = product.nombre,
+                text = product.name,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = product.descripcion,
+                text = product.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "${product.precio} €",
+                text = "${product.price} €",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
@@ -104,7 +104,7 @@ fun CardProductDetail(navController: NavHostController, product: Product, produc
                             cartShoppingViewModel.addToCart(product)
                             Toast.makeText(
                                 context,
-                                "${product.nombre} Añadido ",
+                                "${product.name} Añadido ",
                                 Toast.LENGTH_SHORT
                             ).show()
                             onDismiss() // Cerrar Sheet

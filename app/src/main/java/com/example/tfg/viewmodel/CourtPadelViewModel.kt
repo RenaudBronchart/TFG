@@ -80,7 +80,7 @@ class CourtPadelViewModel : ViewModel() {
             try {
                 val doc = db.collection(name_collection).document(courtId).get().await()
                 val court = doc.toObject(CourtPadel::class.java)
-                onResult(court?.nombre ?: "Inconnu")
+                onResult(court?.name ?: "Inconnu")
             } catch (e: Exception) {
                 onResult("Inconnu")
             }

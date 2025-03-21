@@ -74,14 +74,14 @@ fun UserCard(usuario: User, onEditClick: (String) -> Unit) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = "Nombre: ${usuario.nombre}", fontWeight = FontWeight.Bold)
+            Text(text = "Nombre: ${usuario.name}", fontWeight = FontWeight.Bold)
             Text(text = "Id: ${usuario.id}")
-            Text(text = "Apellido: ${usuario.apellido}")
+            Text(text = "Apellido: ${usuario.firstname}")
             Text(text = "Email: ${usuario.email}")
             Text(text = "Dni: ${usuario.dni}")
-            Text(text = "Telefono: ${usuario.telefono}")
-            Text(text = "Fecha nacimiento: ${usuario.fechaNacimiento}")
-            Text(text = "Genero: ${usuario.genero}")
+            Text(text = "Telefono: ${usuario.phone}")
+            Text(text = "Fecha nacimiento: ${usuario.birthday}")
+            Text(text = "Genero: ${usuario.gender}")
             Text(text = "Role: ${usuario.role}")
 
             Spacer(modifier = Modifier.height(8.dp))

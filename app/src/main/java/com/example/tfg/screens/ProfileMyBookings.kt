@@ -62,7 +62,7 @@ fun ProfileMyBookings(navHostController: NavHostController, authViewModel : Auth
                 //take displayedcout, seleciona solo los elementos de displayedcount
                 items(count = userBookings.take(displayedCount).size) { index ->
                     val booking = userBookings[index] // // Obtener la reserva en la posición `index`
-                    val courtName = courts.find { it.id == booking.courtId }?.nombre ?: "Error Pista"
+                    val courtName = courts.find { it.id == booking.courtId }?.name ?: "Error Pista"
 
                     CardCheckout(
                         courtName = courtName,

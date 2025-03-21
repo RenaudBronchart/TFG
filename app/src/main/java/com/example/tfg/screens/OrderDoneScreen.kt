@@ -64,7 +64,7 @@ fun OrderDoneScreen( navHostController: NavHostController,authViewModel: AuthVie
             // Icono
             Icon(
                 imageVector = Icons.Default.CheckCircle,
-                contentDescription = "Confirmado",
+                contentDescription = "confirm",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(64.dp)

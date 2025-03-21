@@ -83,11 +83,11 @@ fun BookingPadelScreen(
                     CardCourt(
                         courtId = court.id,
                         date = selectedDate.value.toString(),
-                        courtName = court.nombre,
+                        courtName = court.name,
                         bookingPadelViewModel = bookingPadelViewModel
                     ) { timeSlot ->
                         navHostController.navigate(
-                            "checkoutScreen/${court.id}/${court.nombre}/${selectedDate.value}/$timeSlot"
+                            "checkoutScreen/${court.id}/${court.name}/${selectedDate.value}/$timeSlot"
                         )
                     }
                 }
