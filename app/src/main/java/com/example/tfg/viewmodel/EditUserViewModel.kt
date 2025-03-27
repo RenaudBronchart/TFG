@@ -8,16 +8,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
+import com.example.tfg.repository.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 
-class EditUserViewModel : ViewModel() {
-
-    private val db = FirebaseFirestore.getInstance()
-    private val name_collection = "users"
+class EditUserViewModel(
+    private val userRepository: UserRepository) : ViewModel() {
 
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users
@@ -36,44 +35,26 @@ class EditUserViewModel : ViewModel() {
 
     fun getUsersFromFirestore() {
         viewModelScope.launch {
-            try {
-                val query = db.collection(name_collection).get().await()
-
-                // Utilisation de mapNotNull pour récupérer les utilisateurs valides
-                val users = query.documents.mapNotNull { it.toObject(User::class.java) }
-
-                // Mise à jour de l'état avec la liste des utilisateurs
-                _users.value = users
-
-                Log.d("UserViewModel", "Nombre d'utilisateurs récupérés : ${users.size}")
-            } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de la récupération des utilisateurs : ${e.message}")
-            }
+            _users.value = userRepository.getUsers()
         }
     }
 
     fun loadUser(uid: String) {
-        if (currentUid == uid) return  // Evitar recargar si ya tenemos los datos correctos
+        if (currentUid == uid) return // Evitar recargar si ya tenemos los datos correctos
         currentUid = uid
 
         viewModelScope.launch {
-            try {
-                val document = db.collection(name_collection).document(uid).get().await()
-                val user = document.toObject(User::class.java)
-
-                if (user != null) {
-                    _user.value = user
-                } else {
-                    Log.e("EditUserViewModel", "Error: Usuario no encontrado")
-                }
-            } catch (e: Exception) {
-                Log.e("EditUserViewModel", "Error al cargar usuario: ${e.message}")
+            val loadedUser = userRepository.getUserById(uid)
+            if (loadedUser != null) {
+                _user.value = loadedUser
+            } else {
+                Log.e("EditUserViewModel", "Error: Usuario no encontrado")
             }
         }
     }
 
         // se podria pasar un map of en User y utilizar un emit?
-    fun updateUser(uid: String, onSuccess: (String) -> Unit) {
+    /*fun updateUser(uid: String, onSuccess: (String) -> Unit) {
             _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -104,6 +85,33 @@ class EditUserViewModel : ViewModel() {
             } finally {
                 _isLoading.value = false
             }
+        }
+    }*/
+
+    fun updateUser(uid: String, onSuccess: (String) -> Unit) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            // Aseguramos que existe un usuario cargado
+            val currentUser = _user.value
+            if (currentUser != null) {
+                // Se podría crear un nuevo objeto o utilizar copy() para modificarlo
+                val success = userRepository.updateUser(uid, currentUser)
+                if (success) {
+                    // Recargar la lista de usuarios (si es necesario)
+                    getUsersFromFirestore()
+                    val successMessage = "Usuario actualizado correctamente"
+                    _messageConfirmation.value = successMessage
+                    onSuccess(successMessage)
+                } else {
+                    val errorMessage = "Error al actualizar usuario"
+                    _messageConfirmation.value = errorMessage
+                    onSuccess(errorMessage)
+                }
+            } else {
+                _messageConfirmation.value = "No se encontró el usuario"
+                onSuccess("No se encontró el usuario")
+            }
+            _isLoading.value = false
         }
     }
 

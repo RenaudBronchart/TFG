@@ -42,7 +42,6 @@ fun Home(navHostController: NavHostController, authViewModel: AuthViewModel, use
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
-    authViewModel.fetchCurrentUser()
 
     LaunchedEffect(currentUser?.uid) {
         currentUser?.uid?.let { uid ->

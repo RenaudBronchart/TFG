@@ -42,7 +42,6 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showSheet by remember { mutableStateOf(false) }
 
-    authViewModel.fetchCurrentUser()
     LaunchedEffect(navHostController) {
         productViewModel.getProductosFromFirestore()
     }

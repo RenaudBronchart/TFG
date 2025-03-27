@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.tfg.models.User
+import com.example.tfg.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,11 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
-class UserViewModel: ViewModel() {
-    // instancia de la base de datos FB
-    // almacenar el nombre de la colección
-    private  val db = FirebaseFirestore.getInstance()
-    private val  name_collection = "users"
+class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private val _name = MutableStateFlow<String>("")
     val name: StateFlow<String> = _name //
@@ -61,7 +58,7 @@ class UserViewModel: ViewModel() {
     val isButtonEnable: StateFlow<Boolean> = _isButtonEnable
 
     private val _messageConfirmation = MutableStateFlow("")
-    val messageConfirmation: StateFlow<String> get() = _messageConfirmation
+    val messageConfirmation: StateFlow<String> = _messageConfirmation
 
     init {
         getUsersFromFirestore()
@@ -69,65 +66,47 @@ class UserViewModel: ViewModel() {
 
     fun getUsersFromFirestore() {
         viewModelScope.launch {
-            try {
-                val query = db.collection(name_collection).get().await()
-
-                // Utilisation de mapNotNull pour récupérer les utilisateurs valides
-                val users = query.documents.mapNotNull { it.toObject(User::class.java) }
-
-                // Mise à jour de l'état avec la liste des utilisateurs
-                _users.value = users
-
-                Log.d("UserViewModel", "Nombre d'utilisateurs récupérés : ${users.size}")
-            } catch (e: Exception) {
-                Log.e("UserViewModel", "Erreur lors de la récupération des utilisateurs : ${e.message}")
-            }
+            _users.value = userRepository.getUsers()
         }
     }
-
 
 
     fun loadUser(uid: String) {
         viewModelScope.launch {
-            try {
-                val document = db.collection(name_collection).document(uid).get().await()
-                val user = document.toObject(User::class.java)
-                _user.value = user
-            } catch (e: Exception) {
-                Log.e("UsuarioViewModel", "error para cargar datos : ${e.message}")
-            }
+            _user.value = userRepository.getUserById(uid)
         }
     }
 
-    fun registerUser(authViewModel: AuthViewModel, navController: NavHostController, onResult: (String) -> Unit
-    ) {
+    fun registerUser(authViewModel: AuthViewModel, navController: NavHostController, onResult: (String) -> Unit) {
         viewModelScope.launch {
-            val result = authViewModel.createUserWithEmailAndPassword(email.value ?: "", password.value ?: "")
+            val result = authViewModel.createUserWithEmailAndPassword(email.value, password.value)
             val user = result?.user
 
             if (user != null) {
                 val userId = user.uid
-                val newUser  = User(
+                val newUser = User(
                     id = userId,
-                    name = name.value ?: "",
-                    firstname = firstname.value ?: "",
-                    email = email.value ?: "",
-                    dni = dni.value ?: "",
-                    birthday = birthday.value ?: "",
-                    phone = phone.value ?: "",
-                    gender = gender.value ?: "",
+                    name = name.value,
+                    firstname = firstname.value,
+                    email = email.value,
+                    dni = dni.value,
+                    birthday = birthday.value,
+                    phone = phone.value,
+                    gender = gender.value,
                     role = "user"
                 )
-                try {
-                    db.collection(name_collection).document(userId).set(newUser).await()
+
+                val isUserRegistered = userRepository.registerUser(newUser)
+
+                if (isUserRegistered) {
                     _messageConfirmation.value = "Cuenta creada correctamente"
                     delay(1000)
                     resetFields()
                     navController.navigate("Home") {
                         popUpTo("SignUp") { inclusive = true }
                     }
-                } catch (exception: Exception) {
-                    _messageConfirmation.value = "No se ha podido crear la cuenta: ${exception.message}"
+                } else {
+                    _messageConfirmation.value = "No se ha podido crear la cuenta"
                 }
             } else {
                 onResult("Error al crear cuenta")
