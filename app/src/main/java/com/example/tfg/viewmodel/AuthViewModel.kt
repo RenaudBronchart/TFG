@@ -18,7 +18,7 @@ class AuthViewModel: ViewModel() {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
-    private val name_collection = "usuarios"
+    private val name_collection = "users"
 
     private val _isAdmin = MutableStateFlow(false)
     val isAdmin: StateFlow<Boolean> = _isAdmin
@@ -57,14 +57,14 @@ class AuthViewModel: ViewModel() {
     // y facilitando la programación asincrónica en Kotlin Coroutines.
     suspend fun signInWithEmailAndPassword(email: String, password: String): String? {
         return try {
-       val authResult = auth.signInWithEmailAndPassword(email, password).await()
-                authResult.user?.let { user ->
-                    _user.value = user
-                    _currentUserId.value = user.uid
-                    checkIfUserIsAdmin(user.uid)
-                }
+            val authResult = auth.signInWithEmailAndPassword(email, password).await()
+            authResult.user?.let { user ->
+                _user.value = user
+                _currentUserId.value = user.uid
+                checkIfUserIsAdmin(user.uid)
+            }
             null
-            } catch (e:Exception) {
+        } catch (e: Exception) {
             when (e) {
                 is FirebaseAuthInvalidUserException,
                 is FirebaseAuthInvalidCredentialsException -> "Usuario o contraseña incorrecta"

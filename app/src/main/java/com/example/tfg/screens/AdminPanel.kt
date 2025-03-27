@@ -15,22 +15,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.tfg.components.BottomBarComponent
 import com.example.tfg.components.CardItemProfile
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
 import com.example.tfg.viewmodel.AuthViewModel
+import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
 
 @Composable
-fun AdminPage(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
-    val usuarioData by userViewModel.usuario.collectAsState()
+fun AdminPage(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel ) {
+    val usuarioData by userViewModel.user.collectAsState()
     val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
+    val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
     Scaffold(
         topBar = { TopBarComponent("Administrador pagina", navHostController) },
+        bottomBar = { BottomBarComponent(navHostController, cartItems) }
     ) { innerPadding ->
         Box(
             modifier = Modifier

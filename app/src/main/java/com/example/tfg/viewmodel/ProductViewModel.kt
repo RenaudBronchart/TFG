@@ -1,8 +1,6 @@
 package com.example.tfg.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
@@ -17,41 +15,44 @@ class ProductViewModel: ViewModel() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val name_collection = "productos"
 
-    private val _nombre = MutableLiveData<String>()
-    val nombre: LiveData<String> = _nombre //
+    private val _name = MutableStateFlow<String>("")
+    val name: StateFlow<String> = _name //
 
-    private val _precio = MutableLiveData<Double>()
-    val precio: LiveData<Double> = _precio
+    private val _price = MutableStateFlow<Double>(0.0)
+    val price: MutableStateFlow<Double> = _price
 
-    private val _descripcion = MutableLiveData<String>()
-    val descripcion: LiveData<String> = _descripcion
+    private val _description = MutableStateFlow<String>("")
+    val description: StateFlow<String> = _description
 
-    private val _categoria = MutableLiveData<String>()
-    val categoria: LiveData<String> = _categoria
+    private val _category = MutableStateFlow<String>("")
+    val category: StateFlow<String> = _category
 
-    private val _imagen = MutableLiveData<String>()
-    val imagen: LiveData<String> = _imagen
+    private val _image = MutableStateFlow<String>("")
+    val image: StateFlow<String> = _image
 
-    private val _stock = MutableLiveData<Int>()
-    val stock: LiveData<Int> = _stock
+    private val _stock = MutableStateFlow<Int>(0)
+    val stock: StateFlow<Int> = _stock
 
-    private val _marca = MutableLiveData<String>()
-    val marca: LiveData<String> = _marca
+    private val _brand = MutableStateFlow<String>("")
+    val brand: StateFlow<String> = _brand
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
-    private val _productos = MutableStateFlow<List<Product>>(emptyList())
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
-    val productos: StateFlow<List<Product>> = _productos
+    val products: StateFlow<List<Product>> = _products
 
     private val _product = MutableStateFlow<Product?>(null)
     val product: StateFlow<Product?> = _product
 
-    private val _isButtonEnable = MutableLiveData<Boolean>()
-    val isButtonEnable: LiveData<Boolean> = _isButtonEnable
+    private val _isButtonEnable = MutableStateFlow(false)
+    val isButtonEnable: StateFlow<Boolean> = _isButtonEnable
 
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> get() = _messageConfirmation
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     init {
         getProductosFromFirestore()
@@ -73,97 +74,88 @@ class ProductViewModel: ViewModel() {
                     products.add(product)
                 }
             }
-            _productos.value = products
+            _products.value = products
         }
     }
 
-    /*fun getProductById(productId: String) {
-        viewModelScope.launch {
-            try {
-                val document = db.collection(name_collection)
-                    .document(productId)
-                    .get()
-                    .await()
 
-                _producto.value = document.toObject(Producto::class.java)
-            } catch (e: Exception) {
-                Log.e("GetProductById", "Error al obtener producto: ${e.message}")
-            }
-        }
-    }*/
 
-    fun addProduct(
-        nombre: String, precio: Double, descripcion: String,
-        categoria: String, imagen: String, stock: Int, marca: String,
-        onSuccess: (String) -> Unit
+    fun addProduct(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String, onSuccess: (String) -> Unit
     ) {
         viewModelScope.launch {
-            val product = Product(
-                name = nombre,
-                price = precio,
-                description = descripcion,
-                category = categoria,
-                image = imagen,
-                stock = stock,
-                brand = marca
-            )
-            db.collection(name_collection)
-                .document(product.id)
-                .set(product)
-                .addOnSuccessListener {
-                    _messageConfirmation.value = "Producto añadido correctamente"
-                    getProductosFromFirestore()
-                    onSuccess(_messageConfirmation.value)
-                }
-                .addOnFailureListener { exception ->
-                    _messageConfirmation.value = "No se ha podido añadir un producto: ${exception.message}"
-                    onSuccess(_messageConfirmation.value)
-                }
+            try {
+                val product = Product(
+                    name = name,
+                    price = price,
+                    description = description,
+                    category = category,
+                    image = image,
+                    stock = stock,
+                    brand = brand
+                )
+
+                // Utilisation de `await()` pour garder tout en coroutines
+                db.collection(name_collection)
+                    .document(product.id)
+                    .set(product)
+                    .await()
+
+                val confirmationMessage = "Producto añadido correctamente"
+                _messageConfirmation.value = confirmationMessage
+                onSuccess(confirmationMessage)
+            } catch (exception: Exception) {
+                val confirmationMessage = "No se ha podido añadir un producto: ${exception.message}"
+                _messageConfirmation.value = confirmationMessage
+                onSuccess(confirmationMessage)
+            }
         }
     }
 
-    fun deleteProduct(productId: String,onSuccess: (String) -> Unit) {
-
-        db.collection(name_collection)
-            .document(productId)
-            .delete()
-            .addOnSuccessListener {
-                _messageConfirmation.value = "Producto eliminado correctamente"
-                getProductosFromFirestore()
-                onSuccess(_messageConfirmation.value)
-
-            }
-            .addOnFailureListener { exception ->
+    fun deleteProduct(productId: String, onSuccess: (String) -> Unit) {
+        viewModelScope.launch {
+            _isLoading.value = true // Indique que l'opération est en cours
+            try {
+                db.collection(name_collection)
+                    .document(productId)
+                    .delete()
+                    .await()
+                val successMessage = "Producto eliminado correctamente"
+                getProductosFromFirestore() // Rafraîchit la liste des produits
+                _messageConfirmation.value = successMessage
+                onSuccess(successMessage)
+            } catch (exception: Exception) {
                 _messageConfirmation.value = "No se ha podido eliminar el producto: ${exception.message}"
                 onSuccess(_messageConfirmation.value)
+            } finally {
+                _isLoading.value = false // Désactive l'état de chargement
             }
-
+        }
     }
 
-    fun onCompletedFields(nombre: String, precio: Double, descripcion: String, categoria: String, imagen: String, stock: Int, marca: String) {
-        _nombre.value = nombre
-        _precio.value = precio
-        _descripcion.value = descripcion
-        _categoria.value = categoria
-        _imagen.value = imagen
+    fun onCompletedFields(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) {
+        _name.value = name
+        _price.value = price
+        _description.value = description
+        _category.value = category
+        _image.value = image
         _stock.value = stock
-        _marca.value = marca
-        _isButtonEnable.value = enableButton(nombre, precio, descripcion, categoria, imagen, stock, marca)
+        _brand.value = brand
+        _isButtonEnable.value = enableButton(name, price, description, category, image, stock, brand)
 
         Log.d("ButtonEnabled", "isButtonEnable: ${_isButtonEnable.value}")
     }
 
-    fun enableButton(nombre: String, precio: Double, descripcion: String, categoria: String, imagen: String, stock: Int, marca: String) =
-        nombre.isNotEmpty() && precio > 0 && descripcion.isNotEmpty() && categoria.isNotEmpty() && imagen.isNotEmpty() && stock > 0 && marca.isNotEmpty()
+    fun enableButton(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) =
+        name.isNotEmpty() && price > 0 && description.isNotEmpty() && category.isNotEmpty() && image.isNotEmpty() && stock > 0 && brand.isNotEmpty()
 
     fun resetFields() {
-        _nombre.value = ""
-        _precio.value = 0.0
-        _descripcion.value = ""
-        _categoria.value = "Selecciona una categoría"
-        _imagen.value = ""
+        _name.value = ""
+        _price.value = 0.0
+        _description.value = ""
+        _category.value = "Selecciona una categoría"
+        _image.value = ""
         _stock.value = 0
-        _marca.value = ""
+        _brand.value = ""
         _isButtonEnable.value = false // Pour désactiver le bouton après la soumission
     }
 

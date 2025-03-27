@@ -70,13 +70,13 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SelectProductCategory(selectedCategory = producto.category, onCategorySelected = editProductViewModel::setCategoria)
-            DataField(label = "Nombre", value = producto.name, onValueChange = editProductViewModel::setNombre)
-            DataField(label = "Precio", value = producto.price.toString(), onValueChange = { editProductViewModel.setPrecio(it.toDoubleOrNull() ?: 0.0) }, keyboardType = KeyboardType.Number)
-            DataField(label = "Descripción", value = producto.description, onValueChange = editProductViewModel::setDescripcion)
-            DataField(label = "Imagen URL", value = producto.image, onValueChange = editProductViewModel::setImagen)
+            SelectProductCategory(selectedCategory = producto.category, onCategorySelected = editProductViewModel::setCategory)
+            DataField(label = "Nombre", value = producto.name, onValueChange = editProductViewModel::setName)
+            DataField(label = "Precio", value = producto.price.toString(), onValueChange = { editProductViewModel.setPrice(it.toDoubleOrNull() ?: 0.0) }, keyboardType = KeyboardType.Number)
+            DataField(label = "Descripción", value = producto.description, onValueChange = editProductViewModel::setDescription)
+            DataField(label = "Imagen URL", value = producto.image, onValueChange = editProductViewModel::setImage)
             DataField(label = "Stock", value = producto.stock.toString(), onValueChange = { editProductViewModel.setStock(it.toIntOrNull() ?: 0) }, keyboardType = KeyboardType.Number)
-            DataField(label = "Marca", value = producto.brand, onValueChange = editProductViewModel::setMarca)
+            DataField(label = "Marca", value = producto.brand, onValueChange = editProductViewModel::setBrand)
 
             Spacer(modifier = Modifier.height(16.dp))
 

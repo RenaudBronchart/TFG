@@ -60,7 +60,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
         composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel, cartShoppingViewModel)}
-        composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel)}
+        composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel,cartShoppingViewModel)}
         composable(AppScreens.AdminAddProduct.ruta) { AdminAddProduct(navigationController, authViewModel, productViewModel)}
         composable(AppScreens.BookingPadelScreen.ruta) { BookingPadelScreen(navigationController, authViewModel,bookingPadelViewModel, courtPadelViewModel,cartShoppingViewModel)}
         composable(AppScreens.AdminListUsers.ruta) { AdminListUsers(navigationController, authViewModel, userViewModel)}

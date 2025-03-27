@@ -43,7 +43,7 @@ import com.example.tfg.viewmodel.UserViewModel
 @Composable
 fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
-    val usuarioData by userViewModel.usuario.collectAsState()
+    val usuarioData by userViewModel.user.collectAsState()
     Log.d("DEBUG", "Usuario Data: $usuarioData")
     val name = usuarioData?.name ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value

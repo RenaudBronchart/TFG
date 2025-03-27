@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,25 +31,25 @@ import com.example.tfg.components.TopBarComponent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
-    val nombre by userViewModel.nombre.observeAsState("")
-    val apellido by userViewModel.apellido.observeAsState("")
-    val dni by userViewModel.dni.observeAsState("")
-    val email by userViewModel.email.observeAsState("")
-    val telefono by userViewModel.telefono.observeAsState("")
-    val genero by userViewModel.genero.observeAsState("")
-    val fechaNacimiento by userViewModel.fechaNacimiento.observeAsState("")
+    val name by userViewModel.name.collectAsState("")
+    val firstname by userViewModel.firstname.collectAsState("")
+    val dni by userViewModel.dni.collectAsState("")
+    val email by userViewModel.email.collectAsState("")
+    val phone by userViewModel.phone.collectAsState("")
+    val gender by userViewModel.gender.collectAsState("")
+    val birthday by userViewModel.birthday.collectAsState("")
     //val role by viewModel.role.observeAsState("user")
-    val contraseña by userViewModel.contraseña.observeAsState("")
-    val isButtonEnabled by userViewModel.isButtonEnable.observeAsState(false)
+    val password by userViewModel.password.collectAsState("")
+    val isButtonEnabled by userViewModel.isButtonEnable.collectAsState(false)
     val snackbarHostState = remember { SnackbarHostState() }
     val message by userViewModel.messageConfirmation.collectAsState()
 
     val fields = listOf(
-        Triple("Nombre", nombre, "nombre"),
-        Triple("Apellido", apellido, "apellido"),
+        Triple("Nombre", name, "nombre"),
+        Triple("Apellido", firstname, "apellido"),
         Triple("DNI", dni, "dni"),
         Triple("Email", email, "email"),
-        Triple("Teléfono", telefono, "telefono")
+        Triple("Teléfono", phone, "telefono")
     )
 
     LaunchedEffect(message) {
@@ -77,11 +76,11 @@ fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, u
                     value = value,
                     onValueChange = { newValue ->
                         when (key) {
-                            "nombre" -> userViewModel.onCompletedFields(newValue, apellido, dni, email, telefono, genero, fechaNacimiento, contraseña)
-                            "apellido" -> userViewModel.onCompletedFields(nombre, newValue, dni, email, telefono, genero, fechaNacimiento, contraseña)
-                            "dni" -> userViewModel.onCompletedFields(nombre, apellido, newValue, email, telefono, genero, fechaNacimiento, contraseña)
-                            "email" -> userViewModel.onCompletedFields(nombre, apellido, dni, newValue, telefono, genero, fechaNacimiento, contraseña)
-                            "telefono" -> userViewModel.onCompletedFields(nombre, apellido, dni, email, newValue, genero, fechaNacimiento, contraseña)
+                            "nombre" -> userViewModel.onCompletedFields(newValue, firstname, dni, email, phone, gender, birthday, password)
+                            "apellido" -> userViewModel.onCompletedFields(name, newValue, dni, email, phone, gender, birthday, password)
+                            "dni" -> userViewModel.onCompletedFields(name, firstname, newValue, email, phone, gender, birthday, password)
+                            "email" -> userViewModel.onCompletedFields(name, firstname, dni, newValue, phone, gender, birthday, password)
+                            "telefono" -> userViewModel.onCompletedFields(name, firstname, dni, email, newValue, gender, birthday, password)
                         }
                     }
                 )
@@ -89,24 +88,24 @@ fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, u
 
             // Sélection du genre
             SelectGender(
-                selectedGender = genero,
+                selectedGender = gender,
                 onGenderChange = { newGender ->
-                    userViewModel.onCompletedFields(nombre, apellido, dni, email, telefono, newGender, fechaNacimiento, contraseña)
+                    userViewModel.onCompletedFields(name, firstname, dni, email, phone, newGender, birthday, password)
                 }
             )
 
             // Sélection de la date de naissance
             SelectDate(
-                selectedDate = fechaNacimiento,
+                selectedDate = birthday,
                 onDateChange = { newDate ->
-                    userViewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, newDate, contraseña)
+                    userViewModel.onCompletedFields(name, firstname, dni, email, phone, gender, newDate, password)
                 }
             )
 
             // campo para la contrasena
             PasswordField(
-                value = contraseña,
-                onValueChange = { userViewModel.onCompletedFields(nombre, apellido, dni, email, telefono, genero, fechaNacimiento, it) }
+                value = password,
+                onValueChange = { userViewModel.onCompletedFields(name, firstname, dni, email, phone, gender, birthday, it) }
             )
             Button(
                 onClick = {

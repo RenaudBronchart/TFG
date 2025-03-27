@@ -1,6 +1,7 @@
 package com.example.tfg.screens
 
 
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +14,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
@@ -30,11 +31,14 @@ import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.User
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun AdminListUsers(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
+    val userData by userViewModel.users.collectAsState()
 
-val userData by userViewModel.usuarios.collectAsState()
+    LaunchedEffect(Unit) {
+        userViewModel.getUsersFromFirestore()
+    }
 
     Scaffold(
         topBar = { TopBarComponent("Datos", navHostController) },
@@ -53,8 +57,8 @@ val userData by userViewModel.usuarios.collectAsState()
             )
             // mostra lista de usuaruios
             LazyColumn {
-                items(userData) { usuario ->
-                    UserCard(usuario = usuario) { userId ->
+                items(userData) { user ->
+                    UserCard(user = user) { userId ->
                         navHostController.navigate("editUser/$userId")
                     }
                 }
@@ -64,7 +68,7 @@ val userData by userViewModel.usuarios.collectAsState()
     }
 
 @Composable
-fun UserCard(usuario: User, onEditClick: (String) -> Unit) {
+fun UserCard(user: User, onEditClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,20 +78,20 @@ fun UserCard(usuario: User, onEditClick: (String) -> Unit) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = "Nombre: ${usuario.name}", fontWeight = FontWeight.Bold)
-            Text(text = "Id: ${usuario.id}")
-            Text(text = "Apellido: ${usuario.firstname}")
-            Text(text = "Email: ${usuario.email}")
-            Text(text = "Dni: ${usuario.dni}")
-            Text(text = "Telefono: ${usuario.phone}")
-            Text(text = "Fecha nacimiento: ${usuario.birthday}")
-            Text(text = "Genero: ${usuario.gender}")
-            Text(text = "Role: ${usuario.role}")
+            Text(text = "Nombre: ${user.name}", fontWeight = FontWeight.Bold)
+            Text(text = "Id: ${user.id}")
+            Text(text = "Apellido: ${user.firstname}")
+            Text(text = "Email: ${user.email}")
+            Text(text = "Dni: ${user.dni}")
+            Text(text = "Telefono: ${user.phone}")
+            Text(text = "Fecha nacimiento: ${user.birthday}")
+            Text(text = "Genero: ${user.gender}")
+            Text(text = "Role: ${user.role}")
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = { onEditClick(usuario.id) },
+                onClick = { onEditClick(user.id) },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Modifier")

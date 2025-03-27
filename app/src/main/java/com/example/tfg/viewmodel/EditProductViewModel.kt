@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -14,7 +13,8 @@ import kotlinx.coroutines.tasks.await
 
 class EditProductViewModel: ViewModel() {
 
-
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products: StateFlow<List<Product>> = _products
 
 
     private val db = FirebaseFirestore.getInstance()
@@ -30,6 +30,24 @@ class EditProductViewModel: ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun getProductosFromFirestore() {
+        viewModelScope.launch {
+            // almacenar el nombre de la colección
+
+            val query = db.collection(name_collection).get().await()
+
+            val products = mutableListOf<Product>()
+
+            for (document in query.documents) {
+                val product = document.toObject(Product::class.java)
+                if (product != null) {
+                    products.add(product)
+                }
+            }
+            _products.value = products
+        }
+    }
 
 
     fun loadProduct(productId: String) {
@@ -59,18 +77,18 @@ class EditProductViewModel: ViewModel() {
             try {
                 val product = product.value
                 val productUpdates = mapOf(
-                    "nombre" to product.name,
-                    "precio" to product.price,
-                    "descripcion" to product.description,
-                    "categoria" to product.category,
-                    "imagen" to product.image,
+                    "name" to product.name,
+                    "price" to product.price,
+                    "description" to product.description,
+                    "category" to product.category,
+                    "image" to product.image,
                     "stock" to product.stock,
-                    "marca" to product.brand
+                    "brand" to product.brand
                 )
 
                 db.collection("productos").document(productId).update(productUpdates).await()
-                delay(2000)
                 val successMessage = "Producto actualizado correctamente"
+                getProductosFromFirestore()
                 _messageConfirmation.value = successMessage
                 onSuccess(successMessage)
             } catch (exception: Exception) {
@@ -85,13 +103,13 @@ class EditProductViewModel: ViewModel() {
 
 
     // Métodos para actualizar los valores del producto
-    fun setNombre(value: String) { _product.update { it.copy(name = value) } }
-    fun setPrecio(value: Double) { _product.update { it.copy(price = value) } }
-    fun setDescripcion(value: String) { _product.update { it.copy(description = value) } }
-    fun setCategoria(value: String) { _product.update { it.copy(category = value) } }
-    fun setImagen(value: String) { _product.update { it.copy(image = value) } }
+    fun setName(value: String) { _product.update { it.copy(name = value) } }
+    fun setPrice(value: Double) { _product.update { it.copy(price = value) } }
+    fun setDescription(value: String) { _product.update { it.copy(description = value) } }
+    fun setCategory(value: String) { _product.update { it.copy(category = value) } }
+    fun setImage(value: String) { _product.update { it.copy(image = value) } }
     fun setStock(value: Int) { _product.update { it.copy(stock = value) } }
-    fun setMarca(value: String) { _product.update { it.copy(brand = value) } }
+    fun setBrand(value: String) { _product.update { it.copy(brand = value) } }
 
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message

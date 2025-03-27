@@ -36,7 +36,7 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 
 @Composable
 fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewModel, productViewModel: ProductViewModel, cartShoppingViewModel: CartShoppingViewModel) {
-    val productos by productViewModel.productos.collectAsState()
+    val productos by productViewModel.products.collectAsState()
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
     var selectedProduct by remember { mutableStateOf<Product?>(null) }

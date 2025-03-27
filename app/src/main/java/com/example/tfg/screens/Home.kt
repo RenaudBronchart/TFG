@@ -34,9 +34,9 @@ import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
+fun Home(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
-    val usuarioData by userViewModel.usuario.collectAsState()
+    val usuarioData by userViewModel.user.collectAsState()
     val currentUser by authViewModel.user.collectAsState()
     val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
@@ -60,7 +60,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
                 title = { Text("¡Hola, $name! 👋") },
             )
         },
-        bottomBar = { BottomBarComponent(navController, cartItems) }
+        bottomBar = { BottomBarComponent(navHostController, cartItems) }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -80,7 +80,7 @@ fun Home(navController: NavHostController, authViewModel: AuthViewModel, userVie
                     CardItemProfile(
                         icon = item.icon,
                         text = item.text,
-                        onClick = { navController.navigate(item.route) }
+                        onClick = { navHostController.navigate(item.route) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }

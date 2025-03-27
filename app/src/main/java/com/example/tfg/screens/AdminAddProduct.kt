@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,15 +29,15 @@ import com.example.tfg.components.TopBarComponent
 @Composable
 fun AdminAddProduct (navHostController: NavHostController, authViewModel : AuthViewModel, productviewModel: ProductViewModel)    {
 
-    val selectedCategory: String by productviewModel.categoria.observeAsState("Selecciona una categoría")
-    val name:String by productviewModel.nombre.observeAsState("")
-    val price:Double by productviewModel.precio.observeAsState(0.0)
-    val description:String by productviewModel.descripcion.observeAsState("")
-    val category:String by productviewModel.categoria.observeAsState("")
-    val image:String by productviewModel.imagen.observeAsState("")
-    val stock:Int by productviewModel.stock.observeAsState(0)
-    val brand:String by productviewModel.marca.observeAsState("")
-    val isButtonEnable:Boolean by productviewModel.isButtonEnable.observeAsState(initial = false)
+    val selectedCategory: String by productviewModel.category.collectAsState("Selecciona una categoría")
+    val name:String by productviewModel.name.collectAsState("")
+    val price:Double by productviewModel.price.collectAsState(0.0)
+    val description:String by productviewModel.description.collectAsState("")
+    val category:String by productviewModel.category.collectAsState("")
+    val image:String by productviewModel.image.collectAsState("")
+    val stock:Int by productviewModel.stock.collectAsState(0)
+    val brand:String by productviewModel.brand.collectAsState("")
+    val isButtonEnable:Boolean by productviewModel.isButtonEnable.collectAsState(initial = false)
     val snackbarHostState = remember { SnackbarHostState() }
     val message by productviewModel.messageConfirmation.collectAsState()
 
@@ -65,7 +66,8 @@ fun AdminAddProduct (navHostController: NavHostController, authViewModel : AuthV
     )
     // configurar TOPBAR
     Scaffold(
-        topBar = { TopBarComponent("Agregar producto", navHostController) }
+        topBar = { TopBarComponent("Agregar producto", navHostController) },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

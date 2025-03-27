@@ -19,46 +19,46 @@ class UserViewModel: ViewModel() {
     // instancia de la base de datos FB
     // almacenar el nombre de la colección
     private  val db = FirebaseFirestore.getInstance()
-    private val  name_collection = "usuarios"
+    private val  name_collection = "users"
 
-    private val _nombre = MutableLiveData<String>()
-    val nombre: LiveData<String> = _nombre
+    private val _name = MutableStateFlow<String>("")
+    val name: StateFlow<String> = _name //
 
-    private val _apellido = MutableLiveData<String>()
-    val apellido: LiveData<String> = _apellido
+    private val _firstname = MutableStateFlow<String>("")
+    val firstname: StateFlow<String> = _firstname
 
-    private val _dni = MutableLiveData<String>()
-    val dni: LiveData<String> = _dni
+    private val _dni = MutableStateFlow<String>("")
+    val dni: StateFlow<String> = _dni
 
-    private val _email = MutableLiveData<String>()
-    val email: LiveData<String> = _email
+    private val _email = MutableStateFlow<String>("")
+    val email: StateFlow<String> = _email
 
-    private val _telefono = MutableLiveData<String>()
-    val telefono: LiveData<String> = _telefono
+    private val _phone = MutableStateFlow<String>("")
+    val phone: StateFlow<String> = _phone
 
-    private val _genero = MutableLiveData<String>()
-    val genero: LiveData<String> = _genero
+    private val _gender = MutableStateFlow<String>("")
+    val gender: StateFlow<String> = _gender
 
-    private val _fechaNacimiento = MutableLiveData<String>()
-    val fechaNacimiento: LiveData<String> = _fechaNacimiento
+    private val _birthday = MutableStateFlow<String>("")
+    val birthday: StateFlow<String> = _birthday
 
-    private val _role = MutableLiveData<String>("user")
-    val role: LiveData<String> get() = _role
+    private val _role = MutableStateFlow<String>("user")
+    val role: StateFlow<String> get() = _role
 
-    private val _contraseña = MutableLiveData<String>()
-    val contraseña: LiveData<String> = _contraseña
+    private val _password = MutableStateFlow<String>("")
+    val password: StateFlow<String> = _password
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // MutableStateFlow A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
-    private val _usuarios = MutableStateFlow<List<User>>(emptyList())
+    private val _users = MutableStateFlow<List<User>>(emptyList())
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
-    val usuarios: StateFlow<List<User>> = _usuarios
+    val users: StateFlow<List<User>> = _users
 
-    private val _usuario = MutableStateFlow<User?>(null)
-    val usuario: StateFlow<User?> = _usuario
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user
 
-    private val _isButtonEnable = MutableLiveData<Boolean>()
-    val isButtonEnable: LiveData<Boolean> = _isButtonEnable
+    private val _isButtonEnable = MutableStateFlow(false)
+    val isButtonEnable: StateFlow<Boolean> = _isButtonEnable
 
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> get() = _messageConfirmation
@@ -69,27 +69,30 @@ class UserViewModel: ViewModel() {
 
     fun getUsersFromFirestore() {
         viewModelScope.launch {
+            try {
+                val query = db.collection(name_collection).get().await()
 
-            val query = db.collection(name_collection).get().await()
+                // Utilisation de mapNotNull pour récupérer les utilisateurs valides
+                val users = query.documents.mapNotNull { it.toObject(User::class.java) }
 
-            val usuarios = mutableListOf<User>()
-            for (document in query.documents) {
-                val usuario = document.toObject(User::class.java)
-                if (usuario != null) {
-                    usuarios.add(usuario)
-                }
+                // Mise à jour de l'état avec la liste des utilisateurs
+                _users.value = users
+
+                Log.d("UserViewModel", "Nombre d'utilisateurs récupérés : ${users.size}")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Erreur lors de la récupération des utilisateurs : ${e.message}")
             }
-            _usuarios.value = usuarios
         }
     }
+
 
 
     fun loadUser(uid: String) {
         viewModelScope.launch {
             try {
                 val document = db.collection(name_collection).document(uid).get().await()
-                val usuario = document.toObject(User::class.java)
-                _usuario.value = usuario
+                val user = document.toObject(User::class.java)
+                _user.value = user
             } catch (e: Exception) {
                 Log.e("UsuarioViewModel", "error para cargar datos : ${e.message}")
             }
@@ -99,39 +102,33 @@ class UserViewModel: ViewModel() {
     fun registerUser(authViewModel: AuthViewModel, navController: NavHostController, onResult: (String) -> Unit
     ) {
         viewModelScope.launch {
-            val result = authViewModel.createUserWithEmailAndPassword(email.value ?: "", contraseña.value ?: "")
+            val result = authViewModel.createUserWithEmailAndPassword(email.value ?: "", password.value ?: "")
             val user = result?.user
 
             if (user != null) {
-                val userId = "user-" + UUID.randomUUID().toString().take(4)
-                val usuario = User(
+                val userId = user.uid
+                val newUser  = User(
                     id = userId,
-                    name = nombre.value ?: "",
-                    firstname = apellido.value ?: "",
+                    name = name.value ?: "",
+                    firstname = firstname.value ?: "",
                     email = email.value ?: "",
                     dni = dni.value ?: "",
-                    birthday = fechaNacimiento.value ?: "",
-                    phone = telefono.value ?: "",
-                    gender = genero.value ?: "",
+                    birthday = birthday.value ?: "",
+                    phone = phone.value ?: "",
+                    gender = gender.value ?: "",
                     role = "user"
                 )
-
-                db.collection(name_collection)
-                    .document(user.uid)
-                    .set(usuario)
-                    .addOnSuccessListener {
-                        _messageConfirmation.value = "Cuenta creada correctamente"
-                        viewModelScope.launch {
-                            delay(1000)
-                            resetFields()
-                            navController.navigate("Home") {
-                                popUpTo("SignUp") { inclusive = true }
-                            }
-                        }
+                try {
+                    db.collection(name_collection).document(userId).set(newUser).await()
+                    _messageConfirmation.value = "Cuenta creada correctamente"
+                    delay(1000)
+                    resetFields()
+                    navController.navigate("Home") {
+                        popUpTo("SignUp") { inclusive = true }
                     }
-                    .addOnFailureListener { exception ->
-                        _messageConfirmation.value = "No se ha podido crear la cuenta: ${exception.message}"
-                    }
+                } catch (exception: Exception) {
+                    _messageConfirmation.value = "No se ha podido crear la cuenta: ${exception.message}"
+                }
             } else {
                 onResult("Error al crear cuenta")
             }
@@ -139,43 +136,43 @@ class UserViewModel: ViewModel() {
     }
 
     fun onCompletedFields(
-        nombre: String,
-        apellido: String,
+        name: String,
+        firstname: String,
         dni: String,
         email: String,
-        telefono: String,
-        genero: String,
-        fechaNacimiento: String,
-        contraseña: String
+        phone: String,
+        gender: String,
+        birthday: String,
+        password: String
     ) {
-        _nombre.value = nombre
-        _apellido.value = apellido
+        _name.value = name
+        _firstname.value = firstname
         _dni.value = dni
         _email.value = email
-        _telefono.value = telefono
-        _genero.value = genero
-        _fechaNacimiento.value = fechaNacimiento
-        _contraseña.value = contraseña
+        _phone.value = phone
+        _gender.value = gender
+        _birthday.value = birthday
+        _password.value = password
         _isButtonEnable.value = enableButton(
-            nombre, apellido, dni, email, telefono, genero, fechaNacimiento, contraseña
+            name, firstname, dni, email, phone, gender, birthday, password
         )
 
         Log.d("ButtonEnabled", "isButtonEnable: ${_isButtonEnable.value}")
     }
 
-    fun enableButton(nombre: String, apellido: String, dni: String, email: String, telefono: String, genero: String, fechaNacimiento: String, contraseña: String
+    fun enableButton(name: String, firstname: String, dni: String, email: String, phone: String, gender: String, birthday: String, password: String
     ) =
-        nombre.isNotEmpty() && apellido.isNotEmpty() && dni.isNotEmpty() && email.isNotEmpty() && telefono.isNotEmpty() && genero.isNotEmpty() && fechaNacimiento.isNotEmpty() && contraseña.isNotEmpty()
+        name.isNotEmpty() && firstname.isNotEmpty() && dni.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && gender.isNotEmpty() && birthday.isNotEmpty() && password.isNotEmpty()
 
     fun resetFields() {
-        _nombre.value = ""
-        _apellido.value = ""
+        _name.value = ""
+        _firstname.value = ""
         _dni.value = ""
         _email.value = ""
-        _telefono.value = ""
-        _genero.value = ""
-        _fechaNacimiento.value = ""
-        _contraseña.value = ""
+        _phone.value = ""
+        _gender.value = ""
+        _birthday.value = ""
+        _password.value = ""
     }
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message

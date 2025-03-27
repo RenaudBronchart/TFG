@@ -39,9 +39,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel,  userId: String) {
     val currentUser by authViewModel.user.collectAsState()
-    val user by editUserViewModel.usuario.collectAsState() // Manejar el estado de usuario
+    val user by editUserViewModel.user.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
-    val message by editUserViewModel.mensajeConfirmacion.collectAsState()
+    val message by editUserViewModel.messageConfirmation.collectAsState()
     val isLoading by editUserViewModel.isLoading.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -49,15 +49,17 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
     LaunchedEffect(Unit) {
         editUserViewModel.resetMessage()
     }
-    // Cargar datos del usuario cuando el UID cambie
-    LaunchedEffect(currentUser?.uid) {
-        currentUser?.uid?.let { editUserViewModel.loadUser(it) }
+
+    LaunchedEffect(userId) {
+        editUserViewModel.loadUser(userId)
     }
     // Mostrar mensaje en Snackbar si hay un mensaje de confirmación
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
+
             snackbarHostState.showSnackbar(message)
-            editUserViewModel.resetMessage() // Limpiar mensaje después de mostrarlo
+            delay(2000)
+            editUserViewModel.resetMessage()
         }
     }
     Scaffold(
@@ -72,31 +74,30 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
         ) {
             LazyColumn {
                 item {
-                    DataField(label = "Nombre", value = user.name, onValueChange = editUserViewModel::setNombre)
-                    DataField(label = "Apellido", value = user.firstname, onValueChange = editUserViewModel::setApellido)
+                    DataField(label = "Nombre", value = user.name, onValueChange = editUserViewModel::setName)
+                    DataField(label = "Apellido", value = user.firstname, onValueChange = editUserViewModel::setFirstname)
                     DataField(label = "Email", value = user.email, onValueChange = editUserViewModel::setEmail)
-                    DataField(label = "Teléfono", value = user.phone, onValueChange = editUserViewModel::setTelefono)
+                    DataField(label = "Teléfono", value = user.phone, onValueChange = editUserViewModel::setPhone)
                     DataField(label = "DNI", value = user.dni, onValueChange = editUserViewModel::setDni)
 
                     SelectGender(
                         selectedGender = user.gender,
-                        onGenderChange = editUserViewModel::setGenero
+                        onGenderChange = editUserViewModel::setGender
                     )
                     SelectDate(
                         selectedDate = user.birthday,
-                        onDateChange = editUserViewModel::setFechaNacimiento
+                        onDateChange = editUserViewModel::setBirthday
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
                         onClick = {
-                            currentUser?.uid?.let { uid ->
-                                editUserViewModel.updateUser(uid) { message ->
-                                    editUserViewModel.setMessageConfirmation(message)
-                                    coroutineScope.launch {
-                                        delay(500)
-                                    }
+
+                            editUserViewModel.updateUser(userId) { message ->
+                                editUserViewModel.setMessageConfirmation(message)
+                                coroutineScope.launch {
+                                    delay(2000)
                                     navController.popBackStack()
                                 }
                             }
