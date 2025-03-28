@@ -23,30 +23,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.tfg.components.BottomBarComponent
 import com.example.tfg.components.CardItemProfile
 import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.CartShoppingViewModel
+import com.example.tfg.viewmodel.AddUserViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navHostController: NavHostController) {
-    // Hilt inyectará los ViewModels automáticamente
-    val authViewModel: AuthViewModel = hiltViewModel()
-    val userViewModel: UserViewModel = hiltViewModel()
 
-    // Usar los ViewModels aquí para la UI
-
+    val userViewModel: UserViewModel = viewModel()
+    val authViewModel: AuthViewModel = viewModel()
     val usuarioData by userViewModel.user.collectAsState()
     val currentUser by authViewModel.user.collectAsState()
     val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
-  /*  val cartItems by cartShoppingViewModel.CartShopping.collectAsState()*/
 
 
     LaunchedEffect(currentUser?.uid) {
@@ -64,14 +59,12 @@ fun Home(navHostController: NavHostController) {
                 ),
                 title = { Text("¡Hola, $name! 👋") },
             )
-        },
-       /* bottomBar = { BottomBarComponent(navHostController, cartItems) }*/
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-
             contentAlignment = Alignment.Center
         ) {
             LazyColumn(
@@ -80,8 +73,7 @@ fun Home(navHostController: NavHostController) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                items(menuItems.filter { it.category == MenuCategory.HOME && (isAdmin || it.text != "Administrar")} )
-                { item ->
+                items(menuItems.filter { it.category == MenuCategory.HOME && (isAdmin || it.text != "Administrar") }) { item ->
                     CardItemProfile(
                         icon = item.icon,
                         text = item.text,

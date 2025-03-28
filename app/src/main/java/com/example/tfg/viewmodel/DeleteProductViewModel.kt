@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class DeleteProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
+class DeleteProductViewModel : ViewModel() {
+    private val productRepository: ProductRepository = ProductRepository()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -16,21 +17,18 @@ class DeleteProductViewModel(private val productRepository: ProductRepository) :
     val messageConfirmation: StateFlow<String> = _messageConfirmation
 
     // Eliminar un producto
-    fun deleteProduct(productId: String) {
+    fun deleteProduct(productId: String, onSuccess: (String) -> Unit) {
+        _isLoading.value = true
         viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val success = productRepository.deleteProduct(productId)
-                if (success) {
-                    _messageConfirmation.value = "Producto eliminado correctamente"
-                } else {
-                    _messageConfirmation.value = "Error al eliminar producto"
-                }
-            } catch (e: Exception) {
-                _messageConfirmation.value = "Error al eliminar producto: ${e.message}"
-            } finally {
-                _isLoading.value = false
+            val success = productRepository.deleteProductById(productId)
+            val message = if (success) {
+                "Producto eliminado correctamente"
+            } else {
+                "Error al eliminar el producto"
             }
+            _messageConfirmation.value = message
+            onSuccess(message)
+            _isLoading.value = false
         }
     }
 }

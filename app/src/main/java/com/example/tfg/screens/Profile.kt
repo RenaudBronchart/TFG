@@ -38,10 +38,11 @@ import com.example.tfg.models.MenuCategory
 import com.example.tfg.models.menuItems
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
+import com.example.tfg.viewmodel.AddUserViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
 @Composable
-fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
+fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, addUserViewModel: AddUserViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
     val usuarioData by userViewModel.user.collectAsState()
     Log.d("DEBUG", "Usuario Data: $usuarioData")

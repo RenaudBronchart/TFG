@@ -4,21 +4,15 @@ package com.example.tfg.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.tfg.models.User
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.repository.UserRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
-
-@HiltViewModel
-class EditUserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class EditUserViewModel : ViewModel() {
+    private val userRepository: UserRepository = UserRepository()
 
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users
@@ -55,40 +49,6 @@ class EditUserViewModel @Inject constructor(private val userRepository: UserRepo
         }
     }
 
-        // se podria pasar un map of en User y utilizar un emit?
-    /*fun updateUser(uid: String, onSuccess: (String) -> Unit) {
-            _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                val user = user.value
-                val userUpdates = mapOf(
-                    "name" to user.name,
-                    "firstname" to user.firstname,
-                    "email" to user.email,
-                    "phone" to user.phone,
-                    "dni" to user.dni,
-                    "gender" to user.gender,
-                    "birthday" to user.birthday
-                )
-
-                db.collection(name_collection).document(uid).update(userUpdates).await()
-
-
-                getUsersFromFirestore()
-                val successMessage = "Usuario actualizado correctamente"
-                _messageConfirmation.value = successMessage
-                onSuccess(successMessage)
-
-            } catch (exception: Exception) {
-                val errorMessage = "Error al actualizar usuario: ${exception.message}"
-                _messageConfirmation.value = errorMessage
-                Log.e("UpdateUser", "Error: ${exception.message}")
-                onSuccess(errorMessage)
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }*/
 
     fun updateUser(uid: String, onSuccess: (String) -> Unit) {
         _isLoading.value = true
@@ -96,31 +56,27 @@ class EditUserViewModel @Inject constructor(private val userRepository: UserRepo
             val currentUser = _user.value
             if (currentUser != null) {
                 val success = userRepository.updateUser(uid, currentUser)
-                _messageConfirmation.value = if (success) {
+                val message = if (success) {
                     "Usuario actualizado correctamente"
                 } else {
                     "Error al actualizar usuario"
                 }
-                onSuccess(_messageConfirmation.value)
-                if (success) getUsersFromFirestore()
+                _messageConfirmation.value = message
+                onSuccess(message)
+
+                // Llamar a getUsersFromFirestore solo si es necesario
+                if (success) {
+                    getUsersFromFirestore()
+                }
             } else {
-                _messageConfirmation.value = "No se encontró el usuario"
-                onSuccess(_messageConfirmation.value)
+                val errorMessage = "No se encontró el usuario"
+                _messageConfirmation.value = errorMessage
+                onSuccess(errorMessage)
             }
             _isLoading.value = false
         }
     }
 
-    /* Métodos para actualizar los valores del usuario
-    fun setName(value: String) { _user.update { it.copy(name = value) } }
-    fun setFirstname(value: String) { _user.update { it.copy(firstname = value) } }
-    fun setEmail(value: String) { _user.update { it.copy(email = value) } }
-    fun setPhone(value: String) { _user.update { it.copy(phone = value) } }
-    fun setDni(value: String) { _user.update { it.copy(dni = value) } }
-    fun setGender(value: String) { _user.update { it.copy(gender = value) } }
-    fun setBirthday(value: String) { _user.update { it.copy(birthday = value) } }
-
-    */
     fun updateUserField(field: String, value: String) {
         _user.update { currentUser ->
             currentUser?.let {
@@ -134,11 +90,11 @@ class EditUserViewModel @Inject constructor(private val userRepository: UserRepo
                     "birthday" -> it.copy(birthday = value)
                     else -> it
                 }
-            } ?: currentUser  // Si es null, retorna el mismo estado sin cambios
+            } ?: currentUser
         }
     }
 
-    fun setMessageConfirmation(message: String) {
+    fun setMessage(message: String) {
         _messageConfirmation.value = message
     }
 

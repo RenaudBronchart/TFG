@@ -23,14 +23,14 @@ import com.example.tfg.components.DataField
 import com.example.tfg.components.SelectDate
 import com.example.tfg.components.SelectGender
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.UserViewModel
+import com.example.tfg.viewmodel.AddUserViewModel
 import com.example.tfg.components.PasswordField
 import com.example.tfg.components.TopBarComponent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
+fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: AddUserViewModel) {
     val name by userViewModel.name.collectAsState("")
     val firstname by userViewModel.firstname.collectAsState("")
     val dni by userViewModel.dni.collectAsState("")

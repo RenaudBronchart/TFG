@@ -1,6 +1,7 @@
 package com.example.tfg.viewmodel
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
+class ProductViewModel : ViewModel() {
+    private val productRepository: ProductRepository = ProductRepository()
 
     private val _name = MutableStateFlow<String>("")
     val name: StateFlow<String> = _name //
@@ -67,24 +69,6 @@ class ProductViewModel(private val productRepository: ProductRepository) : ViewM
         }
     }
 
-
-    fun addProduct(product: Product) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val success = productRepository.addProduct(product)
-                if (success) {
-                    _messageConfirmation.value = "Producto añadido correctamente"
-                } else {
-                    _messageConfirmation.value = "Error al añadir producto"
-                }
-            } catch (e: Exception) {
-                _messageConfirmation.value = "Error al añadir producto: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
 
 
     fun onCompletedFields(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) {

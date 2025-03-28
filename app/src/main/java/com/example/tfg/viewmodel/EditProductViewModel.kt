@@ -1,6 +1,7 @@
 package com.example.tfg.viewmodel
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
@@ -12,7 +13,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class EditProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
+class EditProductViewModel : ViewModel() {
+
+    private val productRepository: ProductRepository = ProductRepository()
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products
@@ -28,6 +31,11 @@ class EditProductViewModel(private val productRepository: ProductRepository) : V
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    fun getProductsFromFirestore() {
+        viewModelScope.launch {
+            _products.value = productRepository.getProducts()
+        }
+    }
 
     fun loadProduct(productId: String) {
         if (currentProductId == productId) return // Evitar recargar si ya tenemos los datos correctos
@@ -47,10 +55,11 @@ class EditProductViewModel(private val productRepository: ProductRepository) : V
         }
     }
 
-    fun updateProduct(product: Product) {
+    fun updateProduct(productId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                val product = _product.value.copy(id = productId) // Asegúrate de tener el id correcto en el producto
                 val success = productRepository.updateProduct(product.id, product)
                 if (success) {
                     _messageConfirmation.value = "Producto actualizado correctamente"
@@ -66,22 +75,24 @@ class EditProductViewModel(private val productRepository: ProductRepository) : V
     }
 
 
-    // Métodos para actualizar los valores del producto
-    fun updateProductField(field: String, value: Any) {
-        _product.update {
-            when (field) {
-                "name" -> it.copy(name = value as String)
-                "price" -> it.copy(price = value as Double)
-                "description" -> it.copy(description = value as String)
-                "category" -> it.copy(category = value as String)
-                "image" -> it.copy(image = value as String)
-                "stock" -> it.copy(stock = value as Int)
-                "brand" -> it.copy(brand = value as String)
-                else -> it // Si no se encuentra el campo, no hace nada
-            }
-        }
-    }
+        // Métodos para actualizar los valores del producto
+        fun updateProductField(field: String, value: Any) {
+            _product.update { currentProduct ->
+                currentProduct?.let {
 
+                    when (field) {
+                    "name" -> it.copy(name = value as String)
+                    "price" -> it.copy(price = value as Double)
+                    "description" -> it.copy(description = value as String)
+                    "category" -> it.copy(category = value as String)
+                    "image" -> it.copy(image = value as String)
+                    "stock" -> it.copy(stock = value as Int)
+                    "brand" -> it.copy(brand = value as String)
+                    else -> it // Si no se encuentra el campo, no hace nada
+                    }
+                } ?: currentProduct
+         }
+     }
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }

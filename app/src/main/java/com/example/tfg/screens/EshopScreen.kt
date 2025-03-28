@@ -30,12 +30,11 @@ import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
-
-
+import com.example.tfg.viewmodel.DeleteProductViewModel
 
 
 @Composable
-fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewModel, productViewModel: ProductViewModel, cartShoppingViewModel: CartShoppingViewModel) {
+fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewModel, productViewModel: ProductViewModel, cartShoppingViewModel: CartShoppingViewModel,deleteProductViewModel: DeleteProductViewModel) {
     val productos by productViewModel.products.collectAsState()
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
@@ -43,7 +42,7 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
     var showSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(navHostController) {
-        productViewModel.getProductosFromFirestore()
+        productViewModel.getProducts()
     }
     LaunchedEffect(isAdmin) {
         Log.d("EshopScreen", "isAdmin: $isAdmin")
@@ -72,6 +71,7 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
                         isAdmin = isAdmin,
                         navHostController = navHostController,
                         productViewModel = productViewModel,
+                        deleteProductViewModel = deleteProductViewModel,
                         cartShoppingViewModel = cartShoppingViewModel,
                         onProductClick = {
                             selectedProduct = producto

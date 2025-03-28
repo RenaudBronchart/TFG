@@ -56,10 +56,9 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
     // Mostrar mensaje en Snackbar si hay un mensaje de confirmación
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
-
             snackbarHostState.showSnackbar(message)
-            delay(2000)
-            editUserViewModel.resetMessage()
+            delay(2000)  // Muestra el mensaje durante 2 segundos
+            editUserViewModel.resetMessage() // Limpia el mensaje después de mostrarlo
         }
     }
     Scaffold(
@@ -95,7 +94,7 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
                         onClick = {
 
                             editUserViewModel.updateUser(userId) { message ->
-                                editUserViewModel.setMessageConfirmation(message)
+                                editUserViewModel.setMessage(message)
                                 coroutineScope.launch {
                                     delay(2000)
                                     navController.popBackStack()

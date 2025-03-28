@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AddProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
+class AddProductViewModel : ViewModel() {
+    private val productRepository: ProductRepository = ProductRepository()
+
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading

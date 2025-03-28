@@ -42,12 +42,13 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.CartShoppingViewModel
+import com.example.tfg.viewmodel.DeleteProductViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostController, productViewModel: ProductViewModel,
+fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostController, productViewModel: ProductViewModel, deleteProductViewModel: DeleteProductViewModel ,
                 cartShoppingViewModel: CartShoppingViewModel, onProductClick: () -> Unit) {
 
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -172,7 +173,7 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
             message = "¿Seguro que quieres eliminar ${product.name}?",
             onConfirm = {
                 showDialog = false
-                productViewModel.deleteProduct(product.id) { message ->
+                deleteProductViewModel.deleteProduct(product.id) { message ->
                     productViewModel.setMessageConfirmation(message)
                 }
             },

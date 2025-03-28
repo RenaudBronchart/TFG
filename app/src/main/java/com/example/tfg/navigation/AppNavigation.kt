@@ -7,31 +7,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tfg.screens.AdminAddProduct
-import com.example.tfg.screens.AdminPage
-import com.example.tfg.screens.BookingPadelScreen
-import com.example.tfg.screens.CheckoutBookingScreen
-import com.example.tfg.screens.CheckoutShopping
-import com.example.tfg.screens.AdminEditProduct
-import com.example.tfg.screens.EshopScreen
-import com.example.tfg.screens.ProfileMyOrders
 import com.example.tfg.screens.Home
 import com.example.tfg.screens.Login
-import com.example.tfg.screens.SignUp
-import com.example.tfg.screens.Profile
-import com.example.tfg.screens.AdminListUsers
-import com.example.tfg.screens.EditUser
-import com.example.tfg.screens.ProfileMyBookings
-import com.example.tfg.screens.OrderDoneScreen
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.EditProductViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
-import com.example.tfg.viewmodel.ProductViewModel
 import com.example.tfg.viewmodel.UserViewModel
-import com.example.tfg.viewmodel.BookingPadelViewModel
-import com.example.tfg.viewmodel.CartShoppingViewModel
-import com.example.tfg.viewmodel.CourtPadelViewModel
-import com.example.tfg.viewmodel.OrderViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -41,9 +21,10 @@ fun AppNavigation() {
     // rememberNavController() crea y recuerda una instancia de NavController,
     // que permite manejar la navegación entre pantallas en Jetpack Compose.
     val navigationController = rememberNavController()
-    /*val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
+    val authViewModel: AuthViewModel = viewModel()
+    val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
     val userViewModel: UserViewModel = viewModel() // De nuevo, obtener usuarioViewModel si es necesario
-    val productViewModel : ProductViewModel = viewModel()
+   /* val productViewModel : ProductViewModel = viewModel()
     val editProductViewModel: EditProductViewModel = viewModel()
     val bookingPadelViewModel: BookingPadelViewModel = viewModel()
     val courtPadelViewModel: CourtPadelViewModel = viewModel()
@@ -55,7 +36,7 @@ fun AppNavigation() {
         navController =  navigationController,
         startDestination = AppScreens.Login.ruta // indicar la ruta donde empezamos la app
     ) {
-        composable(AppScreens.Login.ruta) { Login(navigationController)}
+        composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
         composable(AppScreens.Home.ruta) { Home(navigationController) }
        /* composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
         composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }

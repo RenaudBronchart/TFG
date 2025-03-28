@@ -49,12 +49,20 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
         editProductViewModel.loadProduct(productId)
     }
 
+
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
             coroutineScope.launch {
                 snackbarHostState.showSnackbar(message)
             }
             editProductViewModel.resetMessage()
+            if (message == "Producto actualizado correctamente") {
+                // Si el producto fue actualizado correctamente, regresamos
+                coroutineScope.launch {
+                    delay(500) // ponemos delay para que se vea el mensaje
+                    navHostController.popBackStack() // Regresamos a la página anterior
+                }
+            }
         }
     }
 
@@ -70,25 +78,19 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SelectProductCategory(selectedCategory = producto.category, onCategorySelected = editProductViewModel::setCategory)
-            DataField(label = "Nombre", value = producto.name, onValueChange = editProductViewModel::setName)
-            DataField(label = "Precio", value = producto.price.toString(), onValueChange = { editProductViewModel.setPrice(it.toDoubleOrNull() ?: 0.0) }, keyboardType = KeyboardType.Number)
-            DataField(label = "Descripción", value = producto.description, onValueChange = editProductViewModel::setDescription)
-            DataField(label = "Imagen URL", value = producto.image, onValueChange = editProductViewModel::setImage)
-            DataField(label = "Stock", value = producto.stock.toString(), onValueChange = { editProductViewModel.setStock(it.toIntOrNull() ?: 0) }, keyboardType = KeyboardType.Number)
-            DataField(label = "Marca", value = producto.brand, onValueChange = editProductViewModel::setBrand)
+            SelectProductCategory(selectedCategory = producto.category, onCategorySelected = { newCategory -> editProductViewModel.updateProductField("category", newCategory) })
+            DataField(label = "Nombre", value = producto.name, onValueChange = { newName -> editProductViewModel.updateProductField("name", newName) })
+            DataField(label = "Precio", value = producto.price.toString(), onValueChange = { newPrice -> editProductViewModel.updateProductField("price", newPrice) }, keyboardType = KeyboardType.Number)
+            DataField(label = "Descripción", value = producto.description, onValueChange = { newDescription -> editProductViewModel.updateProductField("description", newDescription) })
+            DataField(label = "Imagen URL", value = producto.image, onValueChange = { newImage -> editProductViewModel.updateProductField("image", newImage) })
+            DataField(label = "Stock", value = producto.stock.toString(), onValueChange = { newStock -> editProductViewModel.updateProductField("stock", newStock) }, keyboardType = KeyboardType.Number)
+            DataField(label = "Marca", value = producto.brand, onValueChange = { newBrand -> editProductViewModel.updateProductField("brand", newBrand) })
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
-                    editProductViewModel.updateProduct(productId) { message ->
-                        editProductViewModel.setMessageConfirmation(message)
-                        coroutineScope.launch {
-                            delay(500) // ponemos delay
-                            navHostController.popBackStack() // para volver a la pagina de Etienda
-                        }
-                    }
+                    editProductViewModel.updateProduct(productId)
                 },
                 enabled = !isLoading,  //
                 modifier = Modifier.fillMaxWidth()

@@ -24,12 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.AuthViewModel
-import com.example.tfg.viewmodel.UserViewModel
+import com.example.tfg.viewmodel.AddUserViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.User
-
+import com.example.tfg.viewmodel.UserViewModel
 
 
 @Composable
