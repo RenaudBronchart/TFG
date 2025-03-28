@@ -80,10 +80,10 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
         ) {
             SelectProductCategory(selectedCategory = producto.category, onCategorySelected = { newCategory -> editProductViewModel.updateProductField("category", newCategory) })
             DataField(label = "Nombre", value = producto.name, onValueChange = { newName -> editProductViewModel.updateProductField("name", newName) })
-            DataField(label = "Precio", value = producto.price.toString(), onValueChange = { newPrice -> editProductViewModel.updateProductField("price", newPrice) }, keyboardType = KeyboardType.Number)
+            DataField(label = "Precio", value = producto.price.toString(), onValueChange = { newPrice -> newPrice.toDoubleOrNull()?.let { editProductViewModel.updateProductField("price", it) } }, keyboardType = KeyboardType.Number)
             DataField(label = "Descripción", value = producto.description, onValueChange = { newDescription -> editProductViewModel.updateProductField("description", newDescription) })
             DataField(label = "Imagen URL", value = producto.image, onValueChange = { newImage -> editProductViewModel.updateProductField("image", newImage) })
-            DataField(label = "Stock", value = producto.stock.toString(), onValueChange = { newStock -> editProductViewModel.updateProductField("stock", newStock) }, keyboardType = KeyboardType.Number)
+            DataField(label = "Stock", value = producto.stock.toString(), onValueChange = { newStock -> newStock.toIntOrNull()?.let {editProductViewModel.updateProductField("stock", it) } }, keyboardType = KeyboardType.Number)
             DataField(label = "Marca", value = producto.brand, onValueChange = { newBrand -> editProductViewModel.updateProductField("brand", newBrand) })
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -110,6 +110,7 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
                 }
             }
     }
-}}
+}
+}
 
 

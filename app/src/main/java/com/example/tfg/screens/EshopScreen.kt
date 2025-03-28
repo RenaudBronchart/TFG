@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.ProductViewModel
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
@@ -41,6 +43,7 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showSheet by remember { mutableStateOf(false) }
 
+
     LaunchedEffect(navHostController) {
         productViewModel.getProducts()
     }
@@ -50,6 +53,8 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
     LaunchedEffect(productos) {
         Log.d("EshopScreen", "Productos mis a jour!")
     }
+
+
     Scaffold(
         topBar = { TopBarComponent("Tienda", navHostController) },
         bottomBar = { BottomBarComponent(navHostController, cartItems) },
@@ -76,7 +81,8 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
                         onProductClick = {
                             selectedProduct = producto
                             showSheet = true
-                        }
+                        },
+
                     )
                 }
             }

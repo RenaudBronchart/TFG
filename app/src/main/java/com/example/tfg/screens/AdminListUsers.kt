@@ -94,7 +94,7 @@ fun UserCard(user: User, onEditClick: (String) -> Unit) {
                 onClick = { onEditClick(user.id) },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text("Modifier")
+                Text("Modificar")
             }
 
 

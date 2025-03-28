@@ -144,7 +144,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                     // Botón + para aumentar la cantidad
                     IconButton(
                         onClick = {
-                            showDialog = true // Mostrar el cuadro de confirmación
+                            cartShoppingViewModel.increaseQuantity(product)
                         },
                         modifier = Modifier.size(24.dp)
                     ) {
@@ -178,7 +178,7 @@ fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShopping
                 message = "Estás seguro de que deseas eliminar este producto del carrito?",
                 onConfirm = {
                     showDialog = false // Cerrar el cuadro de diálogo
-                    cartShoppingViewModel.removeToCart(product) // Eliminar producto del carrito
+                    cartShoppingViewModel.removeFromCart(product) // Eliminar producto del carrito
                 },
                 onDismiss = { showDialog = false } // Si el usuario cancela, cerrar el cuadro de diálogo
             )

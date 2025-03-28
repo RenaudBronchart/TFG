@@ -37,8 +37,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel,  userId: String) {
-    val currentUser by authViewModel.user.collectAsState()
+fun EditUserProfil(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel, userId: String) {
     val user by editUserViewModel.user.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
     val message by editUserViewModel.messageConfirmation.collectAsState()
@@ -51,7 +50,7 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
     }
 
     LaunchedEffect(userId) {
-        editUserViewModel.loadUser(userId)
+        editUserViewModel.loadUser(userId)  // Aquí se carga el usuario cuando cambia el userId
     }
     // Mostrar mensaje en Snackbar si hay un mensaje de confirmación
     LaunchedEffect(message) {
@@ -120,4 +119,5 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
                 }
             }
         }
-    }}
+    }
+}

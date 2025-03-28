@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Order
+import com.example.tfg.repository.OrderRepository
+import com.example.tfg.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,12 +13,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class OrderViewModel:ViewModel() {
+    private val orderRepository: OrderRepository = OrderRepository()
 
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val name_collection = "orders"
-
-    private val _orders =
-        MutableStateFlow<List<Order>>(emptyList())// emptyList() se usa para inicializar la lista como vacía
+    // emptyList() se usa para inicializar la lista como vacía
+    private val _orders = MutableStateFlow<List<Order>>(emptyList())
     val orders: StateFlow<List<Order>> = _orders
 
     private val _isLoading = MutableStateFlow(false)
@@ -29,55 +29,70 @@ class OrderViewModel:ViewModel() {
         _messageConfirmation.value = message
     }
 
-    fun getOrdersFromFireStore() {
-        viewModelScope.launch {
 
-            _isLoading.value = true // Indicamos que la carga está en proceso
+
+    // Cargar todas las órdenes desde Firestore
+    fun getOrdersFromFirestore() {
+        viewModelScope.launch {
+            _isLoading.value = true
             try {
-                // queremos los documebntos
-                val query = db.collection(name_collection).get().await()
-                //  los documentos en objetos orders
-                val orders = query.documents.mapNotNull { it.toObject(Order::class.java) }
-                // Actualizamos orders con la lista  obtenida
+                val orders = orderRepository.getAllOrdersFromFirestore()
                 _orders.value = orders
             } catch (e: Exception) {
-                _messageConfirmation.value = "Error para cargar las reservas"
+                _messageConfirmation.value = "Error fetching orders: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
+    fun getOrdersFromFirestore(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val orders = orderRepository.getOrdersFromFirestore(userId)
+                _orders.value = orders
+            } catch (e: Exception) {
+                _messageConfirmation.value = "Error fetching orders: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    // Cargar las órdenes de un usuario específico
     fun loadOrders(userId: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                val result = db.collection(name_collection).get().await()
-                val orders = result.toObjects(Order::class.java)
+                val orders = orderRepository.getOrdersFromFirestore(userId) // Pasa el userId al repositorio
                 _orders.value = orders
-                Log.d("DEBUG", "Réservations chargées : $orders")
             } catch (e: Exception) {
-                Log.e("DEBUG", "Erreur de chargement des réservations", e)
+                _messageConfirmation.value = "Error loading orders: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
+    // Cargar una orden específica por ID
     fun loadLastOrder(orderId: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                val result = db.collection(name_collection)
-                    .document(orderId)
-                    .get()
-                    .await()
-
-                val order = result.toObject(Order::class.java)
-                _orders.value = listOfNotNull(order) // On ne garde que cette commande
-                Log.d("DEBUG", "Dernière commande chargée : $order")
+                val order = orderRepository.getOrderById(orderId)
+                if (order != null) {
+                    _orders.value = listOf(order)
+                } else {
+                    _messageConfirmation.value = "Order not found"
+                }
             } catch (e: Exception) {
-                Log.e("DEBUG", "Erreur de chargement de la commande", e)
+                _messageConfirmation.value = "Error loading order: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
-
 
 
 }

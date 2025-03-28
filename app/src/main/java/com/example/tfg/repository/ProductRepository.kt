@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
 class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
                             private val db: FirebaseFirestore = FirebaseFirestore.getInstance())  {
 
-    private val collectionName = "productos"
+    private val collectionName = "products"
 
      suspend fun getProducts(): List<Product> {
         return try {
@@ -29,14 +29,19 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
         }
     }
 
-     suspend fun addProduct(product: Product): Boolean {
+    suspend fun addProduct(product: Product): Result<String> {
         return try {
+            // Agregar el producto a Firestore, usando el id del producto como documento
             db.collection(collectionName).document(product.id).set(product).await()
-            true
+            // Si la operación fue exitosa, devolvemos un resultado de éxito
+            Result.success("Producto agregado correctamente")
         } catch (e: Exception) {
-            false
+            // En caso de error, devolvemos un resultado de fallo con el mensaje de error
+            Result.failure(e)
         }
     }
+
+
 
      suspend fun updateProduct(productId: String, product: Product): Boolean {
         return try {

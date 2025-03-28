@@ -74,13 +74,12 @@ class EditProductViewModel : ViewModel() {
         }
     }
 
+    // Métodos para actualizar los valores del producto
+    fun updateProductField(field: String, value: Any) {
+        _product.update { currentProduct ->
+            currentProduct?.let {
 
-        // Métodos para actualizar los valores del producto
-        fun updateProductField(field: String, value: Any) {
-            _product.update { currentProduct ->
-                currentProduct?.let {
-
-                    when (field) {
+                when (field) {
                     "name" -> it.copy(name = value as String)
                     "price" -> it.copy(price = value as Double)
                     "description" -> it.copy(description = value as String)
@@ -89,10 +88,11 @@ class EditProductViewModel : ViewModel() {
                     "stock" -> it.copy(stock = value as Int)
                     "brand" -> it.copy(brand = value as String)
                     else -> it // Si no se encuentra el campo, no hace nada
-                    }
-                } ?: currentProduct
-         }
-     }
+                }
+            } ?: currentProduct
+        }
+    }
+
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }

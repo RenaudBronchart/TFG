@@ -19,12 +19,14 @@ import androidx.compose.ui.unit.dp
 import com.example.tfg.components.CardEmptyShopping
 import com.example.tfg.components.CardOrderCheckoutShopping
 import com.example.tfg.components.TotalToPay
+import com.example.tfg.models.Order
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 
 @Composable
 fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthViewModel ,cartShoppingViewModel: CartShoppingViewModel) {
     val productos by cartShoppingViewModel.CartShopping.collectAsState()
+    val order by cartShoppingViewModel.order.collectAsState()
 
     Scaffold(
         topBar = { TopBarComponent ("Tu pedido", navHostController )},
@@ -61,12 +63,21 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
             TotalToPay(
                 total = cartShoppingViewModel.calcularTotal(),
                 onClickPay = {
-                    // On crée la commande avant de vider le panier
-                    cartShoppingViewModel.createOrder(authViewModel) {
-                        // Ensuite, on vide le panier après que la commande a été créée et que le stock a été mis à jour
-                        cartShoppingViewModel.clearCart()
-                    }
-                    // Naviguer vers la page de confirmation
+                    // Crear la orden
+                    val userId = authViewModel.currentUserId.value ?: ""
+                    val totalAmount = cartShoppingViewModel.calcularTotal()
+                    val order = Order(
+                        userId = userId,
+                        products = cartShoppingViewModel.CartShopping.value,
+                        totalAmount = totalAmount,
+                        createdAt = System.currentTimeMillis().toString()
+                    )
+                    cartShoppingViewModel.createOrder(order)
+
+                    // Vaciar el carrito
+                    cartShoppingViewModel.clearCart()
+
+                    // Navegar a la pantalla de confirmación
                     navHostController.navigate("OrderDoneScreen")
                 }
             )

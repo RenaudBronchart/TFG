@@ -1,6 +1,7 @@
 package com.example.tfg.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +38,7 @@ import com.example.tfg.viewmodel.OrderViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthViewModel, orderViewModel: OrderViewModel) {
+    val orders by orderViewModel.orders.collectAsState()
     val userId = authViewModel.currentUserId.value ?: ""
     var filter by remember { mutableStateOf("fecha") }
     var isAscending by remember { mutableStateOf(true)}
@@ -53,13 +56,11 @@ fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthVie
         else -> orderViewModel.orders.value
     }
 
-    // Cargar
     LaunchedEffect(userId) {
         if (userId.isNotEmpty()) {
             orderViewModel.loadOrders(userId)
         }
     }
-
     Scaffold(
         topBar = { TopBarComponent("Mis compras", navHostController) }
     ) { innerPadding ->

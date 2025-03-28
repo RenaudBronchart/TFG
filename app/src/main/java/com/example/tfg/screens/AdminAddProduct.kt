@@ -29,7 +29,7 @@ import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.AddProductViewModel
 
 @Composable
-fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthViewModel, productViewModel: ProductViewModel, addProductViewModel: AddProductViewModel) {
+fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthViewModel,  productViewModel: ProductViewModel, addProductViewModel: AddProductViewModel) {
 
     val selectedCategory: String by productViewModel.category.collectAsState("Selecciona una categoría")
     val name: String by productViewModel.name.collectAsState("")
@@ -114,7 +114,21 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
 
             Button(
                 onClick = {
-                    addProductViewModel.addProduct(product)
+
+                    val product = Product(
+                        name = name,
+                        price = price,
+                        description = description,
+                        category = selectedCategory,
+                        image = image,
+                        stock = stock,
+                        brand = brand
+                    )
+
+                    addProductViewModel.addProduct(product) { message ->
+                        productViewModel.setMessageConfirmation(message)
+                        productViewModel.resetFields() // Limpiar los campos después de agregar el producto
+                    }
                 },
                 enabled = isButtonEnable,
                 modifier = Modifier.fillMaxWidth()

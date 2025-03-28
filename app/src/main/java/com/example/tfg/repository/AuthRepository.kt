@@ -19,6 +19,7 @@ class AuthRepository(
 
     fun fetchCurrentUser(): FirebaseUser? = auth.currentUser
 
+
     // Inicia sesión con email y contraseña.
     // Devuelve null en caso de éxito o un mensaje de error si falla.
     suspend fun signInWithEmailAndPassword(email: String, password: String): String? {

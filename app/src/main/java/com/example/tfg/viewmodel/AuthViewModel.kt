@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.repository.AuthRepository
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,18 +16,24 @@ import kotlinx.coroutines.launch
 class AuthViewModel : ViewModel() {
     // Instancia directamente el repositorio
     private val authRepository: AuthRepository = AuthRepository()
-    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    private val _currentUserId = MutableStateFlow<String?>(null)
+    val currentUserId: StateFlow<String?> = _currentUserId
+
+    init {
+        auth.addAuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            _currentUserId.value = user?.uid
+        }
+    }
 
     // Flujos para mantener el estado de la autenticación y el usuario
     private val _isAdmin = MutableStateFlow(false)
     val isAdmin: StateFlow<Boolean> = _isAdmin
 
-    private val _currentUserId = MutableStateFlow<String?>(null)
-    val currentUserId: StateFlow<String?> = _currentUserId
-
     private val _user = MutableStateFlow<FirebaseUser?>(authRepository.fetchCurrentUser())
     val user: StateFlow<FirebaseUser?> = _user
-
 
     init {
         // Actualizamos el estado del usuario y verificamos si es admin
@@ -63,6 +69,13 @@ class AuthViewModel : ViewModel() {
             authRepository.createUserWithEmailAndPassword(email, password)
         } catch (e: Exception) {
             null
+        }
+    }
+
+    fun checkIfUserIsAdmin(userId: String) {
+        viewModelScope.launch {
+            val result = authRepository.isAdmin(userId)
+            _isAdmin.value = result
         }
     }
 
