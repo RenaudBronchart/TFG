@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.tfg.components.BottomBarComponent
 import com.example.tfg.components.CardItemProfile
@@ -34,13 +35,18 @@ import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
+fun Home(navHostController: NavHostController) {
+    // Hilt inyectará los ViewModels automáticamente
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
+
+    // Usar los ViewModels aquí para la UI
 
     val usuarioData by userViewModel.user.collectAsState()
     val currentUser by authViewModel.user.collectAsState()
     val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
-    val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
+  /*  val cartItems by cartShoppingViewModel.CartShopping.collectAsState()*/
 
 
     LaunchedEffect(currentUser?.uid) {
@@ -59,7 +65,7 @@ fun Home(navHostController: NavHostController, authViewModel: AuthViewModel, use
                 title = { Text("¡Hola, $name! 👋") },
             )
         },
-        bottomBar = { BottomBarComponent(navHostController, cartItems) }
+       /* bottomBar = { BottomBarComponent(navHostController, cartItems) }*/
     ) { innerPadding ->
         Box(
             modifier = Modifier

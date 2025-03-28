@@ -1,6 +1,7 @@
 package com.example.tfg
 
 
+import android.app.Application
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,20 +11,13 @@ import androidx.annotation.RequiresApi
 import com.example.tfg.navigation.AppNavigation
 import com.example.tfg.ui.theme.TFGTheme
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
-@AndroidEntryPoint
-class MainActivity : ComponentActivity() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge()
-        setContent {
-            TFGTheme {
-                AppNavigation()
-            }
-        }
+@HiltAndroidApp
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
     }
 }
 

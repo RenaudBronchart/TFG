@@ -8,11 +8,11 @@ import kotlinx.coroutines.tasks.await
 
 class UserRepositoryImpl(private val auth: FirebaseAuth, private val db: FirebaseFirestore) : UserRepository {
 
-    private val nameCollection = "users"
+    private val collectionName = "users"
 
     override suspend fun getUsers(): List<User> {
         return try {
-            val querySnapshot = db.collection(nameCollection).get().await()
+            val querySnapshot = db.collection(collectionName).get().await()
             querySnapshot.documents.mapNotNull { it.toObject(User::class.java) }
         } catch (e: Exception) {
             emptyList() // Si hay error, devolvemos una lista vacía
@@ -21,7 +21,7 @@ class UserRepositoryImpl(private val auth: FirebaseAuth, private val db: Firebas
 
     override suspend fun getUserById(uid: String): User? {
         return try {
-            val document = db.collection(nameCollection).document(uid).get().await()
+            val document = db.collection(collectionName).document(uid).get().await()
             document.toObject(User::class.java)
         } catch (e: Exception) {
             null
@@ -30,7 +30,7 @@ class UserRepositoryImpl(private val auth: FirebaseAuth, private val db: Firebas
 
     override suspend fun registerUser(user: User): Boolean {
         return try {
-            db.collection(nameCollection).document(user.id).set(user).await()
+            db.collection(collectionName).document(user.id).set(user).await()
             true
         } catch (e: Exception) {
             false
@@ -48,7 +48,7 @@ class UserRepositoryImpl(private val auth: FirebaseAuth, private val db: Firebas
                 "gender" to user.gender,
                 "birthday" to user.birthday
             )
-            db.collection(nameCollection).document(uid).update(updates).await()
+            db.collection(collectionName).document(uid).update(updates).await()
             true
         } catch (e: Exception) {
             false

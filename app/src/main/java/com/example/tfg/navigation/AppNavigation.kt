@@ -36,28 +36,28 @@ import com.example.tfg.viewmodel.OrderViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(authViewModel: AuthViewModel) {
+fun AppNavigation() {
 
     // rememberNavController() crea y recuerda una instancia de NavController,
     // que permite manejar la navegación entre pantallas en Jetpack Compose.
     val navigationController = rememberNavController()
-    val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
+    /*val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
     val userViewModel: UserViewModel = viewModel() // De nuevo, obtener usuarioViewModel si es necesario
     val productViewModel : ProductViewModel = viewModel()
     val editProductViewModel: EditProductViewModel = viewModel()
     val bookingPadelViewModel: BookingPadelViewModel = viewModel()
     val courtPadelViewModel: CourtPadelViewModel = viewModel()
     val cartShoppingViewModel : CartShoppingViewModel = viewModel()
-    val orderViewModel : OrderViewModel = viewModel()
+    val orderViewModel : OrderViewModel = viewModel()*/
 
 
     NavHost(
         navController =  navigationController,
-        startDestination = AppScreens.Home.ruta // indicar la ruta donde empezamos la app
+        startDestination = AppScreens.Login.ruta // indicar la ruta donde empezamos la app
     ) {
-        composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
-        composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel,userViewModel,cartShoppingViewModel)}
-        composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
+        composable(AppScreens.Login.ruta) { Login(navigationController)}
+        composable(AppScreens.Home.ruta) { Home(navigationController) }
+       /* composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
         composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel, cartShoppingViewModel)}
         composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel,cartShoppingViewModel)}
@@ -89,6 +89,6 @@ fun AppNavigation(authViewModel: AuthViewModel) {
                 date = backStackEntry.arguments?.getString("date") ?: "",
                 timeSlot = backStackEntry.arguments?.getString("timeSlot") ?: ""
             )
-        }
+        }*/
     }
 }

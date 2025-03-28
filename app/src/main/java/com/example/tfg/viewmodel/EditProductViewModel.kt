@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
+import com.example.tfg.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,14 +12,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class EditProductViewModel: ViewModel() {
+class EditProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products
-
-
-    private val db = FirebaseFirestore.getInstance()
-    private val name_collection = "productos"
 
     private val _product = MutableStateFlow(Product())
     val product: StateFlow<Product> = _product
@@ -31,85 +28,59 @@ class EditProductViewModel: ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun getProductosFromFirestore() {
-        viewModelScope.launch {
-            // almacenar el nombre de la colección
-
-            val query = db.collection(name_collection).get().await()
-
-            val products = mutableListOf<Product>()
-
-            for (document in query.documents) {
-                val product = document.toObject(Product::class.java)
-                if (product != null) {
-                    products.add(product)
-                }
-            }
-            _products.value = products
-        }
-    }
-
 
     fun loadProduct(productId: String) {
-        if (currentProductId == productId) return  // Evitar recargar si ya tenemos los datos correctos
+        if (currentProductId == productId) return // Evitar recargar si ya tenemos los datos correctos
         currentProductId = productId
 
         viewModelScope.launch {
             try {
-                val document = db.collection(name_collection).document(productId).get().await()
-                val product = document.toObject(Product::class.java)
+                val product = productRepository.getProductById(productId)
                 if (product != null) {
                     _product.value = product
                 } else {
-                    Log.e("EditProductViewModel", "Error: Producto no encontrado")
+                    _messageConfirmation.value = "Producto no encontrado"
                 }
-
             } catch (e: Exception) {
-                Log.e("EditProductViewModel", "Error al cargar producto: ${e.message}")
+                _messageConfirmation.value = "Error al cargar producto: ${e.message}"
             }
         }
     }
 
-    fun updateProduct(productId: String, onSuccess: (String) -> Unit) {
+    fun updateProduct(product: Product) {
         viewModelScope.launch {
             _isLoading.value = true
-
             try {
-                val product = product.value
-                val productUpdates = mapOf(
-                    "name" to product.name,
-                    "price" to product.price,
-                    "description" to product.description,
-                    "category" to product.category,
-                    "image" to product.image,
-                    "stock" to product.stock,
-                    "brand" to product.brand
-                )
-
-                db.collection("productos").document(productId).update(productUpdates).await()
-                val successMessage = "Producto actualizado correctamente"
-                getProductosFromFirestore()
-                _messageConfirmation.value = successMessage
-                onSuccess(successMessage)
-            } catch (exception: Exception) {
-                val errorMessage = "Error al actualizar producto: ${exception.message}"
-                _messageConfirmation.value = errorMessage
-                onSuccess(errorMessage)
+                val success = productRepository.updateProduct(product.id, product)
+                if (success) {
+                    _messageConfirmation.value = "Producto actualizado correctamente"
+                } else {
+                    _messageConfirmation.value = "Error al actualizar producto"
+                }
+            } catch (e: Exception) {
+                _messageConfirmation.value = "Error al actualizar producto: ${e.message}"
             } finally {
-                _isLoading.value = false  // desactivamos el loading
+                _isLoading.value = false
             }
         }
     }
 
 
     // Métodos para actualizar los valores del producto
-    fun setName(value: String) { _product.update { it.copy(name = value) } }
-    fun setPrice(value: Double) { _product.update { it.copy(price = value) } }
-    fun setDescription(value: String) { _product.update { it.copy(description = value) } }
-    fun setCategory(value: String) { _product.update { it.copy(category = value) } }
-    fun setImage(value: String) { _product.update { it.copy(image = value) } }
-    fun setStock(value: Int) { _product.update { it.copy(stock = value) } }
-    fun setBrand(value: String) { _product.update { it.copy(brand = value) } }
+    fun updateProductField(field: String, value: Any) {
+        _product.update {
+            when (field) {
+                "name" -> it.copy(name = value as String)
+                "price" -> it.copy(price = value as Double)
+                "description" -> it.copy(description = value as String)
+                "category" -> it.copy(category = value as String)
+                "image" -> it.copy(image = value as String)
+                "stock" -> it.copy(stock = value as Int)
+                "brand" -> it.copy(brand = value as String)
+                else -> it // Si no se encuentra el campo, no hace nada
+            }
+        }
+    }
 
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message

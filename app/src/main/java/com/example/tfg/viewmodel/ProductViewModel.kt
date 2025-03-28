@@ -4,16 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
+import com.example.tfg.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ProductViewModel: ViewModel() {
-
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val name_collection = "productos"
+class ProductViewModel(private val productRepository: ProductRepository) : ViewModel() {
 
     private val _name = MutableStateFlow<String>("")
     val name: StateFlow<String> = _name //
@@ -49,88 +47,45 @@ class ProductViewModel: ViewModel() {
     val isButtonEnable: StateFlow<Boolean> = _isButtonEnable
 
     private val _messageConfirmation = MutableStateFlow("")
-    val messageConfirmation: StateFlow<String> get() = _messageConfirmation
+    val messageConfirmation: StateFlow<String> = _messageConfirmation
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        getProductosFromFirestore()
-    }
 
 
-
-    fun getProductosFromFirestore() {
+    fun getProducts() {
         viewModelScope.launch {
-            // almacenar el nombre de la colección
-
-            val query = db.collection(name_collection).get().await()
-
-            val products = mutableListOf<Product>()
-
-            for (document in query.documents) {
-                val product = document.toObject(Product::class.java)
-                if (product != null) {
-                    products.add(product)
-                }
-            }
-            _products.value = products
-        }
-    }
-
-
-
-    fun addProduct(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String, onSuccess: (String) -> Unit
-    ) {
-        viewModelScope.launch {
+            _isLoading.value = true
             try {
-                val product = Product(
-                    name = name,
-                    price = price,
-                    description = description,
-                    category = category,
-                    image = image,
-                    stock = stock,
-                    brand = brand
-                )
-
-                // Utilisation de `await()` pour garder tout en coroutines
-                db.collection(name_collection)
-                    .document(product.id)
-                    .set(product)
-                    .await()
-
-                val confirmationMessage = "Producto añadido correctamente"
-                _messageConfirmation.value = confirmationMessage
-                onSuccess(confirmationMessage)
-            } catch (exception: Exception) {
-                val confirmationMessage = "No se ha podido añadir un producto: ${exception.message}"
-                _messageConfirmation.value = confirmationMessage
-                onSuccess(confirmationMessage)
-            }
-        }
-    }
-
-    fun deleteProduct(productId: String, onSuccess: (String) -> Unit) {
-        viewModelScope.launch {
-            _isLoading.value = true // Indique que l'opération est en cours
-            try {
-                db.collection(name_collection)
-                    .document(productId)
-                    .delete()
-                    .await()
-                val successMessage = "Producto eliminado correctamente"
-                getProductosFromFirestore() // Rafraîchit la liste des produits
-                _messageConfirmation.value = successMessage
-                onSuccess(successMessage)
-            } catch (exception: Exception) {
-                _messageConfirmation.value = "No se ha podido eliminar el producto: ${exception.message}"
-                onSuccess(_messageConfirmation.value)
+                _products.value = productRepository.getProducts()
+            } catch (e: Exception) {
+                _messageConfirmation.value = "Error al cargar productos: ${e.message}"
             } finally {
-                _isLoading.value = false // Désactive l'état de chargement
+                _isLoading.value = false
             }
         }
     }
+
+
+    fun addProduct(product: Product) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val success = productRepository.addProduct(product)
+                if (success) {
+                    _messageConfirmation.value = "Producto añadido correctamente"
+                } else {
+                    _messageConfirmation.value = "Error al añadir producto"
+                }
+            } catch (e: Exception) {
+                _messageConfirmation.value = "Error al añadir producto: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
 
     fun onCompletedFields(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) {
         _name.value = name

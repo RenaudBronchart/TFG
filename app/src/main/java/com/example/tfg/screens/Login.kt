@@ -49,14 +49,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import com.example.tfg.viewmodel.AuthViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+
 import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
+
+
 
 
 @Composable
-fun Login(navController: NavHostController,authViewModel : AuthViewModel) {
+fun Login(navController: NavHostController, authViewModel: AuthViewModel = hiltViewModel()) {
     val context = LocalContext.current // val porque no va cambiar y permite acceder al contexto
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

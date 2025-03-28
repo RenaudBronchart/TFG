@@ -9,14 +9,18 @@ import androidx.navigation.NavHostController
 import com.example.tfg.models.User
 import com.example.tfg.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
+import javax.inject.Inject
 
-class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor
+    (private val userRepository: UserRepository) : ViewModel() {
 
     private val _name = MutableStateFlow<String>("")
     val name: StateFlow<String> = _name //

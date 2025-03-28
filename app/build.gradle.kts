@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.googleServices)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -85,7 +87,6 @@ dependencies {
     // ViewModel
     implementation(libs.androidx.lifecycle.runtime.ktx.v251)
     implementation(libs.androidx.storage)
-    implementation(libs.androidx.storage)
 
 
     // Material3
@@ -104,6 +105,11 @@ dependencies {
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.androidx.benchmark.macro)
 
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
 
 
     testImplementation(libs.junit)

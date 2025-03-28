@@ -74,19 +74,19 @@ fun EditUser(navController: NavHostController, authViewModel: AuthViewModel, edi
         ) {
             LazyColumn {
                 item {
-                    DataField(label = "Nombre", value = user.name, onValueChange = editUserViewModel::setName)
-                    DataField(label = "Apellido", value = user.firstname, onValueChange = editUserViewModel::setFirstname)
-                    DataField(label = "Email", value = user.email, onValueChange = editUserViewModel::setEmail)
-                    DataField(label = "Teléfono", value = user.phone, onValueChange = editUserViewModel::setPhone)
-                    DataField(label = "DNI", value = user.dni, onValueChange = editUserViewModel::setDni)
+                    DataField(label = "Nombre", value = user?.name ?:"", onValueChange = { editUserViewModel.updateUserField("name", it) })
+                    DataField(label = "Apellido", value = user?.firstname ?:"", onValueChange ={ editUserViewModel.updateUserField("firstname", it) })
+                    DataField(label = "Email", value = user?.email ?:"", onValueChange = { editUserViewModel.updateUserField("email", it) })
+                    DataField(label = "Teléfono", value = user?.phone ?:"", onValueChange = { editUserViewModel.updateUserField("phone", it) })
+                    DataField(label = "DNI", value = user?.dni ?:"", onValueChange ={ editUserViewModel.updateUserField("dni", it) })
 
                     SelectGender(
-                        selectedGender = user.gender,
-                        onGenderChange = editUserViewModel::setGender
+                        selectedGender = user?.gender ?: "",
+                        onGenderChange = { editUserViewModel.updateUserField("gender", it) }
                     )
                     SelectDate(
-                        selectedDate = user.birthday,
-                        onDateChange = editUserViewModel::setBirthday
+                        selectedDate = user?.birthday ?: "",
+                        onDateChange = { editUserViewModel.updateUserField("birthday", it) }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
