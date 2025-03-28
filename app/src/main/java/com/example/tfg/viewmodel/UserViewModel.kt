@@ -27,7 +27,6 @@ class UserViewModel : ViewModel() {
         }
     }
 
-
     fun loadUser(uid: String) {
         viewModelScope.launch {
             _user.value = userRepository.getUserById(uid)

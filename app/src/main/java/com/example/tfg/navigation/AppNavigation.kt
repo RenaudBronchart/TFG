@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tfg.screens.Home
 import com.example.tfg.screens.Login
+import com.example.tfg.screens.SignUp
+import com.example.tfg.viewmodel.AddUserViewModel
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.EditUserViewModel
 import com.example.tfg.viewmodel.UserViewModel
@@ -22,6 +24,7 @@ fun AppNavigation() {
     // que permite manejar la navegación entre pantallas en Jetpack Compose.
     val navigationController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
+    val addUserViewModel: AddUserViewModel = viewModel()
     val editUserViewModel: EditUserViewModel = viewModel() // Usamos viewModel() para crear el ViewModel necesario
     val userViewModel: UserViewModel = viewModel() // De nuevo, obtener usuarioViewModel si es necesario
    /* val productViewModel : ProductViewModel = viewModel()
@@ -37,9 +40,9 @@ fun AppNavigation() {
         startDestination = AppScreens.Login.ruta // indicar la ruta donde empezamos la app
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel)}
-        composable(AppScreens.Home.ruta) { Home(navigationController) }
-       /* composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,userViewModel)}
-        composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
+        composable(AppScreens.Home.ruta) { Home(navigationController,authViewModel,userViewModel) }
+        composable(AppScreens.SignUp.ruta) { SignUp(navigationController,authViewModel,addUserViewModel)}
+       /* composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel,productViewModel, cartShoppingViewModel)}
         composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel,userViewModel,cartShoppingViewModel)}
         composable(AppScreens.AdminAddProduct.ruta) { AdminAddProduct(navigationController, authViewModel, productViewModel)}

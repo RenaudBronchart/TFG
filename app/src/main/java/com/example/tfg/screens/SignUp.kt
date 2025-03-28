@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -30,31 +31,25 @@ import com.example.tfg.components.TopBarComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: AddUserViewModel) {
-    val name by userViewModel.name.collectAsState("")
-    val firstname by userViewModel.firstname.collectAsState("")
-    val dni by userViewModel.dni.collectAsState("")
-    val email by userViewModel.email.collectAsState("")
-    val phone by userViewModel.phone.collectAsState("")
-    val gender by userViewModel.gender.collectAsState("")
-    val birthday by userViewModel.birthday.collectAsState("")
-    //val role by viewModel.role.observeAsState("user")
-    val password by userViewModel.password.collectAsState("")
-    val isButtonEnabled by userViewModel.isButtonEnable.collectAsState(false)
+fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, addUserViewModel: AddUserViewModel) {
+    val userFormState by addUserViewModel.fields.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val message by userViewModel.messageConfirmation.collectAsState()
+    val message by addUserViewModel.messageConfirmation.collectAsState()
 
     val fields = listOf(
-        Triple("Nombre", name, "nombre"),
-        Triple("Apellido", firstname, "apellido"),
-        Triple("DNI", dni, "dni"),
-        Triple("Email", email, "email"),
-        Triple("Teléfono", phone, "telefono")
+        "Nombre" to userFormState.name,
+        "Apellido" to userFormState.firstname,
+        "DNI" to userFormState.dni,
+        "Email" to userFormState.email,
+        "Teléfono" to userFormState.phone
     )
 
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
-            snackbarHostState.showSnackbar(message)
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short // Hace que la Snackbar dure más
+            )
         }
     }
     Scaffold(
@@ -70,50 +65,54 @@ fun SignUp(navHostController: NavHostController, authViewModel: AuthViewModel, u
 
         ) {
 
-            fields.forEach { (label, value, key) ->
+            fields.forEach { (label, value) ->
                 DataField(
                     label = label,
                     value = value,
                     onValueChange = { newValue ->
-                        when (key) {
-                            "nombre" -> userViewModel.onCompletedFields(newValue, firstname, dni, email, phone, gender, birthday, password)
-                            "apellido" -> userViewModel.onCompletedFields(name, newValue, dni, email, phone, gender, birthday, password)
-                            "dni" -> userViewModel.onCompletedFields(name, firstname, newValue, email, phone, gender, birthday, password)
-                            "email" -> userViewModel.onCompletedFields(name, firstname, dni, newValue, phone, gender, birthday, password)
-                            "telefono" -> userViewModel.onCompletedFields(name, firstname, dni, email, newValue, gender, birthday, password)
-                        }
+                        addUserViewModel.onCompletedFields(userFormState.copy(
+                            name = if (label == "Nombre") newValue else userFormState.name,
+                            firstname = if (label == "Apellido") newValue else userFormState.firstname,
+                            dni = if (label == "DNI") newValue else userFormState.dni,
+                            email = if (label == "Email") newValue else userFormState.email,
+                            phone = if (label == "Teléfono") newValue else userFormState.phone
+                        ))
                     }
                 )
             }
 
-            // Sélection du genre
+            // Selección de género
             SelectGender(
-                selectedGender = gender,
+                selectedGender = userFormState.gender,
                 onGenderChange = { newGender ->
-                    userViewModel.onCompletedFields(name, firstname, dni, email, phone, newGender, birthday, password)
+                    addUserViewModel.onCompletedFields(userFormState.copy(gender = newGender))
                 }
             )
 
-            // Sélection de la date de naissance
+            // Selección de fecha de nacimiento
             SelectDate(
-                selectedDate = birthday,
+                selectedDate = userFormState.birthday,
                 onDateChange = { newDate ->
-                    userViewModel.onCompletedFields(name, firstname, dni, email, phone, gender, newDate, password)
+                    addUserViewModel.onCompletedFields(userFormState.copy(birthday = newDate))
                 }
             )
 
-            // campo para la contrasena
+            // Campo de contraseña
             PasswordField(
-                value = password,
-                onValueChange = { userViewModel.onCompletedFields(name, firstname, dni, email, phone, gender, birthday, it) }
+                value = userFormState.password,
+                onValueChange = { newPassword ->
+                    addUserViewModel.onCompletedFields(userFormState.copy(password = newPassword))
+                }
             )
+
+            // Botón de registro
             Button(
                 onClick = {
-                    userViewModel.registerUser(authViewModel, navHostController) { message ->
-                        userViewModel.setMessageConfirmation(message)
+                    addUserViewModel.registerUser(authViewModel, navHostController) { message ->
+                        addUserViewModel.setMessageConfirmation(message)
                     }
                 },
-                enabled = isButtonEnabled,
+                enabled = userFormState.isValid(), // Se habilita solo si los campos son válidos
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Registrarse")

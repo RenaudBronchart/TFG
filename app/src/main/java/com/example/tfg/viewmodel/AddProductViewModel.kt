@@ -11,6 +11,8 @@ import kotlinx.coroutines.launch
 class AddProductViewModel : ViewModel() {
     private val productRepository: ProductRepository = ProductRepository()
 
+    private val _fields = MutableStateFlow(ProductFormState())  // Aquí defines el estado de los campos del producto
+    val fields: StateFlow<ProductFormState> = _fields
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -35,5 +37,19 @@ class AddProductViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+    }
+    // Actualiza los campos del formulario del producto
+    fun onCompletedFields(productForm: ProductFormState) {
+        _fields.value = productForm
+    }
+
+    // Resetea los campos después de registrar el producto
+    fun resetFields() {
+        _fields.value = ProductFormState()  // Resetea todos los campos a valores predeterminados
+    }
+
+    // Establecer mensaje de confirmación
+    fun setMessageConfirmation(message: String) {
+        _messageConfirmation.value = message
     }
 }

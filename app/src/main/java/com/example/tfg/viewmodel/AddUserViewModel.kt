@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.tfg.models.User
+import com.example.tfg.models.UserFormState
 import com.example.tfg.repository.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,32 +16,8 @@ import kotlinx.coroutines.launch
 class AddUserViewModel : ViewModel() {
     private val userRepository: UserRepository = UserRepository()
 
-    private val _name = MutableStateFlow<String>("")
-    val name: StateFlow<String> = _name //
-
-    private val _firstname = MutableStateFlow<String>("")
-    val firstname: StateFlow<String> = _firstname
-
-    private val _dni = MutableStateFlow<String>("")
-    val dni: StateFlow<String> = _dni
-
-    private val _email = MutableStateFlow<String>("")
-    val email: StateFlow<String> = _email
-
-    private val _phone = MutableStateFlow<String>("")
-    val phone: StateFlow<String> = _phone
-
-    private val _gender = MutableStateFlow<String>("")
-    val gender: StateFlow<String> = _gender
-
-    private val _birthday = MutableStateFlow<String>("")
-    val birthday: StateFlow<String> = _birthday
-
-    private val _role = MutableStateFlow<String>("user")
-    val role: StateFlow<String> get() = _role
-
-    private val _password = MutableStateFlow<String>("")
-    val password: StateFlow<String> = _password
+    private val _fields = MutableStateFlow(UserFormState())
+    val fields: StateFlow<UserFormState> = _fields
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // MutableStateFlow A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
@@ -51,90 +28,41 @@ class AddUserViewModel : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user
 
-    private val _isButtonEnable = MutableStateFlow(false)
-    val isButtonEnable: StateFlow<Boolean> = _isButtonEnable
-
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> = _messageConfirmation
 
 
-
+    // Función para registrar un usuario
     fun registerUser(authViewModel: AuthViewModel, navController: NavHostController, onResult: (String) -> Unit) {
         viewModelScope.launch {
-            val result = authViewModel.createUserWithEmailAndPassword(email.value, password.value)
-            val user = result?.user
+            val result = userRepository.registerUser(_fields.value)
 
-            if (user != null) {
-                val userId = user.uid
-                val newUser = User(
-                    id = userId,
-                    name = name.value,
-                    firstname = firstname.value,
-                    email = email.value,
-                    dni = dni.value,
-                    birthday = birthday.value,
-                    phone = phone.value,
-                    gender = gender.value,
-                    role = "user"
-                )
-
-                val isUserRegistered = userRepository.registerUser(newUser)
-
-                if (isUserRegistered) {
-                    _messageConfirmation.value = "Cuenta creada correctamente"
-                    delay(1000)
-                    resetFields()
-                    navController.navigate("Home") {
-                        popUpTo("SignUp") { inclusive = true }
-                    }
-                } else {
-                    _messageConfirmation.value = "No se ha podido crear la cuenta"
+            // Verifica si el resultado fue exitoso
+            result.onSuccess {
+                _messageConfirmation.value = it
+                delay(2000)
+                resetFields() // Resetear los campos después de registrar el usuario
+                navController.navigate("Home") {
+                    popUpTo("SignUp") { inclusive = true }
                 }
-            } else {
+            }.onFailure {
+                _messageConfirmation.value = "Error: ${it.message}"
                 onResult("Error al crear cuenta")
             }
         }
     }
 
-    fun onCompletedFields(
-        name: String,
-        firstname: String,
-        dni: String,
-        email: String,
-        phone: String,
-        gender: String,
-        birthday: String,
-        password: String
-    ) {
-        _name.value = name
-        _firstname.value = firstname
-        _dni.value = dni
-        _email.value = email
-        _phone.value = phone
-        _gender.value = gender
-        _birthday.value = birthday
-        _password.value = password
-        _isButtonEnable.value = enableButton(
-            name, firstname, dni, email, phone, gender, birthday, password
-        )
-
-        Log.d("ButtonEnabled", "isButtonEnable: ${_isButtonEnable.value}")
+    // Actualiza los campos del formulario
+    fun onCompletedFields(userForm: UserFormState) {
+        _fields.value = userForm
     }
 
-    fun enableButton(name: String, firstname: String, dni: String, email: String, phone: String, gender: String, birthday: String, password: String
-    ) =
-        name.isNotEmpty() && firstname.isNotEmpty() && dni.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && gender.isNotEmpty() && birthday.isNotEmpty() && password.isNotEmpty()
-
+    // Resetear los campos después del registro
     fun resetFields() {
-        _name.value = ""
-        _firstname.value = ""
-        _dni.value = ""
-        _email.value = ""
-        _phone.value = ""
-        _gender.value = ""
-        _birthday.value = ""
-        _password.value = ""
+        _fields.value = UserFormState() // Resetea todos los campos a valores predeterminados
     }
+
+    // Establecer mensaje de confirmación
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }

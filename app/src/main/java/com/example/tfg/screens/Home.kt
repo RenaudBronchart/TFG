@@ -34,10 +34,9 @@ import com.example.tfg.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navHostController: NavHostController) {
+fun Home(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
 
-    val userViewModel: UserViewModel = viewModel()
-    val authViewModel: AuthViewModel = viewModel()
+
     val usuarioData by userViewModel.user.collectAsState()
     val currentUser by authViewModel.user.collectAsState()
     val name = usuarioData?.name ?: "Usuario desconocido"

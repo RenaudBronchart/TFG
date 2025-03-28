@@ -1,6 +1,7 @@
 package com.example.tfg.repository
 
 import com.example.tfg.models.User
+import com.example.tfg.models.UserFormState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -31,12 +32,37 @@ class UserRepository(
         }
     }
 
-     suspend fun registerUser(user: User): Boolean {
+    // Registrar un nuevo usuario
+    suspend fun registerUser(userFormState: UserFormState): Result<String> {
         return try {
-            db.collection(collectionName).document(user.id).set(user).await()
-            true
+            // Primero se valida que los campos no estén vacíos
+            if (!userFormState.isValid()) {
+                return Result.failure(Exception("Todos los campos son obligatorios"))
+            }
+
+            // Crear usuario en Firebase Auth
+            val result = auth.createUserWithEmailAndPassword(userFormState.email, userFormState.password).await()
+
+            // Crear el objeto User
+            val newUser = User(
+                id = result.user?.uid ?: throw Exception("Error al obtener UID del usuario"),
+                name = userFormState.name,
+                firstname = userFormState.firstname,
+                email = userFormState.email,
+                dni = userFormState.dni,
+                birthday = userFormState.birthday,
+                phone = userFormState.phone,
+                gender = userFormState.gender,
+                role = "user" // Rol predeterminado
+            )
+
+            // Guardar el usuario en Firestore
+            db.collection(collectionName).document(newUser.id).set(newUser).await()
+
+            Result.success("Cuenta creada correctamente")
         } catch (e: Exception) {
-            false
+            // Si hay algún error, devolvemos el fallo con el mensaje de excepción
+            Result.failure(e)
         }
     }
 
