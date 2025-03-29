@@ -79,22 +79,4 @@ class CartShoppingRepository (private val auth: FirebaseAuth = FirebaseAuth.getI
     }
 
 
-    // Función para actualizar el stock de los productos después de realizar la compra
-    suspend fun updateStockAfterOrder(cartProducts: List<Product>) {
-        cartProducts.forEach { product ->
-            try {
-                val newStock = product.stock - product.quantity
-                if (newStock >= 0) {
-                    db.collection("products")
-                        .document(product.id)
-                        .update("stock", newStock)
-                        .await()
-                } else {
-                    throw Exception("Stock insuficiente para ${product.name}")
-                }
-            } catch (e: Exception) {
-                throw Exception("Error al actualizar el stock para ${product.name}: ${e.message}")
-            }
-        }
-    }
 }

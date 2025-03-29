@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Order
+import com.example.tfg.models.Product
+import com.example.tfg.repository.CartShoppingRepository
 import com.example.tfg.repository.OrderRepository
 import com.example.tfg.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,6 +16,7 @@ import kotlinx.coroutines.tasks.await
 
 class OrderViewModel:ViewModel() {
     private val orderRepository: OrderRepository = OrderRepository()
+    private val cartShoppingRepository: CartShoppingRepository = CartShoppingRepository()
 
     // emptyList() se usa para inicializar la lista como vacía
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
@@ -29,7 +32,8 @@ class OrderViewModel:ViewModel() {
         _messageConfirmation.value = message
     }
 
-
+    private val _CartShopping = MutableStateFlow<List<Product>>(emptyList())
+    val CartShopping : StateFlow<List<Product>> = _CartShopping
 
     // Cargar todas las órdenes desde Firestore
     fun getOrdersFromFirestore() {
@@ -90,6 +94,20 @@ class OrderViewModel:ViewModel() {
                 _messageConfirmation.value = "Error loading order: ${e.message}"
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun createOrder(order: Order) {
+        viewModelScope.launch {
+            try {
+                val orderId = orderRepository.createOrderWithStockUpdate(order)
+                _messageConfirmation.value = "Orden creada con éxito! ID: $orderId"
+
+                // 3️⃣ Limpiar carrito después de que la transacción fue exitosa
+                _CartShopping.value = cartShoppingRepository.clearCart()
+            } catch (e: Exception) {
+                _messageConfirmation.value = "Error al procesar la orden: ${e.message}"
             }
         }
     }

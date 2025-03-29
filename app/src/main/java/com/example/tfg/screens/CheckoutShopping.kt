@@ -22,6 +22,7 @@ import com.example.tfg.components.TotalToPay
 import com.example.tfg.models.Order
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
+import com.example.tfg.viewmodel.OrderViewModel
 
 @Composable
 fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthViewModel ,cartShoppingViewModel: CartShoppingViewModel) {
@@ -63,7 +64,6 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
             TotalToPay(
                 total = cartShoppingViewModel.calcularTotal(),
                 onClickPay = {
-                    // Crear la orden
                     val userId = authViewModel.currentUserId.value ?: ""
                     val totalAmount = cartShoppingViewModel.calcularTotal()
                     val order = Order(
@@ -72,13 +72,10 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
                         totalAmount = totalAmount,
                         createdAt = System.currentTimeMillis().toString()
                     )
-                    cartShoppingViewModel.createOrder(order)
 
-                    // Vaciar el carrito
-                    cartShoppingViewModel.clearCart()
-
-                    // Navegar a la pantalla de confirmación
-                    navHostController.navigate("OrderDoneScreen")
+                    cartShoppingViewModel.createOrder(order) {
+                        navHostController.navigate("OrderDoneScreen")
+                    }
                 }
             )
         }

@@ -39,12 +39,13 @@ class CartShoppingViewModel : ViewModel() {
     private val _messageConfirmation = MutableStateFlow("")
     val messageConfirmation: StateFlow<String> = _messageConfirmation
 
+    private val _orderSuccess = MutableStateFlow(false)
+    val orderSuccess: StateFlow<Boolean> = _orderSuccess
+
 
     private val _isOrderInProgress = MutableStateFlow(false)
     val isOrderInProgress: StateFlow<Boolean> = _isOrderInProgress
 
-    private val _orderSuccessMessage = MutableStateFlow("")
-    val orderSuccessMessage: StateFlow<String> get() = _orderSuccessMessage
 
 
     // Agregar producto al carrito
@@ -93,18 +94,21 @@ class CartShoppingViewModel : ViewModel() {
         return CartShopping.value.sumOf { it.price * it.quantity }
     }
 
-    fun createOrder(order: Order) {
+    fun createOrder(order: Order, onOrderCreated: () -> Unit) {
         viewModelScope.launch {
-            try {
-                val orderId = orderRepository.createOrder(order)
-                _orderSuccessMessage.value = "Orden creada con éxito! ID: $orderId"
-                // Actualizamos el stock después de la compra (si es necesario)
-                cartShoppingRepository.updateStockAfterOrder(_CartShopping.value)
-                // Limpiamos el carrito
-                _CartShopping.value = cartShoppingRepository.clearCart()
-            } catch (e: Exception) {
-                _errorMessage.value = "Error al crear la orden: ${e.message}"
+            _isLoading.value = true
+            val success = orderRepository.createOrder(order)
+
+            if (success) {
+                _messageConfirmation.value = "Compra realizada con éxito!"
+                _CartShopping.value = emptyList() // ✅ Vacía el carrito
+                _orderSuccess.value = true // ✅ Notifica a la UI para navegar
+                onOrderCreated() // ✅ Llamamos el callback
+            } else {
+                _messageConfirmation.value = "Error al realizar la compra"
             }
+
+            _isLoading.value = false
         }
     }
 }
