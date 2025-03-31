@@ -2,6 +2,7 @@ package com.example.tfg.screens
 
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,6 +60,7 @@ fun AdminListUsers(navHostController: NavHostController, authViewModel: AuthView
             LazyColumn {
                 items(userData) { user ->
                     UserCard(user = user) { userId ->
+                        Log.d("AdminListUsers", "Navigating to editUser with userId: $userId")
                         navHostController.navigate("editUser/$userId")
                     }
                 }

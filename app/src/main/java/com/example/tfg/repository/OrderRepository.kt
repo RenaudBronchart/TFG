@@ -13,37 +13,41 @@ class OrderRepository (private val auth: FirebaseAuth = FirebaseAuth.getInstance
     private val nameCollection = "orders"
 
     suspend fun createOrderWithStockUpdate(order: Order): String {
-        return try {
-            db.runTransaction { transaction ->
-                val orderId = order.id
+        try {
+            // Iniciar un batch para realizar varias escrituras de forma atómica
+            val batch = db.batch()
 
-                // 1️⃣ Guardar la orden
-                val orderRef = db.collection("orders").document(orderId)
-                transaction.set(orderRef, order)
+            // Primero, realizamos las lecturas de stock de los productos
+            for (product in order.products) {
+                val productRef = db.collection("products").document(product.id)
+                val productSnapshot = productRef.get().await()  // Leer el documento de producto
 
-                // 2️⃣ Actualizar el stock de cada producto
-                order.products.forEach { product ->
-                    val productRef = db.collection("products").document(product.id)
-                    val snapshot = transaction.get(productRef)
-                    val currentStock = snapshot.getLong("stock")?.toInt() ?: 0
+                val currentStock = productSnapshot.getLong("stock")?.toInt() ?: 0
+                val newStock = currentStock - product.quantity
 
-                    val newStock = currentStock - product.quantity
-                    if (newStock >= 0) {
-                        transaction.update(productRef, "stock", newStock)
-                    } else {
-                        throw FirebaseFirestoreException(
-                            "Stock insuficiente para ${product.name}",
-                            FirebaseFirestoreException.Code.ABORTED
-                        )
-                    }
+                // Verificar si hay suficiente stock
+                if (newStock < 0) {
+                    throw FirebaseFirestoreException("Stock insuficiente para ${product.name}", FirebaseFirestoreException.Code.ABORTED)
                 }
 
-                orderId // Retornamos el ID de la orden si todo salió bien
-            }.await()
+                // Agregar la operación de actualización de stock al batch
+                batch.update(productRef, "stock", newStock)
+            }
+
+            // Crear la orden en la colección de órdenes
+            val orderRef = db.collection("orders").document(order.id)
+            batch.set(orderRef, order)
+
+            // Ejecutar todas las operaciones en el batch
+            batch.commit().await() // Aquí es donde se guardan todos los cambios de manera atómica
+
+            // Devolver el ID de la orden
+            return order.id
         } catch (e: Exception) {
             throw Exception("Error al crear la orden y actualizar el stock: ${e.message}")
         }
     }
+
 
     suspend fun getOrdersFromFirestore(userId: String): List<Order> {
         return try {
@@ -74,41 +78,10 @@ class OrderRepository (private val auth: FirebaseAuth = FirebaseAuth.getInstance
 
     suspend fun getOrderById(orderId: String): Order? {
         return try {
-            val documentSnapshot = db.collection(nameCollection).document(orderId).get().await()
-            documentSnapshot.toObject(Order::class.java)
+            val snapshot = db.collection("orders").document(orderId).get().await()
+            snapshot.toObject(Order::class.java)
         } catch (e: Exception) {
-            throw Exception("Error fetching order with ID $orderId: ${e.message}")
-        }
-    }
-
-    suspend fun createOrder(order: Order): Boolean {
-        return try {
-            db.runTransaction { transaction ->
-                for (product in order.products) {
-                    val productRef = db.collection("products").document(product.id)
-                    val snapshot = transaction.get(productRef)
-
-                    val currentStock = snapshot.getLong("stock")?.toInt() ?: 0
-                    val newStock = currentStock - product.quantity
-
-                    if (newStock < 0) {
-                        throw FirebaseFirestoreException(
-                            "Stock insuficiente para ${product.name}",
-                            FirebaseFirestoreException.Code.ABORTED
-                        )
-                    }
-
-                    transaction.update(productRef, "stock", newStock)
-                }
-
-                val orderRef = db.collection("orders").document(order.id)
-                transaction.set(orderRef, order)
-            }.await()
-
-            true // ✅ Pedido creado correctamente
-        } catch (e: Exception) {
-            Log.e("OrderRepository", "Error al crear la orden: ${e.message}")
-            false // ❌ Error en la compra
+            throw Exception("Error fetching order: ${e.message}")
         }
     }
 

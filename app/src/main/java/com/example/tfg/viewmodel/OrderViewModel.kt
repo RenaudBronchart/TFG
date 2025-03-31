@@ -22,6 +22,9 @@ class OrderViewModel:ViewModel() {
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
     val orders: StateFlow<List<Order>> = _orders
 
+    private val _lastOrder = MutableStateFlow<Order?>(null)
+    val lastOrder: StateFlow<Order?> = _lastOrder
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -79,14 +82,14 @@ class OrderViewModel:ViewModel() {
         }
     }
 
-    // Cargar una orden específica por ID
     fun loadLastOrder(orderId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Aquí deberías obtener la orden por su ID del repositorio
                 val order = orderRepository.getOrderById(orderId)
                 if (order != null) {
-                    _orders.value = listOf(order)
+                    _lastOrder.value = order  // Guardamos la última orden en el estado
                 } else {
                     _messageConfirmation.value = "Order not found"
                 }
@@ -98,19 +101,7 @@ class OrderViewModel:ViewModel() {
         }
     }
 
-    fun createOrder(order: Order) {
-        viewModelScope.launch {
-            try {
-                val orderId = orderRepository.createOrderWithStockUpdate(order)
-                _messageConfirmation.value = "Orden creada con éxito! ID: $orderId"
 
-                // 3️⃣ Limpiar carrito después de que la transacción fue exitosa
-                _CartShopping.value = cartShoppingRepository.clearCart()
-            } catch (e: Exception) {
-                _messageConfirmation.value = "Error al procesar la orden: ${e.message}"
-            }
-        }
-    }
 
 
 }

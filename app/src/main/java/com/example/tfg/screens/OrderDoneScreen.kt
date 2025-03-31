@@ -2,6 +2,7 @@ package com.example.tfg.screens
 
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,15 +39,16 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 @Composable
 fun OrderDoneScreen( navHostController: NavHostController,authViewModel: AuthViewModel,orderViewModel: OrderViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
-    val userId = authViewModel.currentUserId.value ?: ""
-    val orders by orderViewModel.orders.collectAsState()
-    val lastOrderId by cartShoppingViewModel.lastOrderId.collectAsState()
+    val lastOrderId by cartShoppingViewModel.lastOrderId.collectAsState()  // ID de la última orden
+    val lastOrder by orderViewModel.lastOrder.collectAsState()  // La última orden cargada
+
 
     LaunchedEffect(lastOrderId) {
         if (!lastOrderId.isNullOrEmpty()) {
-            orderViewModel.loadLastOrder(lastOrderId!!) // !! --> porque asi no puede ser nulo
+            orderViewModel.loadLastOrder(lastOrderId!!)  // Cargar la última orden usando el ID
         }
     }
+
 
     Box(
         modifier = Modifier
@@ -82,15 +84,13 @@ fun OrderDoneScreen( navHostController: NavHostController,authViewModel: AuthVie
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Card con detalles de la orden
-            orders.forEach { order ->
-                order.products.firstOrNull()?.let { producto ->
-                    CardOrderMessageConfirmation(
-                        navHostController = navHostController,
-                        product = producto,
-                        order = order
-                    )
-                }
+            // Mostrar la última orden si existe
+            lastOrder?.let { order ->
+                CardOrderMessageConfirmation(
+                    navHostController = navHostController,
+                    product = order.products.firstOrNull() ?: return@let,
+                    order = order
+                )
             }
 
             Spacer(modifier = Modifier.height(32.dp)) // Espacio para la tarjeta y el buton

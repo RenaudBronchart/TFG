@@ -53,10 +53,8 @@ fun EditUserMyProfil(navController: NavHostController, authViewModel: AuthViewMo
     // Verificar si currentUser está disponible y tiene UID
     LaunchedEffect(currentUser) {
         currentUser?.uid?.let { userId ->
-            Log.d("EditUserMyProfil", "Cargando datos para el usuario con UID: $userId")
-            // Cargar los datos del usuario desde la base de datos
-            editUserViewModel.loadUser(userId)
-        } ?: Log.e("EditUserMyProfil", "Error: currentUser es nulo o no tiene UID")
+            editUserViewModel.loadUser(userId) // Aquí se usa el UID del currentUser para cargar datos.
+        }
     }
 
     // Mostrar mensaje en Snackbar si hay un mensaje de confirmación

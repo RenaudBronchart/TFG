@@ -11,7 +11,7 @@ sealed class AppScreens(val ruta: String) {
     object EshopScreen: AppScreens("eshopScreen")
     object AdminListUsers: AppScreens("adminListUsers")
     object EditUserProfil: AppScreens("editUser/{userId}")
-    object EditUserMyProfil: AppScreens("editUser/{userId}")
+    object EditUserMyProfil: AppScreens("editMyProfile/{userId}")
     object AdminEditProduct: AppScreens("adminEditProduct/{productId}")
     object AdminPanel: AppScreens("adminPanel")
     object BookingPadelScreen: AppScreens("bookingPadelScreen")

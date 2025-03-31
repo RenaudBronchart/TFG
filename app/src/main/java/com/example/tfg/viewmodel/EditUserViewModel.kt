@@ -36,7 +36,9 @@ class EditUserViewModel : ViewModel() {
     }
 
     fun loadUser(uid: String) {
-        if (currentUid == uid) return
+        Log.d("EditUserViewModel", "loadUser called with uid: $uid")
+
+        // Siempre recargar usuario sin importar si es el mismo
         currentUid = uid
 
         viewModelScope.launch {
@@ -44,12 +46,12 @@ class EditUserViewModel : ViewModel() {
                 val loadedUser = userRepository.getUserById(uid)
                 if (loadedUser != null) {
                     _user.value = loadedUser
-                    Log.d("EditUserViewModel", "Usuario cargado: $loadedUser")  // Log para comprobar
+                    Log.d("EditUserViewModel", "Usuario cargado: $loadedUser")
                 } else {
                     Log.e("EditUserViewModel", "Error: Usuario no encontrado")
                 }
             } catch (e: Exception) {
-                Log.e("EditUserViewModel", "Error al cargar usuario: ${e.message}")
+                Log.e("EditUserViewModel", "Error cargando usuario: ${e.message}")
             }
         }
     }

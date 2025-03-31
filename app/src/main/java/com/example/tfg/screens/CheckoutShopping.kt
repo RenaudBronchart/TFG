@@ -73,9 +73,15 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
                         createdAt = System.currentTimeMillis().toString()
                     )
 
-                    cartShoppingViewModel.createOrder(order) {
-                        navHostController.navigate("OrderDoneScreen")
-                    }
+                    // Llamar a createOrder con el único argumento 'order'
+                    cartShoppingViewModel.createOrder(order)
+
+                    // Vaciar el carrito (después de que la orden se ha creado)
+                    cartShoppingViewModel.clearCart()
+
+                    // Navegar a la pantalla de confirmación
+                    navHostController.navigate("OrderDoneScreen")
+
                 }
             )
         }

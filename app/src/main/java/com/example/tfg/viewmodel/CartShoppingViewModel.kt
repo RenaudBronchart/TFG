@@ -94,21 +94,28 @@ class CartShoppingViewModel : ViewModel() {
         return CartShopping.value.sumOf { it.price * it.quantity }
     }
 
-    fun createOrder(order: Order, onOrderCreated: () -> Unit) {
+    fun createOrder(order: Order) {
+        Log.d("CartShoppingViewModel", "Iniciando creación de la orden...") // Esto debería aparecer en los logs.
         viewModelScope.launch {
-            _isLoading.value = true
-            val success = orderRepository.createOrder(order)
+            try {
+                // Crear la orden
+                val orderId = orderRepository.createOrderWithStockUpdate(order)
+                Log.d("CartShoppingViewModel", "Orden creada con éxito: $orderId")
 
-            if (success) {
-                _messageConfirmation.value = "Compra realizada con éxito!"
-                _CartShopping.value = emptyList() // ✅ Vacía el carrito
-                _orderSuccess.value = true // ✅ Notifica a la UI para navegar
-                onOrderCreated() // ✅ Llamamos el callback
-            } else {
-                _messageConfirmation.value = "Error al realizar la compra"
+                // Actualizar el lastOrderId
+                _lastOrderId.value = orderId
+                Log.d("CartShoppingViewModel", "lastOrderId actualizado a: ${_lastOrderId.value}")
+            } catch (e: Exception) {
+                Log.e("CartShoppingViewModel", "Error al procesar la orden: ${e.message}")
+                _messageConfirmation.value = "Error al procesar la orden: ${e.message}"
             }
-
-            _isLoading.value = false
         }
+    }
+
+
+
+
+    fun setLastOrderId(orderId: String) {
+        _lastOrderId.value = orderId
     }
 }
