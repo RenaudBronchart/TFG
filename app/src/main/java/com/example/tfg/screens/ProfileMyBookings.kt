@@ -66,7 +66,7 @@ fun ProfileMyBookings(navHostController: NavHostController, authViewModel : Auth
 
                     CardCheckout(
                         courtName = courtName,
-                        DisplayDate = booking.date,
+                        displayDate = booking.date,
                         timeSlot = "${booking.startTime} - ${booking.endTime}",
                         showReserveButton = false,
                         onReserveClick = {  }

@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CardCheckout(courtName: String, DisplayDate: String, timeSlot: String,showReserveButton: Boolean = true, onReserveClick: () -> Unit) {
+fun CardCheckout(courtName: String, displayDate: String, timeSlot: String, showReserveButton: Boolean = true, onReserveClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,7 +77,7 @@ fun CardCheckout(courtName: String, DisplayDate: String, timeSlot: String,showRe
                 ) {
                     Icon(imageVector = Icons.Filled.CalendarToday, contentDescription = "Date", tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = "Fecha: $DisplayDate", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+                    Text(text = "Fecha: $displayDate", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
