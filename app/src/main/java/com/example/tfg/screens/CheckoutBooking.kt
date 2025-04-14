@@ -42,7 +42,7 @@ fun CheckoutBookingScreen(navHostController: NavHostController, authViewModel: A
         }
     }
     Scaffold(
-        topBar = { TopBarComponent("Confirmacion de reserva", navHostController) },
+        topBar = { TopBarComponent("Confirmación de reserva", navHostController) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(

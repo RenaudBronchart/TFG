@@ -52,7 +52,7 @@ fun CardCheckout(courtName: String, displayDate: String, timeSlot: String, showR
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Reservacion ",
+                text = "Reservación de Padel",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
