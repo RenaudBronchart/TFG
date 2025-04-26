@@ -178,6 +178,7 @@ fun CardProduct(product: Product, isAdmin:Boolean, navHostController : NavHostCo
                 showDialog = false
                 deleteProductViewModel.deleteProduct(product.id) { message ->
                     productViewModel.setMessageConfirmation(message)
+                    productViewModel.getProducts()
                 }
             },
             // si pincha en cancelar, se cancela y nada sucede

@@ -102,7 +102,18 @@ class ProductViewModel : ViewModel() {
         _messageConfirmation.value = message
     }
 
-
+    fun updateImage(newImageUrl: String) {
+        _image.value = newImageUrl
+        _isButtonEnable.value = enableButton(
+            _name.value,
+            _price.value,
+            _description.value,
+            _category.value,
+            _image.value,
+            _stock.value,
+            _brand.value
+        )
+    }
 
 
 }

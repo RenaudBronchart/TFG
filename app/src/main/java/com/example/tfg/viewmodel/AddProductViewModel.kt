@@ -109,16 +109,7 @@ class AddProductViewModel : ViewModel() {
                     _image.value = downloadUrl
                     _messageConfirmation.value = "Imagen subida correctamente"
 
-                    // 👇 Ici on met l'URL correctement dans le ProductViewModel
-                    productViewModel.onCompletedFields(
-                        productViewModel.name.value,
-                        productViewModel.price.value,
-                        productViewModel.description.value,
-                        productViewModel.category.value,
-                        downloadUrl, // 👈 ici l'URL réel
-                        productViewModel.stock.value,
-                        productViewModel.brand.value
-                    )
+                    productViewModel.updateImage(downloadUrl)
                 }.onFailure { exception ->
                     _messageConfirmation.value = "Error al subir la imagen: ${exception.message}"
                 }

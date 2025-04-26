@@ -79,7 +79,7 @@ fun AdminAddProduct(
                 }
             )
 
-            // Champs normaux (SANS imagen pour l'instant)
+
             listOf(
                 Triple("Nombre", name, "nombre"),
                 Triple("Precio", price.toString(), "precio"),
