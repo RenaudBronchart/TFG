@@ -52,6 +52,10 @@ android {
 
 dependencies {
 
+
+
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -68,10 +72,8 @@ dependencies {
 
     // Firestore
     implementation(libs.firebase.bom)
-
     // Firebase
     implementation(platform(libs.firebase.bom))
-
     // Firebase Firestore
     implementation(libs.firebase.firestore.ktx)
 
@@ -89,6 +91,11 @@ dependencies {
 
     // Material3
     implementation(libs.androidx.material3)
+
+    // FireStore Stokage
+    implementation("com.google.firebase:firebase-storage-ktx")
+    implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+
 
 
     implementation(libs.material.icons.extended)

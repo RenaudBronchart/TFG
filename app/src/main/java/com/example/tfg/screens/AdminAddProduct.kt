@@ -1,36 +1,34 @@
 package com.example.tfg.screens
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
+
+import androidx.annotation.OptIn
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.components.SelectProductCategory
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 import com.example.tfg.components.DataField
+import com.example.tfg.components.PickImageFromGallery
 import com.example.tfg.components.TopBarComponent
 import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.AddProductViewModel
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
+import com.example.tfg.components.ImagePickerField
 
+@OptIn(UnstableApi::class)
 @Composable
-fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthViewModel,  productViewModel: ProductViewModel, addProductViewModel: AddProductViewModel) {
-
+fun AdminAddProduct(
+    navHostController: NavHostController,
+    authViewModel: AuthViewModel,
+    productViewModel: ProductViewModel,
+    addProductViewModel: AddProductViewModel
+) {
     val selectedCategory: String by productViewModel.category.collectAsState("Selecciona una categoría")
     val name: String by productViewModel.name.collectAsState("")
     val price: Double by productViewModel.price.collectAsState(0.0)
@@ -42,12 +40,12 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
     val isButtonEnable: Boolean by productViewModel.isButtonEnable.collectAsState(false)
     val snackbarHostState = remember { SnackbarHostState() }
     val message by addProductViewModel.messageConfirmation.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         productViewModel.setMessageConfirmation("")
     }
 
-    // permite lanzar el message configurado
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
             snackbarHostState.showSnackbar(message)
@@ -55,14 +53,12 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
         }
     }
 
-    val fields = listOf(
-        Triple("Nombre", name, "nombre"),
-        Triple("Precio", price.toString(), "precio"),
-        Triple("Descripción", description, "descripcion"),
-        Triple("Imagen", image, "imagen"),
-        Triple("Stock", stock.toString(), "stock"),
-        Triple("Marca", brand, "marca")
-    )
+    val pickImageLauncher = PickImageFromGallery { uri ->
+        uri?.let {
+            addProductViewModel.uploadImageAndSetUrl(it,productViewModel)
+
+        }
+    }
 
     Scaffold(
         topBar = { TopBarComponent("Agregar producto", navHostController) },
@@ -75,6 +71,7 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
+            // Catégorie
             SelectProductCategory(
                 selectedCategory = category,
                 onCategorySelected = { newCategory ->
@@ -82,7 +79,14 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
                 }
             )
 
-            fields.forEach { (label, value, key) ->
+            // Champs normaux (SANS imagen pour l'instant)
+            listOf(
+                Triple("Nombre", name, "nombre"),
+                Triple("Precio", price.toString(), "precio"),
+                Triple("Descripción", description, "descripcion"),
+                Triple("Stock", stock.toString(), "stock"),
+                Triple("Marca", brand, "marca")
+            ).forEach { (label, value, key) ->
                 DataField(
                     label = label,
                     value = value,
@@ -91,7 +95,6 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
                             "nombre" -> productViewModel.onCompletedFields(newValue, price, description, selectedCategory, image, stock, brand)
                             "precio" -> productViewModel.onCompletedFields(name, newValue.toDoubleOrNull() ?: 0.0, description, selectedCategory, image, stock, brand)
                             "descripcion" -> productViewModel.onCompletedFields(name, price, newValue, selectedCategory, image, stock, brand)
-                            "imagen" -> productViewModel.onCompletedFields(name, price, description, selectedCategory, newValue, stock, brand)
                             "stock" -> productViewModel.onCompletedFields(name, price, description, selectedCategory, image, newValue.toIntOrNull() ?: 0, brand)
                             "marca" -> productViewModel.onCompletedFields(name, price, description, selectedCategory, image, stock, newValue)
                         }
@@ -99,35 +102,44 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Crear un objeto Product con los valores actuales
-            val product = Product(
-                name = name,
-                price = price,
-                description = description,
-                category = selectedCategory,
-                image = image,
-                stock = stock,
-                brand = brand
-            )
+            Button(
+                onClick = { pickImageLauncher() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text("Seleccionar imagen")
+            }
+
+            if (image.isNotEmpty()) {
+                Text(
+                    text = "Imagen seleccionada ️",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Button(
                 onClick = {
-
+                    Log.d("AdminAddProduct", "Image URL avant création produit: $image")
                     val product = Product(
                         name = name,
                         price = price,
                         description = description,
                         category = selectedCategory,
-                        image = image,
+                        image = image, // ici l'URL de l'image Firebase !
                         stock = stock,
                         brand = brand
                     )
 
                     addProductViewModel.addProduct(product) { message ->
                         productViewModel.setMessageConfirmation(message)
-                        productViewModel.resetFields() // Limpiar los campos después de agregar el producto
+                        productViewModel.resetFields()
                     }
                 },
                 enabled = isButtonEnable,
@@ -138,7 +150,3 @@ fun AdminAddProduct(navHostController: NavHostController, authViewModel: AuthVie
         }
     }
 }
-
-
-
-

@@ -1,5 +1,6 @@
 package com.example.tfg.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -97,5 +98,33 @@ class AddProductViewModel : ViewModel() {
 
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
+    }
+
+    fun uploadImageAndSetUrl(imageUri: Uri, productViewModel: ProductViewModel) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                val result = productRepository.uploadImageToStorage(imageUri)
+                result.onSuccess { downloadUrl ->
+                    _image.value = downloadUrl
+                    _messageConfirmation.value = "Imagen subida correctamente"
+
+                    // 👇 Ici on met l'URL correctement dans le ProductViewModel
+                    productViewModel.onCompletedFields(
+                        productViewModel.name.value,
+                        productViewModel.price.value,
+                        productViewModel.description.value,
+                        productViewModel.category.value,
+                        downloadUrl, // 👈 ici l'URL réel
+                        productViewModel.stock.value,
+                        productViewModel.brand.value
+                    )
+                }.onFailure { exception ->
+                    _messageConfirmation.value = "Error al subir la imagen: ${exception.message}"
+                }
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }

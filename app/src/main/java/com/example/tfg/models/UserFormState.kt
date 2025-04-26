@@ -10,8 +10,10 @@ data class UserFormState(
     val birthday: String = "",
     val password: String = ""
 ) {
+
     // Método para validar si todos los campos son válidos
     fun isValid(): Boolean =
         name.isNotEmpty() && firstname.isNotEmpty() && dni.isNotEmpty() && email.isNotEmpty() &&
                 phone.isNotEmpty() && gender.isNotEmpty() && birthday.isNotEmpty() && password.isNotEmpty()
+
 }

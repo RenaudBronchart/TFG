@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PasswordField(value: String, onValueChange: (String) -> Unit) {
-    // remeember matiene el estado de la cariable
-    // sin el remember se veolveria a su valor inicial
+    //    // remember matiene el estado de la cariable
+    //    // sin el remember se volveria a su valor inicial
     var errorMessage by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 

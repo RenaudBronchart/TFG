@@ -1,15 +1,16 @@
 package com.example.tfg.repository
 
+import android.net.Uri
 import com.example.tfg.models.Product
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
 class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
                             private val db: FirebaseFirestore = FirebaseFirestore.getInstance())  {
 
     private val collectionName = "products"
-
      suspend fun getProducts(): List<Product> {
         return try {
             val querySnapshot = db.collection(collectionName).get().await()
@@ -69,5 +70,18 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
             false
         }
     }
+
+    suspend fun uploadImageToStorage(imageUri: Uri): Result<String> {
+        return try {
+            val storageReference = FirebaseStorage.getInstance().reference
+            val imageRef = storageReference.child("product_images/${System.currentTimeMillis()}.jpg")
+            val uploadTask = imageRef.putFile(imageUri).await()
+            val downloadUrl = imageRef.downloadUrl.await()
+            Result.success(downloadUrl.toString())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }
 
