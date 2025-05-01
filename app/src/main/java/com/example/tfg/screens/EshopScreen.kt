@@ -2,70 +2,61 @@ package com.example.tfg.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg.viewmodel.ProductViewModel
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import com.example.tfg.components.BottomBarComponent
-import com.example.tfg.components.CardProductDetail
-import com.example.tfg.components.CardProduct
-import com.example.tfg.components.TopBarComponent
-import com.example.tfg.models.Product
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.DeleteProductViewModel
-
+import com.example.tfg.models.Product
+import com.example.tfg.components.BottomBarComponent
+import com.example.tfg.components.CardProduct
+import com.example.tfg.components.CardProductDetail
+import com.example.tfg.components.TopBarComponent
 
 @Composable
-fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewModel, productViewModel: ProductViewModel, cartShoppingViewModel: CartShoppingViewModel,deleteProductViewModel: DeleteProductViewModel) {
+fun EshopScreen(
+    navHostController: NavHostController,
+    authViewModel: AuthViewModel,
+    productViewModel: ProductViewModel,
+    cartShoppingViewModel: CartShoppingViewModel,
+    deleteProductViewModel: DeleteProductViewModel
+) {
     val productos by productViewModel.products.collectAsState()
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showSheet by remember { mutableStateOf(false) }
 
-
-    LaunchedEffect(navHostController) {
+    // Cargamos los productos una vez cuando se abre la pantalla
+    LaunchedEffect(Unit) {
         productViewModel.getProducts()
     }
+
+    // Observamos si cambia el estado de administrador
     LaunchedEffect(isAdmin) {
         Log.d("EshopScreen", "isAdmin: $isAdmin")
     }
-    LaunchedEffect(productos) {
-        Log.d("EshopScreen", "Productos mis a jour!")
-    }
-
 
     Scaffold(
         topBar = { TopBarComponent("Tienda", navHostController) },
-        bottomBar = { BottomBarComponent(navHostController, cartItems) },
-
-    ) { innerPadding -> //
+        bottomBar = { BottomBarComponent(navHostController, cartItems) }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Le contenu de la grille
+            // Lista de productos en formato grid
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize()
@@ -75,19 +66,22 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
                         product = producto,
                         isAdmin = isAdmin,
                         navHostController = navHostController,
-                        productViewModel = productViewModel,
-                        deleteProductViewModel = deleteProductViewModel,
                         cartShoppingViewModel = cartShoppingViewModel,
                         onProductClick = {
                             selectedProduct = producto
                             showSheet = true
                         },
-
+                        onDeleteClick = { product ->
+                            deleteProductViewModel.deleteProduct(product.id) { message ->
+                                productViewModel.setMessageConfirmation(message)
+                                productViewModel.getProducts() // Refrescamos la lista después de borrar
+                            }
+                        }
                     )
                 }
             }
 
-            // si es admin , button floating para llegar a la pagina de adminAddProduct
+            // Si el usuario es admin, mostramos el botón flotante para añadir productos
             if (isAdmin) {
                 FloatingActionButton(
                     onClick = { navHostController.navigate("AdminAddProduct") },
@@ -95,13 +89,12 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add Product")
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Añadir Producto")
                 }
             }
-
         }
-        // si hay productos, vamos a mostrar el producto
-        // función let {} para ejecutar la funcion solo si el  producto si no es nulo
+
+        // Mostrar el detalle del producto si se ha seleccionado uno
         selectedProduct?.let { product ->
             if (showSheet) {
                 CardProductDetail(
@@ -121,8 +114,3 @@ fun EshopScreen(navHostController: NavHostController, authViewModel : AuthViewMo
         }
     }
 }
-
-
-
-
-
