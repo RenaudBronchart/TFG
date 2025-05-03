@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class EditProductViewModel : ViewModel() {
-
+class EditProductViewModel(
     private val productRepository: ProductRepository = ProductRepository()
+) : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products

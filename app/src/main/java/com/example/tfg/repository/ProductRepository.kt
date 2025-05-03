@@ -7,11 +7,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
-class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
-                            private val db: FirebaseFirestore = FirebaseFirestore.getInstance())  {
+class ProductRepository(
+private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+) : IProductRepository {
 
     private val collectionName = "products"
-     suspend fun getProducts(): List<Product> {
+     override suspend fun getProducts(): List<Product> {
         return try {
             val querySnapshot = db.collection(collectionName).get().await()
             // Utilizamos mapNotNull para convertir los documentos y eliminar automáticamente los nulos
@@ -21,7 +23,7 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
         }
     }
 
-     suspend fun getProductById(uid: String): Product? {
+     override suspend fun getProductById(uid: String): Product? {
         return try {
             val document = db.collection(collectionName).document(uid).get().await()
             document.toObject(Product::class.java)
@@ -30,7 +32,7 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
         }
     }
 
-    suspend fun addProduct(product: Product): Result<String> {
+    override suspend fun addProduct(product: Product): Result<String> {
         return try {
             // Agregar el producto a Firestore, usando el id del producto como documento
             db.collection(collectionName).document(product.id).set(product).await()
@@ -44,7 +46,7 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
 
 
 
-     suspend fun updateProduct(productId: String, product: Product): Boolean {
+     override suspend fun updateProduct(productId: String, product: Product): Boolean {
         return try {
             val updates = mapOf(
                 "name" to product.name,
@@ -62,7 +64,7 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
         }
     }
 
-     suspend fun deleteProductById(productId: String): Boolean {
+     override suspend fun deleteProductById(productId: String): Boolean {
         return try {
             db.collection(collectionName).document(productId).delete().await()
             true
@@ -71,7 +73,7 @@ class ProductRepository(    private val auth: FirebaseAuth = FirebaseAuth.getIns
         }
     }
 
-    suspend fun uploadImageToStorage(imageUri: Uri): Result<String> {
+    override suspend fun uploadImageToStorage(imageUri: Uri): Result<String> {
         return try {
             val storageReference = FirebaseStorage.getInstance().reference
             val imageRef = storageReference.child("product_images/${System.currentTimeMillis()}.jpg")

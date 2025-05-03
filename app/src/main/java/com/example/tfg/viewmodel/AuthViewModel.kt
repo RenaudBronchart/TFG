@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class AuthViewModel : ViewModel() {
-    // Instancia directamente el repositorio
-    private val authRepository: AuthRepository = AuthRepository()
-    private val auth = FirebaseAuth.getInstance()
+class AuthViewModel(
+    private val authRepository: AuthRepository = AuthRepository(),
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+) : ViewModel() {
 
     private val _currentUserId = MutableStateFlow<String?>(null)
     val currentUserId: StateFlow<String?> = _currentUserId

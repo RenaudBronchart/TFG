@@ -11,8 +11,9 @@ import com.example.tfg.repository.UserRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class EditUserViewModel : ViewModel() {
+class EditUserViewModel(
     private val userRepository: UserRepository = UserRepository()
+) : ViewModel() {
 
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users

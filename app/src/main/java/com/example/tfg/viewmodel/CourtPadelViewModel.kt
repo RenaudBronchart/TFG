@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class CourtPadelViewModel : ViewModel() {
+class CourtPadelViewModel(
     private val courtPadelRepository: CourtPadelRepository = CourtPadelRepository()
+) : ViewModel() {
 
 
     private val _courtsPadel = MutableStateFlow<List<CourtPadel>>(emptyList())
@@ -23,8 +24,7 @@ class CourtPadelViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    // Charger les courts de padel depuis Firestore
-    // Cargar los courts de padel desde Firestore
+
     fun getCourtsPadelFromFirestore() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -60,7 +60,6 @@ class CourtPadelViewModel : ViewModel() {
         }
     }
 
-    // Eliminar un court de padel
     fun deleteCourtPadel(courtPadel: CourtPadel, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true

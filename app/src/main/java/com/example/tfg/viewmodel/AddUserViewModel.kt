@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class AddUserViewModel : ViewModel() {
+class AddUserViewModel(
     private val userRepository: UserRepository = UserRepository()
+) : ViewModel() {
 
     private val _fields = MutableStateFlow(UserFormState())
     val fields: StateFlow<UserFormState> = _fields

@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class BookingPadelViewModel : ViewModel() {
+class BookingPadelViewModel(
     private val bookingPadelRepository: BookingPadelRepository = BookingPadelRepository()
+) : ViewModel() {
 
     private val _bookingsPadel = MutableStateFlow<List<BookingPadel>>(emptyList())
     val bookingsPadel: StateFlow<List<BookingPadel>> = _bookingsPadel

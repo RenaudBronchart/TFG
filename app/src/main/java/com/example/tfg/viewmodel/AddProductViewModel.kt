@@ -5,13 +5,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.models.Product
+import com.example.tfg.repository.IProductRepository
 import com.example.tfg.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AddProductViewModel : ViewModel() {
-    private val productRepository: ProductRepository = ProductRepository()
+class AddProductViewModel(
+    private val productRepository: IProductRepository = ProductRepository() //
+) : ViewModel() {
 
     private val _name = MutableStateFlow<String>("")
     val name: StateFlow<String> = _name //
@@ -79,7 +81,6 @@ class AddProductViewModel : ViewModel() {
         _brand.value = brand
         _isButtonEnable.value = enableButton(name, price, description, category, image, stock, brand)
 
-        Log.d("ButtonEnabled", "isButtonEnable: ${_isButtonEnable.value}")
     }
 
     fun enableButton(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) =

@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class OrderViewModel:ViewModel() {
-    private val orderRepository: OrderRepository = OrderRepository()
+class OrderViewModel(
+    private val orderRepository: OrderRepository = OrderRepository(),
     private val cartShoppingRepository: CartShoppingRepository = CartShoppingRepository()
+) : ViewModel() {
 
     // emptyList() se usa para inicializar la lista como vacía
     private val _orders = MutableStateFlow<List<Order>>(emptyList())

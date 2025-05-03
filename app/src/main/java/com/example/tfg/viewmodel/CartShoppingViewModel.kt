@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class CartShoppingViewModel : ViewModel() {
-
-    private val cartShoppingRepository: CartShoppingRepository = CartShoppingRepository()
+class CartShoppingViewModel(
+    private val cartShoppingRepository: CartShoppingRepository = CartShoppingRepository(),
     private val orderRepository: OrderRepository = OrderRepository()
+) : ViewModel() {
 
     private val _CartShopping = MutableStateFlow<List<Product>>(emptyList())
     val CartShopping : StateFlow<List<Product>> = _CartShopping
