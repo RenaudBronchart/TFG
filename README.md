@@ -12,7 +12,7 @@ Este repositorio contiene el código fuente y la memoria del Trabajo de Fin de G
 Lenguaje: Kotlin
 Framework: Jetpack Compose
 Arquitectura: MVVM 
-Base de Datos: Firebase
+Base de Datos: FireStore
 
 📂 Contenido del repositorio
 -----------------------------
@@ -42,7 +42,7 @@ This repository contains the source code and documentation for the Final Degree 
 Language: Kotlin
 Framework: Jetpack Compose
 Architecture: MVVM
-Database: Firebase
+Database: FireStore
 
 📂 Repository Content
 ----------------------
