@@ -6,14 +6,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-
+// Repositorio que encapsula el acceso a Firebase Authentication y Firestore para gestionar usuarios.
+// Permite registrar, consultar y actualizar usuarios en la aplicación.
 class UserRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {
 
     private val collectionName = "users"
-
+    // Obtiene la lista completa de usuarios desde Firestore.
+    // Devuelve una lista vacía si ocurre un error.
      suspend fun getUsers(): List<User> {
         return try {
             val querySnapshot = db.collection(collectionName).get().await()
@@ -22,7 +24,8 @@ class UserRepository(
             emptyList() // Si hay error, devolvemos una lista vacía
         }
     }
-
+    // Obtiene un usuario específico a partir de su UID.
+    // Devuelve null si no se encuentra o si ocurre un error.
      suspend fun getUserById(uid: String): User? {
         return try {
             val document = db.collection(collectionName).document(uid).get().await()
@@ -65,7 +68,8 @@ class UserRepository(
             Result.failure(e)
         }
     }
-
+    // Actualiza los datos personales de un usuario existente en Firestore.
+    // Devuelve true si fue exitoso, o false si ocurrió un error.
      suspend fun updateUser(uid: String, user: User): Boolean {
         return try {
             val updates = mapOf(

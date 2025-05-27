@@ -2,6 +2,7 @@ package com.example.tfg.models
 
 import java.util.UUID
 
+//  Modelo de datos que representa un usuario de la aplicación.
 data class User(
     val id: String = "",
     val name: String = "",

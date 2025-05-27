@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+
+// ViewModel responsable de gestionar las pistas de pádel.
+// Maneja operaciones como carga, adición y eliminación de pistas desde Firestore.
 class CourtPadelViewModel(
     private val courtPadelRepository: CourtPadelRepository = CourtPadelRepository()
 ) : ViewModel() {
@@ -24,16 +27,16 @@ class CourtPadelViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-
+    // Carga todas las pistas de pádel desde Firestore
     fun getCourtsPadelFromFirestore() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val courts = courtPadelRepository.getCourtsPadelFromFirestore()
                 _courtsPadel.value = courts
-                Log.d("FirestoreDebug", "Courts récupérés: $courts")
+                Log.d("FirestoreDebug", "Pistas obtenidas: $courts")
             } catch (e: Exception) {
-                Log.e("FirestoreError", "Erreur: ${e.message}")
+                Log.e("FirestoreError", "Error al obtener pistas: ${e.message}")
             } finally {
                 _isLoading.value = false
             }

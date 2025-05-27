@@ -11,12 +11,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
+// ViewModel encargado de gestionar el carrito de compras, incluyendo operaciones sobre productos,
+// creación de pedidos y actualización del stock.
 class CartShoppingViewModel(
     private val cartShoppingRepository: CartShoppingRepository = CartShoppingRepository(),
     private val orderRepository: OrderRepository = OrderRepository()
 ) : ViewModel() {
-
+    // Lista de productos actualmente en el carrito
     private val _CartShopping = MutableStateFlow<List<Product>>(emptyList())
     val CartShopping : StateFlow<List<Product>> = _CartShopping
 
@@ -94,6 +95,7 @@ class CartShoppingViewModel(
         return CartShopping.value.sumOf { it.price * it.quantity }
     }
 
+    // Crea una orden con los productos del carrito y actualiza el stock
     fun createOrder(order: Order) {
         Log.d("CartShoppingViewModel", "Iniciando creación de la orden...") // Esto debería aparecer en los logs.
         viewModelScope.launch {

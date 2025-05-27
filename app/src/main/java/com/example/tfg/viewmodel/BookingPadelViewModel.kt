@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+// ViewModel responsable de gestionar las reservas de pistas de pádel.
+// Se encarga de cargar, realizar y actualizar las reservas, así como manejar mensajes de estado y carga.
 class BookingPadelViewModel(
     private val bookingPadelRepository: BookingPadelRepository = BookingPadelRepository()
 ) : ViewModel() {
-
+    // Lista de reservas de pádel actuales
     private val _bookingsPadel = MutableStateFlow<List<BookingPadel>>(emptyList())
     val bookingsPadel: StateFlow<List<BookingPadel>> = _bookingsPadel
 
@@ -41,7 +43,7 @@ class BookingPadelViewModel(
             }
         }
     }
-
+    // Carga las reservas
     fun loadBookings() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -61,7 +63,7 @@ class BookingPadelViewModel(
         loadBookings()  // Esto simplemente vuelve a cargar las reservas
     }
 
-    // Reservar una pista de padel
+    // Realiza la reserva de una pista si está disponible
     fun bookCourt(
         authViewModel: AuthViewModel,
         navController: NavHostController,

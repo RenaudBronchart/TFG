@@ -1,7 +1,7 @@
 package com.example.tfg.models
 
 import java.util.UUID
-
+// Modelo de datos que representa un booking padel de la aplicación.
 data class BookingPadel(
     val id: String = UUID.randomUUID().toString(), // ID único autogenerado
     val userId: String = "",  // id del usuario

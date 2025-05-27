@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// ViewModel responsable de manejar la lógica de negocio relacionada con la creación de productos.
+// Gestiona los estados de los campos del formulario, validaciones, subida de imágenes y comunicación con el repositorio.
 class AddProductViewModel(
     private val productRepository: IProductRepository = ProductRepository() //
 ) : ViewModel() {
@@ -71,6 +73,8 @@ class AddProductViewModel(
             resetFields() // Limpiar los campos después de agregar el producto
         }
     }
+
+    // Actualiza los campos con los valores ingresados y verifica si se puede habilitar el botón
     fun onCompletedFields(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) {
         _name.value = name
         _price.value = price
@@ -82,10 +86,11 @@ class AddProductViewModel(
         _isButtonEnable.value = enableButton(name, price, description, category, image, stock, brand)
 
     }
-
+    // Valida que todos los campos estén correctamente completados para habilitar el botón
     fun enableButton(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) =
         name.isNotEmpty() && price > 0 && description.isNotEmpty() && category.isNotEmpty() && image.isNotEmpty() && stock > 0 && brand.isNotEmpty()
 
+    // Resetear los campos después de agregar un producto
     fun resetFields() {
         _name.value = ""
         _price.value = 0.0
@@ -94,13 +99,15 @@ class AddProductViewModel(
         _image.value = ""
         _stock.value = 0
         _brand.value = ""
-        _isButtonEnable.value = false // Pour désactiver le bouton après la soumission
+        _isButtonEnable.value = false // Desactivar el botón después del envío
     }
 
+    // Función para confirmacion de mensaje
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }
 
+    // Llama al ViewModel principal del producto para actualizar la imagen mostrada en pantalla
     fun uploadImageAndSetUrl(imageUri: Uri, productViewModel: ProductViewModel) {
         viewModelScope.launch {
             try {

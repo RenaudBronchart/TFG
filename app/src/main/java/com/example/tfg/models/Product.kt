@@ -2,6 +2,7 @@ package com.example.tfg.models
 
 import java.util.UUID
 
+//  Modelo de datos que representa un producto de la aplicación.
 data class Product(
     val id: String = UUID.randomUUID().toString(),
     val name: String = "",

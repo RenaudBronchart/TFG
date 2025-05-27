@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+// ViewModel encargado de la edición de productos.
+// Permite cargar un producto, modificar sus campos y actualizarlo en Firestore.
 class EditProductViewModel(
     private val productRepository: ProductRepository = ProductRepository()
 ) : ViewModel() {
@@ -31,12 +33,13 @@ class EditProductViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    // Carga todos los productos desde Firestore (útil para listas de selección o verificación)
     fun getProductsFromFirestore() {
         viewModelScope.launch {
             _products.value = productRepository.getProducts()
         }
     }
-
+    // Carga un producto por su ID si aún no está cargado
     fun loadProduct(productId: String) {
         if (currentProductId == productId) return // Evitar recargar si ya tenemos los datos correctos
         currentProductId = productId
@@ -54,7 +57,7 @@ class EditProductViewModel(
             }
         }
     }
-
+    // Actualiza un producto en Firestore con los nuevos valores del formulario
     fun updateProduct(productId: String) {
         viewModelScope.launch {
             _isLoading.value = true

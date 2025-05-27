@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
 
+// Repositorio encargado de manejar la autenticación y autorización con Firebase Authentication.
+// Incluye funciones para iniciar sesión, registrar usuarios, cerrar sesión y verificar roles.
 class AuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),  // Inyecta la instancia de FirebaseAuth
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()  // Inyecta la instancia de FirebaseFirestore
 ) {
-
+    // Obtiene el usuario actualmente autenticado (puede ser null si no hay sesión)
     fun fetchCurrentUser(): FirebaseUser? = auth.currentUser
 
 
@@ -35,7 +37,8 @@ class AuthRepository(
             }
         }
     }
-
+    // Crea un nuevo usuario con email y contraseña.
+    // Devuelve el AuthResult si fue exitoso, o null si ocurrió un error.
      suspend fun createUserWithEmailAndPassword(email: String, password: String): AuthResult? {
         return try {
             auth.createUserWithEmailAndPassword(email, password).await()
@@ -43,12 +46,12 @@ class AuthRepository(
             null
         }
     }
-
+    // Cierra la sesión del usuario actual.
      fun signOut() {
         auth.signOut()
     }
 
-
+    // Verifica si un usuario tiene rol de administrador consultando su documento en Firestore.
     suspend fun isAdmin(userId: String): Boolean {
         return try {
             val document = db.collection("users").document(userId).get().await()

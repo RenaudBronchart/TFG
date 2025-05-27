@@ -7,11 +7,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.tasks.await
 
+// Repositorio que encapsula el acceso a Firestore para gestionar órdenes de compra.
+// Permite crear órdenes con actualización de stock, y consultar órdenes por usuario o globales.
 class OrderRepository (private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
                        private val db: FirebaseFirestore = FirebaseFirestore.getInstance())  {
 
     private val nameCollection = "orders"
-
+    // Crea una nueva orden y actualiza el stock de los productos de forma atómica.
+    // Utiliza un batch de escritura para asegurar que todas las operaciones se realicen
+    // Lanza una excepción si no hay suficiente stock.
     suspend fun createOrderWithStockUpdate(order: Order): String {
         try {
             // Iniciar un batch para realizar varias escrituras de forma atómica
@@ -48,7 +52,7 @@ class OrderRepository (private val auth: FirebaseAuth = FirebaseAuth.getInstance
         }
     }
 
-
+    // Obtiene todas las órdenes realizadas por un usuario específico
     suspend fun getOrdersFromFirestore(userId: String): List<Order> {
         return try {
             Log.d("OrderRepository", "Obteniendo órdenes para el usuario: $userId")
@@ -64,7 +68,7 @@ class OrderRepository (private val auth: FirebaseAuth = FirebaseAuth.getInstance
             throw Exception("Error fetching orders from Firestore: ${e.message}")
         }
     }
-
+// Obtiene todas las órdenes de compra sin filtrar por usuario
     suspend fun getAllOrdersFromFirestore(): List<Order> {
         return try {
             val querySnapshot = db.collection(nameCollection)
@@ -76,6 +80,7 @@ class OrderRepository (private val auth: FirebaseAuth = FirebaseAuth.getInstance
         }
     }
 
+    // Obtiene una orden específica por su ID
     suspend fun getOrderById(orderId: String): Order? {
         return try {
             val snapshot = db.collection("orders").document(orderId).get().await()

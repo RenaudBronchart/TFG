@@ -11,6 +11,8 @@ import com.example.tfg.repository.UserRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+// ViewModel responsable de editar usuarios existentes.
+// Permite cargar datos desde Firestore, actualizar campos y sincronizar cambios.
 class EditUserViewModel(
     private val userRepository: UserRepository = UserRepository()
 ) : ViewModel() {
@@ -29,18 +31,18 @@ class EditUserViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-
+    // Carga todos los usuarios desde Firestore
     fun getUsersFromFirestore() {
         viewModelScope.launch {
             _users.value = userRepository.getUsers()
         }
     }
-
+    // Carga un usuario específico desde Firestore mediante su UID
     fun loadUser(uid: String) {
         Log.d("EditUserViewModel", "loadUser called with uid: $uid")
 
         // Siempre recargar usuario sin importar si es el mismo
-        currentUid = uid
+        currentUid = uid // Actualizar currentUid para el seguimiento
 
         viewModelScope.launch {
             try {
@@ -57,7 +59,7 @@ class EditUserViewModel(
         }
     }
 
-
+    // Actualiza los datos del usuario actual en Firestore
     fun updateUser(uid: String, onSuccess: (String) -> Unit) {
         _isLoading.value = true
         viewModelScope.launch {
@@ -85,6 +87,7 @@ class EditUserViewModel(
         }
     }
 
+    // Actualiza un campo específico del usuario actual
     fun updateUserField(field: String, value: String) {
         _user.update { currentUser ->
             currentUser?.let {

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+// ViewModel responsable de gestionar la visualización y edición de productos.
+// Maneja el estado del formulario, la validación y la carga de productos desde el repositorio.
 class ProductViewModel(
     private val productRepository: IProductRepository = ProductRepository()
 ) : ViewModel() {
@@ -57,7 +59,7 @@ class ProductViewModel(
     val isLoading: StateFlow<Boolean> = _isLoading
 
 
-
+    // Cargar todos los productos desde Firestore a través del repositorio
     fun getProducts() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -72,7 +74,7 @@ class ProductViewModel(
     }
 
 
-
+    // Actualiza los campos del formulario con los valores dados y valida si se puede habilitar el botón
     fun onCompletedFields(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) {
         _name.value = name
         _price.value = price
@@ -84,10 +86,10 @@ class ProductViewModel(
         _isButtonEnable.value = enableButton(name, price, description, category, image, stock, brand)
 
     }
-
+    // Valida si todos los campos están completos y correctos
     fun enableButton(name: String, price: Double, description: String, category: String, image: String, stock: Int, brand: String) =
         name.isNotEmpty() && price > 0 && description.isNotEmpty() && category.isNotEmpty() && image.isNotEmpty() && stock > 0 && brand.isNotEmpty()
-
+    // Reinicia todos los campos del formulario a sus valores por defecto
     fun resetFields() {
         _name.value = ""
         _price.value = 0.0
@@ -102,7 +104,7 @@ class ProductViewModel(
     fun setMessageConfirmation(message: String) {
         _messageConfirmation.value = message
     }
-
+    // Actualiza solo la imagen y vuelve a validar los campos
     fun updateImage(newImageUrl: String) {
         _image.value = newImageUrl
         _isButtonEnable.value = enableButton(

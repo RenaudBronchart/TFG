@@ -1,5 +1,8 @@
 package com.example.tfg.models
-
+/**
+ * Clase que representa el estado del formulario de registro de usuario.
+ * Contiene los campos necesarios y una función de validación.
+ */
 data class UserFormState(
     val name: String = "",
     val firstname: String = "",

@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// ViewModel responsable de gestionar la carga de usuarios.
+// Permite obtener todos los usuarios o cargar uno específico desde Firestore.
 class UserViewModel(
     private val userRepository: UserRepository = UserRepository()
 ) : ViewModel() {
@@ -21,13 +23,13 @@ class UserViewModel(
     init {
         getUsersFromFirestore()
     }
-
+    // Cargar todos los usuarios desde Firestore
     fun getUsersFromFirestore() {
         viewModelScope.launch {
             _users.value = userRepository.getUsers()
         }
     }
-
+    // Cargar un usuario específico por su UID
     fun loadUser(uid: String) {
         viewModelScope.launch {
             _user.value = userRepository.getUserById(uid)

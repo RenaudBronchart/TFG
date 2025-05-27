@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+// Repositorio que encapsula el acceso a Firestore para gestionar pistas de pádel (courts).
+// Permite obtener, agregar, eliminar y consultar información de pistas almacenadas en la base de datos.
 class CourtPadelRepository(
 private val auth: FirebaseAuth = FirebaseAuth.getInstance(),  // Inyecta la instancia de FirebaseAuth
 private val db: FirebaseFirestore = FirebaseFirestore.getInstance()  // Inyecta la instancia de FirebaseFirestore

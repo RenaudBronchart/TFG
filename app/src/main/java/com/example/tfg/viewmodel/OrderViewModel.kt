@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+// ViewModel responsable de gestionar las órdenes de compra.
+// Permite cargar todas las órdenes, cargar órdenes por usuario y obtener detalles de una orden específica.
 class OrderViewModel(
     private val orderRepository: OrderRepository = OrderRepository(),
     private val cartShoppingRepository: CartShoppingRepository = CartShoppingRepository()
@@ -82,7 +84,7 @@ class OrderViewModel(
             }
         }
     }
-
+    // Carga una orden específica por su ID
     fun loadLastOrder(orderId: String) {
         viewModelScope.launch {
             _isLoading.value = true

@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// ViewModel responsable de gestionar la eliminación de productos del sistema.
+// Controla el estado de carga y muestra mensajes de confirmación tras cada acción.
 class DeleteProductViewModel(
     private val productRepository: ProductRepository = ProductRepository()
 ) : ViewModel() {

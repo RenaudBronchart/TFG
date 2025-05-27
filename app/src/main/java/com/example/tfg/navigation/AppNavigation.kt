@@ -37,7 +37,12 @@ import com.example.tfg.viewmodel.OrderViewModel
 import com.example.tfg.viewmodel.ProductViewModel
 import com.example.tfg.viewmodel.UserViewModel
 
-
+/**
+ * AppNavigation.kt
+ *
+ * Define y configura todas las rutas de navegación de la aplicación usando Jetpack Compose Navigation.
+ * Utiliza un NavHost con rutas declaradas en AppScreens y vincula cada ruta a su pantalla correspondiente.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation() {

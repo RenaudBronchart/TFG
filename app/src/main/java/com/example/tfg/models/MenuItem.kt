@@ -11,10 +11,17 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SportsTennis
 import androidx.compose.ui.graphics.vector.ImageVector
 
+//  Representa un ítem del menú de navegación lateral o inferior.
 data class MenuItem(val icon: ImageVector, val text: String, val route: String, val category: MenuCategory)
 
+//  Enum para categorizar los ítems del menú.
+// enum es una clase especial en Kotlin que define un conjunto de constantes relacionadas.
 enum class MenuCategory {HOME,PROFILE,ADMIN}
 
+/**
+ * Lista de ítems del menú que se muestran en la aplicación.
+ * Cada ítem está asociado a una pantalla específica por su ruta.
+ */
 val menuItems = listOf(
     MenuItem(Icons.Default.SportsTennis, "Reservar pista", "BookingPadelScreen",MenuCategory.HOME),
     MenuItem(Icons.Default.ShoppingCart, "Tienda", "EshopScreen",MenuCategory.HOME),

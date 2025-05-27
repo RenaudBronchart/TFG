@@ -12,15 +12,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
+// ViewModel encargado de gestionar la autenticación de usuarios utilizando Firebase Authentication.
+// Incluye funciones para login, registro, cierre de sesión y verificación de permisos de administrador.
 class AuthViewModel(
     private val authRepository: AuthRepository = AuthRepository(),
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : ViewModel() {
 
+    // valor del usuario actualmente autenticado
     private val _currentUserId = MutableStateFlow<String?>(null)
     val currentUserId: StateFlow<String?> = _currentUserId
-
+    // Listener que actualiza automáticamente el ID del usuario cuando cambia el estado de autenticación
     init {
         auth.addAuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
@@ -28,7 +30,7 @@ class AuthViewModel(
         }
     }
 
-    // Flujos para mantener el estado de la autenticación y el usuario
+    // Contiene el usuario autenticado y verifica si es administrador
     private val _isAdmin = MutableStateFlow(false)
     val isAdmin: StateFlow<Boolean> = _isAdmin
 

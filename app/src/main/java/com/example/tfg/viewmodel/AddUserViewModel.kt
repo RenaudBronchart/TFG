@@ -12,16 +12,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
+// ViewModel encargado de gestionar el registro de usuarios y el estado del formulario de registro.
 class AddUserViewModel(
     private val userRepository: UserRepository = UserRepository()
 ) : ViewModel() {
-
+    // Estado del formulario de registro
     private val _fields = MutableStateFlow(UserFormState())
     val fields: StateFlow<UserFormState> = _fields
 
     // MutableStateFlow es un flujo reactivo de Kotlin que siempre mantiene un valor actual
     // MutableStateFlow A diferencia de LiveData, está diseñado para funcionar de forma óptima con coroutines.
+
+    // Lista de usuarios registrados
     private val _users = MutableStateFlow<List<User>>(emptyList())
     // StateFlow es más eficiente para manejar  cambios de manera reactiva
     val users: StateFlow<List<User>> = _users
@@ -53,7 +55,7 @@ class AddUserViewModel(
         }
     }
 
-    // Actualiza los campos del formulario
+    // Actualiza el estado del formulario con los datos ingresados por el usuario
     fun onCompletedFields(userForm: UserFormState) {
         _fields.value = userForm
     }
