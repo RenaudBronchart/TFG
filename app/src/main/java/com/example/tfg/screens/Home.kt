@@ -40,12 +40,14 @@ fun Home(navHostController: NavHostController, authViewModel: AuthViewModel, use
 
 
     val usuarioData by userViewModel.user.collectAsState()
+    // Observa el usuario autenticado desde Firebase Auth
     val currentUser by authViewModel.user.collectAsState()
+    // Si no se encuentra nombre del usuario, mostrar texto alternativo
     val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
-
+    // Cargar los datos del usuario cuando se inicia la pantalla
     LaunchedEffect(currentUser?.uid) {
         currentUser?.uid?.let { uid ->
             userViewModel.loadUser(uid)  // cargar usuario

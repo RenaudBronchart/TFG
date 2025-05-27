@@ -33,12 +33,12 @@ fun CheckoutBookingScreen(navHostController: NavHostController, authViewModel: A
 
     val snackbarHostState = remember { SnackbarHostState() }
     val message by bookingPadelViewModel.messageConfirmation.collectAsState()
-
+    // Escucha el mensaje de confirmación y actúa cuando cambia
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
-            snackbarHostState.showSnackbar(message) //
-            bookingPadelViewModel.setMessageConfirmation("") //
-            navHostController.popBackStack() //
+            snackbarHostState.showSnackbar(message) // muestra el mensaje en un Snackbar
+            bookingPadelViewModel.setMessageConfirmation("") // lim
+            navHostController.popBackStack() // volver a la pantalla anterior
         }
     }
     Scaffold(
@@ -53,6 +53,7 @@ fun CheckoutBookingScreen(navHostController: NavHostController, authViewModel: A
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Tarjeta con información de reserva y botón para confirmar
             CardCheckout( courtName, date, timeSlot,
                 onReserveClick = {
                     bookingPadelViewModel.bookCourt(authViewModel, navHostController, courtId, date,

@@ -30,7 +30,7 @@ import com.example.tfg.models.Product
 
 @Composable
 fun CardOrderMessageConfirmation (navHostController: NavHostController, product: Product, order: Order) {
-
+    // Tarjeta visual principal que encierra todos los detalles del pedido
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -39,12 +39,14 @@ fun CardOrderMessageConfirmation (navHostController: NavHostController, product:
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
+                // Número de pedido mostrado parcialmente (primeros 8 caracteres del ID)
                 Text(
                     text = "Pedido n° : ${order.id.take(8)}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
+                // Lista de productos del pedido
                 LazyColumn {
                     items(order.products) { producto ->
                         Row(

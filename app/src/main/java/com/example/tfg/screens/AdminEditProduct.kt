@@ -49,7 +49,7 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
         editProductViewModel.loadProduct(productId)
     }
 
-
+// Mostrar mensaje de confirmación
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
             coroutineScope.launch {
@@ -78,6 +78,7 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Selección de categoría con menú desplegable
             SelectProductCategory(selectedCategory = producto.category, onCategorySelected = { newCategory -> editProductViewModel.updateProductField("category", newCategory) })
             DataField(label = "Nombre", value = producto.name, onValueChange = { newName -> editProductViewModel.updateProductField("name", newName) })
             DataField(label = "Precio", value = producto.price.toString(), onValueChange = { newPrice -> newPrice.toDoubleOrNull()?.let { editProductViewModel.updateProductField("price", it) } }, keyboardType = KeyboardType.Number)
@@ -88,6 +89,7 @@ fun AdminEditProduct(navHostController: NavHostController, authViewModel: AuthVi
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Botón para guardar cambios con feedback de carga
             Button(
                 onClick = {
                     editProductViewModel.updateProduct(productId)

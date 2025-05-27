@@ -2,6 +2,7 @@ package com.example.tfg.viewmodel
 
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfg.repository.AuthRepository
@@ -11,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 // ViewModel encargado de gestionar la autenticación de usuarios utilizando Firebase Authentication.
 // Incluye funciones para login, registro, cierre de sesión y verificación de permisos de administrador.
@@ -22,6 +24,13 @@ class AuthViewModel(
     // valor del usuario actualmente autenticado
     private val _currentUserId = MutableStateFlow<String?>(null)
     val currentUserId: StateFlow<String?> = _currentUserId
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
+
+    private val _resetMessage = MutableStateFlow<String?>(null)
+    val resetMessage: StateFlow<String?> = _resetMessage
+
+
     // Listener que actualiza automáticamente el ID del usuario cuando cambia el estado de autenticación
     init {
         auth.addAuthStateListener { firebaseAuth ->
@@ -79,6 +88,20 @@ class AuthViewModel(
             val result = authRepository.isAdmin(userId)
             _isAdmin.value = result
         }
+    }
+
+    fun sendPasswordReset(email: String) {
+        viewModelScope.launch {
+            try {
+                FirebaseAuth.getInstance().sendPasswordResetEmail(email).await()
+            } catch (e: Exception) {
+                Log.e("Login", "Error al enviar email: ${e.message}")
+            }
+        }
+    }
+
+    fun clearResetMessage() {
+        _resetMessage.value = null
     }
 
 }

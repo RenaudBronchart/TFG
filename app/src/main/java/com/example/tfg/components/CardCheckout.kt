@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CardCheckout(courtName: String, displayDate: String, timeSlot: String, showReserveButton: Boolean = true, onReserveClick: () -> Unit) {
+    // Tarjeta visual para mostrar los detalles de la reserva
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,7 +94,7 @@ fun CardCheckout(courtName: String, displayDate: String, timeSlot: String, showR
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
+            // Botón de confirmación de reserva
             if(showReserveButton) {
                 Button(
                     onClick = onReserveClick,

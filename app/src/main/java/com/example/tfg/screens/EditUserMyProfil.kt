@@ -77,6 +77,7 @@ fun EditUserMyProfil(navController: NavHostController, authViewModel: AuthViewMo
         ) {
             LazyColumn {
                 item {
+                    // Campos editables del usuario
                     DataField(label = "Nombre", value = user?.name ?:"", onValueChange = { editUserViewModel.updateUserField("name", it) })
                     DataField(label = "Apellido", value = user?.firstname ?:"", onValueChange ={ editUserViewModel.updateUserField("firstname", it) })
                     DataField(label = "Email", value = user?.email ?:"", onValueChange = { editUserViewModel.updateUserField("email", it) })

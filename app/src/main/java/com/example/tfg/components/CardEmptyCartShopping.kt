@@ -29,11 +29,13 @@ fun CardEmptyShopping(navHostController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        // Ícono de carrito para indicar visualmente que está vacío
         Icon(
             imageVector = Icons.Default.ShoppingCart,
             contentDescription = "Empty Cart",
             modifier = Modifier.size(70.dp)
         )
+        // Texto que informa al usuario que el carrito está vacío
         Text(
             text = "Tu carrito está vacío ",
             fontSize = 22.sp,
@@ -41,6 +43,7 @@ fun CardEmptyShopping(navHostController: NavHostController) {
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(20.dp))
+        // Botón para redirigir a la tienda
         Button(onClick = { navHostController.navigate("EshopScreen") }) {
             Text("Volver a la tienda")
         }

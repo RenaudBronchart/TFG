@@ -61,11 +61,13 @@ fun CheckoutShopping(navHostController: NavHostController,authViewModel: AuthVie
                 }
             }
 
+            // Muestra el total a pagar y botón para realizar el pedido
             TotalToPay(
                 total = cartShoppingViewModel.calcularTotal(),
                 onClickPay = {
                     val userId = authViewModel.currentUserId.value ?: ""
                     val totalAmount = cartShoppingViewModel.calcularTotal()
+                    // Crea un objeto Order con los datos actuales del carrito
                     val order = Order(
                         userId = userId,
                         products = cartShoppingViewModel.CartShopping.value,

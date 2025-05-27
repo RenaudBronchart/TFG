@@ -36,7 +36,7 @@ import com.example.tfg.viewmodel.UserViewModel
 @Composable
 fun AdminListUsers(navHostController: NavHostController, authViewModel: AuthViewModel, userViewModel: UserViewModel) {
     val userData by userViewModel.users.collectAsState()
-
+    // Al cargar la pantalla, solicitamos los usuarios desde Firestore
     LaunchedEffect(Unit) {
         userViewModel.getUsersFromFirestore()
     }
@@ -68,7 +68,7 @@ fun AdminListUsers(navHostController: NavHostController, authViewModel: AuthView
         }
         }
     }
-
+// Tarjeta individual para mostrar los datos de un usuario
 @Composable
 fun UserCard(user: User, onEditClick: (String) -> Unit) {
     Card(

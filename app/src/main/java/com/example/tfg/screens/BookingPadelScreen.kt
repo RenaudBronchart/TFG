@@ -38,8 +38,9 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 @Composable
 fun BookingPadelScreen(
     navHostController: NavHostController, authViewModel: AuthViewModel, bookingPadelViewModel: BookingPadelViewModel, courtPadelViewModel: CourtPadelViewModel, cartShoppingViewModel: CartShoppingViewModel) {
+    // Obtener los días de la semana a partir de hoy
     val weekDays = getWeekDays(LocalDate.now())
-    val selectedDate = remember { mutableStateOf(LocalDate.now()) } //
+    val selectedDate = remember { mutableStateOf(LocalDate.now()) } // fecha
     val courts = courtPadelViewModel.courtsPadel.collectAsState().value
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
@@ -56,7 +57,7 @@ fun BookingPadelScreen(
     ) { innerPadding ->
 
         Column(modifier = Modifier.padding(innerPadding)) {
-
+            // Selector de días (LazyRow de tarjetas de días)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

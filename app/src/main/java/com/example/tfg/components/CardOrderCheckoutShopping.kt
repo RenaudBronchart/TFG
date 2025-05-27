@@ -42,7 +42,7 @@ import com.example.tfg.viewmodel.CartShoppingViewModel
 @Composable
 fun CardOrderCheckoutShopping(navHostController: NavHostController, cartShoppingViewModel: CartShoppingViewModel, product: Product) {
     var showDialog by remember { mutableStateOf(false) }
-
+// Tarjeta que muestra los detalles del producto en el carrito
     Card(
         modifier = Modifier
             .fillMaxWidth()

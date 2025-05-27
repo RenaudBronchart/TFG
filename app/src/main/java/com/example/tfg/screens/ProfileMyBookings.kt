@@ -26,7 +26,10 @@ import com.example.tfg.viewmodel.BookingPadelViewModel
 import com.example.tfg.viewmodel.CourtPadelViewModel
 
 
-
+/**
+ * Pantalla que muestra las reservas realizadas por el usuario autenticado.
+ * Las reservas se cargan desde Firestore y se muestran con información de pista.
+ */
 @Composable
 fun ProfileMyBookings(navHostController: NavHostController, authViewModel : AuthViewModel, bookingPadelViewModel: BookingPadelViewModel, courtPadelViewModel: CourtPadelViewModel)  {
     val currentUser by authViewModel.user.collectAsState()
@@ -59,7 +62,7 @@ fun ProfileMyBookings(navHostController: NavHostController, authViewModel : Auth
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                //take displayedcout, seleciona solo los elementos de displayedcount
+                // Muestra solo las reservas actuales hasta el límite (displayedCount)
                 items(count = userBookings.take(displayedCount).size) { index ->
                     val booking = userBookings[index] // // Obtener la reserva en la posición `index`
                     val courtName = courts.find { it.id == booking.courtId }?.name ?: "Error Pista"
@@ -73,6 +76,7 @@ fun ProfileMyBookings(navHostController: NavHostController, authViewModel : Auth
                     )
                 }
             }
+            // Botón para cargar más reservas (de 3 en 3)
             if (displayedCount < userBookings.size) {
                 Button(
                     onClick = { displayedCount += 3 }, // 🔹 Muestra 3 reservas más

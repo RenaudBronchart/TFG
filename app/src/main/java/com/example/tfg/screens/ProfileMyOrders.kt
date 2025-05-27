@@ -34,7 +34,10 @@ import com.example.tfg.components.TopBarComponent
 import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.OrderViewModel
 
-
+/**
+ * Pantalla que muestra todas las compras realizadas por el usuario actual.
+ * Permite filtrar por fecha, nombre del producto o precio, y alternar el orden ascendente/descendente.
+ */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthViewModel, orderViewModel: OrderViewModel) {
@@ -42,6 +45,8 @@ fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthVie
     val userId = authViewModel.currentUserId.value ?: ""
     var filter by remember { mutableStateOf("fecha") }
     var isAscending by remember { mutableStateOf(true)}
+
+    // Ordena las órdenes según el filtro y orden seleccionados (fecha, nombre, precio)
 
     val sortedOrders = when (filter) {
         "fecha" -> if (isAscending) { orderViewModel.orders.value.sortedBy { it.createdAt }
@@ -55,7 +60,7 @@ fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthVie
 
         else -> orderViewModel.orders.value
     }
-
+// Carga las órdenes del usuario solo una vez al obtener su ID
     LaunchedEffect(userId) {
         if (userId.isNotEmpty()) {
             orderViewModel.loadOrders(userId)
@@ -71,7 +76,7 @@ fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthVie
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // creacion bara filtros
+            // Fila con botones para seleccionar el tipo de filtro y botón para alternar orden ascendente/descendente
             Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                 FilterButton(text = "Fecha", onClick  = { filter = "fecha" })
                 FilterButton(text = "Nombre", onClick  = { filter = "nombre" })
@@ -84,6 +89,7 @@ fun ProfileMyOrders(navHostController: NavHostController, authViewModel: AuthVie
                     )
                 }
             }
+            // Lista de órdenes filtradas y ordenadas, mostradas como tarjetas
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)

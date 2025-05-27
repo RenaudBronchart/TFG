@@ -40,7 +40,10 @@ import com.example.tfg.viewmodel.AuthViewModel
 import com.example.tfg.viewmodel.CartShoppingViewModel
 import com.example.tfg.viewmodel.AddUserViewModel
 import com.example.tfg.viewmodel.UserViewModel
-
+/**
+ * Pantalla de perfil que muestra un saludo al usuario autenticado,
+ * las opciones del menú de perfil (editar perfil, reservas, cerrar sesión).
+ */
 @Composable
 fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel,  userViewModel: UserViewModel, cartShoppingViewModel: CartShoppingViewModel) {
 
@@ -49,6 +52,7 @@ fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, 
     val name = usuarioData?.name ?: "Usuario desconocido"
     val firebaseUser = authViewModel.user.collectAsState().value
     val userId = authViewModel.currentUserId.value ?: ""
+    // Productos del carrito (para mostrar número en la BottomBar)
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
     LaunchedEffect(firebaseUser?.uid) {
@@ -93,6 +97,7 @@ fun Profile(navHostController: NavHostController, authViewModel: AuthViewModel, 
                 modifier = Modifier.padding(16.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
+            // Opciones del menú de perfil (reservas, editar perfil, cerrar sesión, etc.)
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier

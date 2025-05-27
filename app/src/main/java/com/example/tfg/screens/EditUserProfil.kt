@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EditUserProfil(navController: NavHostController, authViewModel: AuthViewModel, editUserViewModel: EditUserViewModel, userId: String) {
+    // Observa los estados necesarios desde el ViewModel
     val user by editUserViewModel.user.collectAsState() // Manejar el estado de usuario
     val snackbarHostState = remember { SnackbarHostState() }
     val message by editUserViewModel.messageConfirmation.collectAsState()
@@ -73,6 +74,7 @@ fun EditUserProfil(navController: NavHostController, authViewModel: AuthViewMode
         ) {
             LazyColumn {
                 item {
+                    // Campos de entrada para cada atributo del usuario
                     DataField(label = "Nombre", value = user?.name ?:"", onValueChange = { editUserViewModel.updateUserField("name", it) })
                     DataField(label = "Apellido", value = user?.firstname ?:"", onValueChange ={ editUserViewModel.updateUserField("firstname", it) })
                     DataField(label = "Email", value = user?.email ?:"", onValueChange = { editUserViewModel.updateUserField("email", it) })
@@ -90,6 +92,7 @@ fun EditUserProfil(navController: NavHostController, authViewModel: AuthViewMode
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Botón para guardar cambios
                     Button(
                         onClick = {
 

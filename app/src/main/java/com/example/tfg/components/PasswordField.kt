@@ -38,6 +38,7 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit) {
         val isLongEnough = password.length >= 6 // mas de 6 tiene tener el password
         // para agregar mas seguridad, se podria anadir !it.isLetterOrDigit, y tenemos un caractere special
 
+        // Asignar mensaje de error apropiado
         errorMessage = when {
             password.isEmpty() -> "La contraseña no puede ser vacía"
             !isLongEnough -> "La contraseña debe tener al menos 6 caracteres"

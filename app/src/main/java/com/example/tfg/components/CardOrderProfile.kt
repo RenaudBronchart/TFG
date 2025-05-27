@@ -30,6 +30,7 @@ fun CardOrderProfile(order: Order) {
             .fillMaxWidth()
             .padding(vertical = 12.dp)
     ) {
+        // Mostrar la fecha del pedido formateada
         DisplayDate(
             date = order.createdAt,
             fontSize = 16.sp,
@@ -38,7 +39,7 @@ fun CardOrderProfile(order: Order) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-
+        // Fila principal con icono, nombre del producto y total
         Row(
             modifier = Modifier
                 .fillMaxWidth()

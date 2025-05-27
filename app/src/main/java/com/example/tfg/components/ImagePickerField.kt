@@ -20,12 +20,12 @@ fun ImagePickerField(
 ) {
     TextField(
         value = value,
-        onValueChange = {},
+        onValueChange = {},  // Campo solo lectura
         label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
-            .clickable { onPickImage() },
+            .clickable { onPickImage() }, // Al tocar el campo, se ejecuta la lógica de selección
         readOnly = true,
         enabled = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),

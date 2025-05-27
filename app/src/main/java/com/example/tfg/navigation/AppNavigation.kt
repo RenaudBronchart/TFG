@@ -70,7 +70,7 @@ fun AppNavigation() {
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel) }
         composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
-        composable(AppScreens.SignUp.ruta) { SignUp(navigationController, authViewModel, addUserViewModel) }
+        composable(AppScreens.SignUp.ruta) { SignUp(navigationController, authViewModel,userViewModel, addUserViewModel) }
         composable(AppScreens.Profile.ruta) { Profile(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }
         composable(AppScreens.EshopScreen.ruta) { EshopScreen(navigationController, authViewModel, productViewModel, cartShoppingViewModel, deleteProductViewModel) }
         composable(AppScreens.AdminPanel.ruta) { AdminPage(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }

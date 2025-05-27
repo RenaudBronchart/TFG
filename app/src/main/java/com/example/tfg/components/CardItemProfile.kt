@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CardItemProfile(icon: ImageVector, text: String, onClick: () -> Unit) {
+    // Componente que muestra una tarjeta interactiva con un ícono y texto, usada comúnmente en menús de perfil
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,6 +33,7 @@ fun CardItemProfile(icon: ImageVector, text: String, onClick: () -> Unit) {
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
+        // Contenedor en fila: ícono + texto
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,

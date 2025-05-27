@@ -31,12 +31,15 @@ fun AdminPage(navHostController: NavHostController, authViewModel: AuthViewModel
     val usuarioData by userViewModel.user.collectAsState()
     val name = usuarioData?.name ?: "Usuario desconocido"
     val isAdmin by authViewModel.isAdmin.collectAsState()
+
+    // Obtener los productos actuales del carrito para mostrar el contador en la BottomBar
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
 
     Scaffold(
         topBar = { TopBarComponent("Administrador pagina", navHostController) },
         bottomBar = { BottomBarComponent(navHostController, cartItems) }
     ) { innerPadding ->
+        // Contenedor principal
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -49,6 +52,7 @@ fun AdminPage(navHostController: NavHostController, authViewModel: AuthViewModel
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
+                // Mostramos solo los ítems de categoría ADMIN
                 items(menuItems.filter { it.category == MenuCategory.ADMIN})
                 { item ->
                     CardItemProfile(

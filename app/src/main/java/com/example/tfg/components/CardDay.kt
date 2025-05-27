@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
+    // Define el color del fondo según si está seleccionado o no
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary
     else MaterialTheme.colorScheme.surfaceVariant
     val textColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
@@ -52,6 +53,7 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
+                    // Día de la semana en formato es
                     day.format(DateTimeFormatter.ofPattern("EEE"))
                         .replace("Mon", "Lun")
                             .replace("Tue", "Mar")
@@ -67,6 +69,7 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall.copy(color = textColor)
                 )
                 Text(
+                    // Mes abreviado en español
                     day.format(DateTimeFormatter.ofPattern("MMM"))
                         .replace("Jan", "Ene")
                             .replace("Feb", "Feb")
@@ -88,9 +91,11 @@ fun DayCard(day: LocalDate, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun getWeekDays(currentDay: LocalDate): List<LocalDate> {
-    val days = mutableListOf<LocalDate>() // mutablelistof en vez de Listof para agegrear dinacamente los dias
 
+fun getWeekDays(currentDay: LocalDate): List<LocalDate> {
+    // Lista mutable para guardar los 7 días
+    val days = mutableListOf<LocalDate>() // mutablelistof en vez de Listof para agegrear dinacamente los dias
+    // Agrega 7 días a partir del día actual
     for (i in 0..6) {
         days.add(currentDay.plusDays(i.toLong()))
     }

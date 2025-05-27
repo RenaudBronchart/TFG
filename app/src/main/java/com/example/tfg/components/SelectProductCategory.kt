@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
-
+// Componente reutilizable que permite seleccionar una categoría de producto desde un menú desplegable.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectProductCategory(
@@ -30,12 +30,14 @@ fun SelectProductCategory(
     onCategorySelected: (String) -> Unit,
     categories: List<String> = listOf("Palas de pádel", "Pelotas") //
 ) {
+    // Estado local que controla si el menú está desplegado o no
     var expanded by remember { mutableStateOf(false) }
-
+    // Contenedor que gestiona el menú desplegable y su TextField asociado
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it }
+        onExpandedChange = { expanded = it } // Alterna el estado al hacer clic en el TextField
     ) {
+        // TextField de solo lectura que muestra la categoría seleccionada
         TextField(
             value = selectedCategory.ifEmpty { "Selecciona una categoría" },
             onValueChange = {},
@@ -53,7 +55,7 @@ fun SelectProductCategory(
                 disabledContainerColor = MaterialTheme.colorScheme.surface
             )
         )
-
+        // Menú desplegable con opciones de categoría
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }

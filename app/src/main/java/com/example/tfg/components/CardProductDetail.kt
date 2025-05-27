@@ -43,9 +43,10 @@ fun CardProductDetail(navController: NavHostController, product: Product, produc
                       cartShoppingViewModel: CartShoppingViewModel, onAddToCart: () -> Unit, onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    // Verifica si el producto ya está en el carrito y si está agotado
     val existingItem = cartShoppingViewModel.CartShopping.value.find { it.id == product.id }
     val isOutOfStock = product.stock == 0
-
+    // Hoja modal inferior para mostrar los detalles del producto
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),

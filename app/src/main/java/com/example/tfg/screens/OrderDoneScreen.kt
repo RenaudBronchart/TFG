@@ -42,14 +42,14 @@ fun OrderDoneScreen( navHostController: NavHostController,authViewModel: AuthVie
     val lastOrderId by cartShoppingViewModel.lastOrderId.collectAsState()  // ID de la última orden
     val lastOrder by orderViewModel.lastOrder.collectAsState()  // La última orden cargada
 
-
+    // Efecto lanzado una vez cuando se detecta que hay una nueva orden
     LaunchedEffect(lastOrderId) {
         if (!lastOrderId.isNullOrEmpty()) {
             orderViewModel.loadLastOrder(lastOrderId!!)  // Cargar la última orden usando el ID
         }
     }
 
-
+    // Contenedor general de la pantalla
     Box(
         modifier = Modifier
             .fillMaxSize()

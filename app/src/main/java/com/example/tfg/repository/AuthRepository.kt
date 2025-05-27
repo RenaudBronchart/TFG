@@ -62,4 +62,13 @@ class AuthRepository(
             false
         }
     }
+    // Envía un correo de restablecimiento de contraseña al usuario.
+    suspend fun sendPasswordReset(email: String): Result<String> {
+        return try {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email).await()
+            Result.success("Correo enviado correctamente")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

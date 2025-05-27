@@ -45,6 +45,7 @@ import androidx.navigation.NavHostController
 import com.example.tfg.R
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -144,6 +145,23 @@ fun Login(navController: NavHostController, authViewModel: AuthViewModel ) {
             )
 
             Spacer(modifier = Modifier.height(32.dp)) // Espaciado más grande
+
+            // Enlace para recuperación de contraseña
+            TextButton(
+                onClick = {
+                    if (email.isNotEmpty()) {
+                        coroutineScope.launch {
+                            authViewModel.sendPasswordReset(email)
+                            Toast.makeText(context, "Correo de recuperación enviado", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Introduce tu correo para recuperar contraseña", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            ) {
+                Text("¿Olvidaste tu contraseña?", color = Color.White)
+            }
+
 
             // Botón "Iniciar Sesión"
             Button(

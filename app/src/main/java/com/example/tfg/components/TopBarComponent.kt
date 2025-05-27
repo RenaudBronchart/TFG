@@ -15,12 +15,14 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+// Componente de barra superior (TopAppBar) reutilizable con un botón de retroceso.
 fun TopBarComponent(title: String, navHostController: NavHostController) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = Color.White
         ),
+        // Título de la AppBar
         title = { Text(title) },
         navigationIcon = {
             IconButton(onClick = { navHostController.popBackStack() }) {

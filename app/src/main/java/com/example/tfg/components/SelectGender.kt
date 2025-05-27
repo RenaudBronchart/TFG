@@ -24,8 +24,9 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectGender(selectedGender: String, onGenderChange: (String) -> Unit) {
+    // Opciones disponibles en el menú
     val options = listOf("Hombre", "Mujer")
-    // expanded controla si el menú desplegable, configurado como false
+    // Estado para controlar si el menú está expandido (visible)
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -34,14 +35,14 @@ fun SelectGender(selectedGender: String, onGenderChange: (String) -> Unit) {
     ) {
         TextField(
             value = selectedGender,
-            onValueChange = {},
+            onValueChange = {},// No editable directamente
             readOnly = true,
             label = { Text("Género") },
             trailingIcon = {
                 Icon(Icons.Filled.ArrowDropDown, contentDescription = "List desplegable")
             },
             modifier = Modifier
-                .menuAnchor()
+                .menuAnchor() // Asegura que el menú aparezca anclado correctamente
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),

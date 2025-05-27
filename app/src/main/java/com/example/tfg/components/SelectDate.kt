@@ -26,7 +26,7 @@ import java.util.*
 fun SelectDate(selectedDate: String, onDateChange: (String) -> Unit) {
     //LocalContext.current  da acceso al contexto actual en una función composable.
     val context = LocalContext.current
-
+// Función que lanza el selector de fecha
     val openDatePicker: () -> Unit = {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -36,6 +36,7 @@ fun SelectDate(selectedDate: String, onDateChange: (String) -> Unit) {
         val datePickerDialog = DatePickerDialog(
             context,
             { _, year, monthOfYear, dayOfMonth ->
+                // Formatear la fecha como dd/MM/yyyy (añadir ceros opcional)
                 val formattedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
                 onDateChange(formattedDate)
             },
@@ -44,7 +45,7 @@ fun SelectDate(selectedDate: String, onDateChange: (String) -> Unit) {
 
         datePickerDialog.show()
     }
-
+// TextField de solo lectura con ícono clickeable para abrir el calendario
     TextField(
         value = selectedDate,
         onValueChange = {},

@@ -36,13 +36,17 @@ class AddUserViewModel(
 
 
     // Función para registrar un usuario
-    fun registerUser(authViewModel: AuthViewModel, navController: NavHostController, onResult: (String) -> Unit) {
+    fun registerUser(authViewModel: AuthViewModel, navController: NavHostController,userViewModel: UserViewModel ,onResult: (String) -> Unit) {
         viewModelScope.launch {
             val result = userRepository.registerUser(_fields.value)
 
             // Verifica si el resultado fue exitoso
             result.onSuccess {
                 _messageConfirmation.value = it
+                // Carga los datos del usuario registrado usando su UID desde FirebaseAuth
+                authViewModel.currentUserId.value?.let { uid ->
+                    userViewModel.loadUser(uid)}
+
                 delay(2000)
                 resetFields() // Resetear los campos después de registrar el usuario
                 navController.navigate("Home") {

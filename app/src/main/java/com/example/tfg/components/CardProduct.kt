@@ -36,8 +36,10 @@ fun CardProduct(
 ) {
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
+    // Obtenemos el estado actual del carrito
     val cartItems by cartShoppingViewModel.CartShopping.collectAsState()
     val existingItem = cartItems.find { it.id == product.id }
+    // Verificamos si no hay stock o si ya se ha alcanzado el máximo en el carrito
     val isOutOfStock = product.stock == 0 || (existingItem != null && existingItem.quantity >= product.stock)
 
     val cardBackgroundColor = if (isOutOfStock) Color.LightGray else Color.White
@@ -71,7 +73,7 @@ fun CardProduct(
             Text(text = "${product.price} €", color = Color.Black)
 
             Spacer(modifier = Modifier.weight(1f))
-
+            // Modo administrador: mostrar botones editar y eliminar
             if (isAdmin) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -90,13 +92,13 @@ fun CardProduct(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
+                            contentDescription = "Editar",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                     }
-
+                    // Botón para eliminar producto (con diálogo de confirmación)
                     Button(
                         modifier = Modifier
                             .padding(2.dp)
@@ -116,6 +118,7 @@ fun CardProduct(
                     }
                 }
             } else {
+                // Modo usuario: botón de añadir al carrito
                 Button(
                     modifier = Modifier
                         .padding(2.dp)
@@ -142,7 +145,7 @@ fun CardProduct(
             }
         }
     }
-
+    // Diálogo de confirmación para eliminar
     if (showDialog) {
         mostrarMessageConfirmation(
             message = "¿Seguro que quieres eliminar ${product.name}?",

@@ -41,20 +41,21 @@ fun AdminAddProduct(
     val snackbarHostState = remember { SnackbarHostState() }
     val message by addProductViewModel.messageConfirmation.collectAsState()
     val context = LocalContext.current
-
+// Limpiar mensaje de confirmación al montar la pantalla
     LaunchedEffect(Unit) {
         productViewModel.setMessageConfirmation("")
     }
-
+// Mostrar mensaje en Snackbar si llega uno
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
             snackbarHostState.showSnackbar(message)
             productViewModel.resetFields()
         }
     }
-
+// Lanzador para seleccionar una imagen de la galería
     val pickImageLauncher = PickImageFromGallery { uri ->
         uri?.let {
+            // Subimos la imagen a Firebase Storage y guardamos su URL
             addProductViewModel.uploadImageAndSetUrl(it,productViewModel)
 
         }
@@ -79,7 +80,7 @@ fun AdminAddProduct(
                 }
             )
 
-
+            // Campos de texto para capturar datos del producto
             listOf(
                 Triple("Nombre", name, "nombre"),
                 Triple("Precio", price.toString(), "precio"),
@@ -103,7 +104,7 @@ fun AdminAddProduct(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-
+            // Botón para seleccionar imagen
             Button(
                 onClick = { pickImageLauncher() },
                 modifier = Modifier
@@ -112,7 +113,7 @@ fun AdminAddProduct(
             ) {
                 Text("Seleccionar imagen")
             }
-
+            // Indicador visual si hay imagen seleccionada
             if (image.isNotEmpty()) {
                 Text(
                     text = "Imagen seleccionada ️",
@@ -123,7 +124,7 @@ fun AdminAddProduct(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-
+            // Botón para crear producto
             Button(
                 onClick = {
                     Log.d("AdminAddProduct", "Image URL avant création produit: $image")
