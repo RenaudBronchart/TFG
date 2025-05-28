@@ -49,7 +49,7 @@ class AddUserViewModel(
 
                 delay(2000)
                 resetFields() // Resetear los campos después de registrar el usuario
-                navController.navigate("Home") {
+                navController.navigate("Login") {
                     popUpTo("SignUp") { inclusive = true }
                 }
             }.onFailure {

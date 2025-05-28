@@ -77,7 +77,17 @@ class AuthViewModel(
     // Función para crear un nuevo usuario con correo y contraseña
     suspend fun createUserWithEmailAndPassword(email: String, password: String): AuthResult? {
         return try {
-            authRepository.createUserWithEmailAndPassword(email, password)
+            val result = authRepository.createUserWithEmailAndPassword(email, password)
+            if (result != null) {
+                _user.value = authRepository.fetchCurrentUser()
+                _currentUserId.value = _user.value?.uid
+
+                // Verificamos si es admin, aunque un nuevo usuario no lo sea por defecto
+                _user.value?.uid?.let { uid ->
+                    _isAdmin.value = authRepository.isAdmin(uid)
+                }
+            }
+            result
         } catch (e: Exception) {
             null
         }

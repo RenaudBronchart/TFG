@@ -66,7 +66,7 @@ fun AppNavigation() {
 
     NavHost(
         navController =  navigationController,
-        startDestination = AppScreens.Home.ruta // indicar la ruta donde empezamos la app
+        startDestination = AppScreens.Login.ruta // indicar la ruta donde empezamos la app
     ) {
         composable(AppScreens.Login.ruta) { Login(navigationController, authViewModel) }
         composable(AppScreens.Home.ruta) { Home(navigationController, authViewModel, userViewModel, cartShoppingViewModel) }

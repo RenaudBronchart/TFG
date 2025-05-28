@@ -38,6 +38,7 @@ fun CheckoutBookingScreen(navHostController: NavHostController, authViewModel: A
         if (message.isNotEmpty()) {
             snackbarHostState.showSnackbar(message) // muestra el mensaje en un Snackbar
             bookingPadelViewModel.setMessageConfirmation("") // lim
+            bookingPadelViewModel.loadBookings()
             navHostController.popBackStack() // volver a la pantalla anterior
         }
     }

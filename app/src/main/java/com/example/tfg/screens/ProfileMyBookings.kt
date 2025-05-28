@@ -39,9 +39,11 @@ fun ProfileMyBookings(navHostController: NavHostController, authViewModel : Auth
     val courts by courtPadelViewModel.courtsPadel.collectAsState()
     var displayedCount by remember { mutableStateOf(3) }
 
-    LaunchedEffect(Unit) {
-        bookingPadelViewModel.loadBookings()
-        courtPadelViewModel.getCourtsPadelFromFirestore()
+    LaunchedEffect(currentUser?.uid) {
+        if (currentUser != null) {
+            bookingPadelViewModel.loadBookings()
+            courtPadelViewModel.getCourtsPadelFromFirestore()
+        }
     }
     // it representa cada elemento de allbookings  con el userId de l'id que hizo la reserva
     //  UiD = user connectado . guardamos solo las reserva de it.userId = a UID actual
